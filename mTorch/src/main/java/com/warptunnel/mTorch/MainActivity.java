@@ -176,17 +176,17 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
-
+            Log.d(TAG, "********** surfaceCreated **********");
         }
 
         @Override
         public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
+            Log.d(TAG, "********** surfaceChanged **********");
         }
 
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
-
+            Log.d(TAG, "********** surfaceDestroyed **********");
         }
 
         private boolean toggleTorch() {
