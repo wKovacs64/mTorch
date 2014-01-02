@@ -1,5 +1,6 @@
 package com.warptunnel.mTorch;
 
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.os.Bundle;
@@ -61,6 +62,7 @@ public class MainActivity extends ActionBarActivity {
         private Camera mCamera;
         private boolean mHasFlash;
         private boolean mFlashOn;
+        private Context mContext;
 
         public MainFragment() {
         }
@@ -79,19 +81,23 @@ public class MainActivity extends ActionBarActivity {
             super.onStart();
             Log.d(TAG, "********** onStart **********");
 
+            // Obtain Context for communicating with UI later
+            mContext = getActivity().getApplicationContext();
+
+            // Initially, the flash will be off.   ...right?
+            mFlashOn = false;
+
             // Check for flash capability
-            mHasFlash = getActivity().getApplicationContext().getPackageManager()
-                    .hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
+            mHasFlash = mContext.getPackageManager().hasSystemFeature(PackageManager
+                    .FEATURE_CAMERA_FLASH);
             if (!mHasFlash) {
-                Log.e(TAG, getString(R.string.error_noflash));
-                Toast mToast = Toast.makeText(getActivity().getApplicationContext(),
-                        R.string.error_noflash, Toast.LENGTH_LONG);
-                mToast.show();
+                Log.e(TAG, getString(R.string.error_no_flash));
+                Toast.makeText(mContext, R.string.error_no_flash, Toast.LENGTH_LONG).show();
                 getActivity().finish();
                 return;
             }
 
-            Log.d(TAG, getString(R.string.debug_flashfound));
+            Log.d(TAG, getString(R.string.debug_flash_found));
 
             mImageButton = (ImageButton) getActivity().findViewById(R.id.torch_imagebutton);
             if (mImageButton == null) Log.e(TAG, "mImageButton was NULL");
@@ -131,7 +137,31 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public void onClick(View v) {
             Log.d(TAG, "********** onClick **********");
+
+            // Toggle torch and image
+            if (toggleTorch()) toggleImage();
+            else {
+                Log.e(TAG, getString(R.string.error_toggle_failed));
+                Toast.makeText(mContext, R.string.error_toggle_failed, Toast.LENGTH_LONG).show();
+                getActivity().finish();
+            }
+        }
+
+        private boolean toggleTorch() {
+            Log.d(TAG, "toggleTorch | mFlashOn = " + mFlashOn);
+
             // Toggle torch here
+
+            return true;
+        }
+
+        private void toggleImage() {
+            Log.d(TAG, "toggleImage | mFlashOn = " + mFlashOn);
+
+            if (mFlashOn) mImageButton.setImageResource(R.drawable.torch_off);
+            else mImageButton.setImageResource(R.drawable.torch_on);
+
+            mFlashOn = !mFlashOn;
         }
 
     }
