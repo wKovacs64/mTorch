@@ -3,6 +3,8 @@
 
     <string name="app_name">mTorch</string>
     <string name="debug_flash_found">DEBUG: Flash capability detected!</string>
+    <string name="error_camera_unavailable">ERROR: unable to acquire camera</string>
+    <string name="error_holder_failed">ERROR: unable to get SurfaceHolder</string>
     <string name="error_no_flash">ERROR: no flash detected</string>
     <string name="error_toggle_failed">ERROR: unable to toggle flash</string>
     <string name="menu_about">About</string>
