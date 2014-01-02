@@ -59,7 +59,7 @@ public class MainActivity extends ActionBarActivity {
 */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
+
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
@@ -92,6 +92,8 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
+            Log.d(TAG, "********** onCreateView **********");
+
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             return rootView;
         }
@@ -107,6 +109,8 @@ public class MainActivity extends ActionBarActivity {
                 //mImageButton.setImageResource(R.drawable.torch_off);
                 mImageButton.setOnClickListener(this);
                 mImageButton.setEnabled(false);
+                // Get the Camera device and SurfaceView, then...
+                mImageButton.setEnabled(true);
             }
         }
 
