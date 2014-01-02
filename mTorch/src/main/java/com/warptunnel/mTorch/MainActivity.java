@@ -22,7 +22,7 @@ public class MainActivity extends ActionBarActivity {
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
+                    .add(R.id.container, new MainFragment())
                     .commit();
         }
     }
@@ -81,15 +81,12 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment implements View.OnClickListener {
+    public static class MainFragment extends Fragment implements View.OnClickListener {
 
-        private static final String TAG = PlaceholderFragment.class.getSimpleName();
+        private static final String TAG = MainFragment.class.getSimpleName();
         private ImageButton mImageButton;
 
-        public PlaceholderFragment() {
+        public MainFragment() {
         }
 
         @Override
