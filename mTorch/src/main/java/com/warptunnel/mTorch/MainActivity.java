@@ -1,5 +1,7 @@
 package com.warptunnel.mTorch;
 
+import android.content.pm.PackageManager;
+import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
@@ -10,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -55,6 +58,9 @@ public class MainActivity extends ActionBarActivity {
 
         private static final String TAG = MainFragment.class.getSimpleName();
         private ImageButton mImageButton;
+        private Camera mCamera;
+        private boolean mHasFlash;
+        private boolean mFlashOn;
 
         public MainFragment() {
         }
@@ -73,7 +79,21 @@ public class MainActivity extends ActionBarActivity {
             super.onStart();
             Log.d(TAG, "********** onStart **********");
 
-            mImageButton = (ImageButton) this.getActivity().findViewById(R.id.torch_imagebutton);
+            // Check for flash capability
+            mHasFlash = getActivity().getApplicationContext().getPackageManager()
+                    .hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
+            if (!mHasFlash) {
+                Log.e(TAG, getString(R.string.error_noflash));
+                Toast mToast = Toast.makeText(getActivity().getApplicationContext(),
+                        R.string.error_noflash, Toast.LENGTH_LONG);
+                mToast.show();
+                getActivity().finish();
+                return;
+            }
+
+            Log.d(TAG, getString(R.string.debug_flashfound));
+
+            mImageButton = (ImageButton) getActivity().findViewById(R.id.torch_imagebutton);
             if (mImageButton == null) Log.e(TAG, "mImageButton was NULL");
             else {
                 //mImageButton.setImageResource(R.drawable.torch_off);
