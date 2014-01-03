@@ -69,6 +69,8 @@ public class MainActivity extends ActionBarActivity {
             SurfaceHolder.Callback {
 
         private static final String TAG = MainFragment.class.getSimpleName();
+        private final Lock mSurfaceLock = new ReentrantLock();
+        private final Condition mSurfaceHolderIsSet = mSurfaceLock.newCondition();
         private ImageButton mImageButton;
         private CameraDevice mCameraDevice;
         private boolean mHasFlash;
@@ -77,8 +79,6 @@ public class MainActivity extends ActionBarActivity {
         private FragmentActivity mActivity;
         private SurfaceView mCameraPreview;
         private SurfaceHolder mSurfaceHolder;
-        private final Lock mSurfaceLock = new ReentrantLock();
-        private final Condition mSurfaceHolderIsSet = mSurfaceLock.newCondition();
 
         public MainFragment() {
         }
