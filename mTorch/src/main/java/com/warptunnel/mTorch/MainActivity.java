@@ -121,7 +121,7 @@ public class MainActivity extends ActionBarActivity {
             mImageButton = (ImageButton) mActivity.findViewById(R.id.torch_image_button);
             if (mImageButton == null) Log.e(TAG, "mImageButton was NULL");
             else {
-                //mImageButton.setImageResource(R.drawable.torch_off);
+                mImageButton.setImageResource(R.drawable.torch_off);
                 mImageButton.setOnClickListener(this);
                 mImageButton.setEnabled(false);
 
