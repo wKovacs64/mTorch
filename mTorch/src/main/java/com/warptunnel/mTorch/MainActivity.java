@@ -29,6 +29,8 @@ public class MainActivity extends ActionBarActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    private AboutDialog mAboutDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +41,8 @@ public class MainActivity extends ActionBarActivity {
                     .add(R.id.container, new MainFragment())
                     .commit();
         }
+
+        mAboutDialog = new AboutDialog(this);
     }
 
     @Override
@@ -57,12 +61,21 @@ public class MainActivity extends ActionBarActivity {
         switch (item.getItemId()) {
             case R.id.menu_about:
                 // show About dialog
+                mAboutDialog.show();
                 return true;
             case R.id.menu_settings:
                 // show Settings
+                Toast.makeText(this, R.string.nyi, Toast.LENGTH_SHORT).show();
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (mAboutDialog.isShowing()) mAboutDialog.dismiss();
     }
 
     public static class MainFragment extends Fragment implements View.OnClickListener,

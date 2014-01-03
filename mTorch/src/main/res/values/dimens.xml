@@ -4,5 +4,7 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
 
     <dimen name="surface_view_size">1dp</dimen>
+    <dimen name="divider_height">2dp</dimen>
+    <dimen name="divider_vertical_margin">10dp</dimen>
 
 </resources>

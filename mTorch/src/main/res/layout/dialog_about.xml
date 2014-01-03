@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/about_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/about_description" />
+
+    <View
+        android:id="@+id/about_divider01"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_height"
+        android:layout_below="@id/about_description"
+        android:layout_marginTop="@dimen/divider_vertical_margin"
+        android:layout_marginBottom="@dimen/divider_vertical_margin"
+        android:background="@drawable/black_holo_gradient" />
+
+    <TextView
+        android:id="@+id/about_version_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/about_divider01"
+        android:text="@string/about_version_text" />
+
+    <TextView
+        android:id="@+id/about_version_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/about_divider01"
+        android:layout_alignParentRight="true" />
+
+    <TextView
+        android:id="@+id/about_donations_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/about_version_text"
+        android:text="@string/about_donations_text" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/about_version_text"
+        android:layout_alignParentRight="true"
+        android:text="@string/about_donations_link"
+        android:autoLink="web" />
+
+    <TextView
+        android:id="@+id/about_author_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/about_donations_text"
+        android:text="@string/about_author_text" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/about_donations_text"
+        android:layout_alignParentRight="true"
+        android:text="@string/about_author_name"
+        android:autoLink="web" />
+
+    <View
+        android:id="@+id/about_divider02"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_height"
+        android:layout_below="@id/about_author_text"
+        android:layout_marginTop="@dimen/divider_vertical_margin"
+        android:layout_marginBottom="@dimen/divider_vertical_margin"
+        android:background="@drawable/black_holo_gradient" />
+
+    <TextView
+        android:id="@+id/about_disclaimer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/about_divider02"
+        android:text="@string/about_disclaimer" />
+
+</RelativeLayout>
