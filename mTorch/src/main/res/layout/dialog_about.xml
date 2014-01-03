@@ -15,8 +15,8 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/divider_height"
         android:layout_below="@id/about_description"
-        android:layout_marginTop="@dimen/divider_vertical_margin"
         android:layout_marginBottom="@dimen/divider_vertical_margin"
+        android:layout_marginTop="@dimen/divider_vertical_margin"
         android:background="@drawable/black_holo_gradient" />
 
     <TextView
@@ -30,8 +30,8 @@
         android:id="@+id/about_version_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/about_divider01"
-        android:layout_alignParentRight="true" />
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/about_divider01" />
 
     <TextView
         android:id="@+id/about_donations_text"
@@ -43,10 +43,10 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/about_version_text"
         android:layout_alignParentRight="true"
-        android:text="@string/about_donations_link"
-        android:autoLink="web" />
+        android:layout_below="@id/about_version_text"
+        android:autoLink="web"
+        android:text="@string/about_donations_link" />
 
     <TextView
         android:id="@+id/about_author_text"
@@ -58,18 +58,18 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/about_donations_text"
         android:layout_alignParentRight="true"
-        android:text="@string/about_author_name"
-        android:autoLink="web" />
+        android:layout_below="@id/about_donations_text"
+        android:autoLink="web"
+        android:text="@string/about_author_name" />
 
     <View
         android:id="@+id/about_divider02"
         android:layout_width="match_parent"
         android:layout_height="@dimen/divider_height"
         android:layout_below="@id/about_author_text"
-        android:layout_marginTop="@dimen/divider_vertical_margin"
         android:layout_marginBottom="@dimen/divider_vertical_margin"
+        android:layout_marginTop="@dimen/divider_vertical_margin"
         android:background="@drawable/black_holo_gradient" />
 
     <TextView
