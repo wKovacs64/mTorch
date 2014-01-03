@@ -9,7 +9,7 @@
     tools:context="com.warptunnel.mTorch.MainActivity.MainFragment">
 
     <ImageButton
-        android:id="@+id/torch_imagebutton"
+        android:id="@+id/torch_image_button"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:scaleType="fitCenter"
