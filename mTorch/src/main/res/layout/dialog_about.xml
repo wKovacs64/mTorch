@@ -17,7 +17,7 @@
         android:layout_below="@id/about_description"
         android:layout_marginBottom="@dimen/divider_vertical_margin"
         android:layout_marginTop="@dimen/divider_vertical_margin"
-        android:background="@drawable/black_holo_gradient" />
+        android:background="@drawable/white_transparent_gradient" />
 
     <TextView
         android:id="@+id/about_version_text"
@@ -70,7 +70,7 @@
         android:layout_below="@id/about_author_text"
         android:layout_marginBottom="@dimen/divider_vertical_margin"
         android:layout_marginTop="@dimen/divider_vertical_margin"
-        android:background="@drawable/black_holo_gradient" />
+        android:background="@drawable/white_transparent_gradient" />
 
     <TextView
         android:id="@+id/about_disclaimer"
