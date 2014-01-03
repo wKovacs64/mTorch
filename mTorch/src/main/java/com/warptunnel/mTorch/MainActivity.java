@@ -267,9 +267,7 @@ public class MainActivity extends ActionBarActivity {
         private boolean toggleTorch() {
             Log.d(TAG, "toggleTorch | mFlashOn was " + mFlashOn + " when image was pressed");
 
-            // Toggle torch here
-
-            return true;
+            return mCameraDevice.toggleCameraLED(!mFlashOn);
         }
 
         private void toggleImage() {
