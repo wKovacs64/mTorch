@@ -2,7 +2,6 @@ package com.warptunnel.mTorch;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,6 +18,8 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.Toast;
+
+import com.swijaya.galaxytorch.CameraDevice;
 
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -69,7 +70,7 @@ public class MainActivity extends ActionBarActivity {
 
         private static final String TAG = MainFragment.class.getSimpleName();
         private ImageButton mImageButton;
-//        private CameraDevice mCameraDevice;
+        private CameraDevice mCameraDevice;
         private boolean mHasFlash;
         private boolean mFlashOn;
         private Context mContext;
@@ -125,7 +126,7 @@ public class MainActivity extends ActionBarActivity {
                 mImageButton.setEnabled(false);
 
                 // Get the Camera device
-//                mCameraDevice = new CameraDevice();
+                mCameraDevice = new CameraDevice();
 
                 // Get the camera preview SurfaceView
                 mCameraPreview = (SurfaceView) mActivity.findViewById(R.id.camera_preview);
@@ -165,17 +166,17 @@ public class MainActivity extends ActionBarActivity {
             // now re-acquired, but that means the camera has now no surface holder
             // to flush to! so remember the state of the surface holder, and reset
             // it immediately after re-acquiring
-//            if (!mCameraDevice.acquireCamera()) {
-//                // bail fast if we cannot acquire the camera device to begin with - perhaps some
-//                // background service outside of our control is holding it hostage
-//                Log.e(TAG, getString(R.string.error_camera_unavailable));
-//                Toast.makeText(mContext, R.string.error_camera_unavailable,
-//                        Toast.LENGTH_LONG).show();
-//                mActivity.finish();
-//            }
-//            if (mSurfaceHolder != null) {
-//                mCameraDevice.setPreviewDisplayAndStartPreview(mSurfaceHolder);
-//            }
+            if (!mCameraDevice.acquireCamera()) {
+                // bail fast if we cannot acquire the camera device to begin with - perhaps some
+                // background service outside of our control is holding it hostage
+                Log.e(TAG, getString(R.string.error_camera_unavailable));
+                Toast.makeText(mContext, R.string.error_camera_unavailable,
+                        Toast.LENGTH_LONG).show();
+                mActivity.finish();
+            }
+            if (mSurfaceHolder != null) {
+                mCameraDevice.setPreviewDisplayAndStartPreview(mSurfaceHolder);
+            }
         }
 
         @Override
@@ -184,13 +185,13 @@ public class MainActivity extends ActionBarActivity {
             Log.d(TAG, "********** onPause **********");
 
             // toggle the torch if it is on
-//            if (mCameraDevice.isFlashlightOn()) {
-//                if (!mCameraDevice.toggleCameraLED(false)) {
-//                    Log.e(TAG, getString(R.string.error_toggle_failed));
-//                    return;
-//                }
-//                mImageButton.setSelected(false);
-//            }
+            if (mCameraDevice.isFlashlightOn()) {
+                if (!mCameraDevice.toggleCameraLED(false)) {
+                    Log.e(TAG, getString(R.string.error_toggle_failed));
+                    return;
+                }
+                mImageButton.setSelected(false);
+            }
         }
 
         @Override
@@ -200,7 +201,7 @@ public class MainActivity extends ActionBarActivity {
 
             // don't stop preview too early; releaseCamera() does it anyway and it might need the
             // preview to toggle the torch off cleanly
-//            mCameraDevice.releaseCamera();
+            mCameraDevice.releaseCamera();
         }
 
         @Override
@@ -209,13 +210,13 @@ public class MainActivity extends ActionBarActivity {
             Log.d(TAG, "********** onDestroy **********");
 
             // toggle the torch if it is on
-//            if (mCameraDevice.isFlashlightOn()) {
-//                if (!mCameraDevice.toggleCameraLED(false)) {
-//                    Log.e(TAG, getString(R.string.error_toggle_failed));
-//                }
-//            }
-//
-//            mCameraDevice.releaseCamera();
+            if (mCameraDevice.isFlashlightOn()) {
+                if (!mCameraDevice.toggleCameraLED(false)) {
+                    Log.e(TAG, getString(R.string.error_toggle_failed));
+                }
+            }
+
+            mCameraDevice.releaseCamera();
             mImageButton.setSelected(false);
         }
 
@@ -240,7 +241,7 @@ public class MainActivity extends ActionBarActivity {
             mSurfaceLock.lock();
             try {
                 mSurfaceHolder = holder;
-//                mCameraDevice.setPreviewDisplayAndStartPreview(mSurfaceHolder);
+                mCameraDevice.setPreviewDisplayAndStartPreview(mSurfaceHolder);
                 mSurfaceHolderIsSet.signalAll();
             } finally {
                 mSurfaceLock.unlock();
@@ -259,7 +260,7 @@ public class MainActivity extends ActionBarActivity {
         public void surfaceDestroyed(SurfaceHolder holder) {
             Log.d(TAG, "********** surfaceDestroyed **********");
 
-//            mCameraDevice.stopPreview();
+            mCameraDevice.stopPreview();
             mSurfaceHolder = null;
         }
 
