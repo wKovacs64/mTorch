@@ -11,6 +11,9 @@
 *.iws
 *.iml
 
+# Custom script for building signed release
+release
+
 # Eclipse/other project files
 *.pydevproject
 .project
