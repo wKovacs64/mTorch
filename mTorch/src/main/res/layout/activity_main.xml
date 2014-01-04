@@ -7,10 +7,17 @@
     tools:context="com.warptunnel.mTorch.MainActivity"
     tools:ignore="MergeRootFrame">
 
-    <SurfaceView
-        android:id="@+id/camera_preview"
-        android:layout_width="@dimen/surface_view_size"
-        android:layout_height="@dimen/surface_view_size"
-        android:layout_gravity="center"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center">
+
+        <SurfaceView
+            android:id="@+id/camera_preview"
+            android:layout_width="@dimen/surface_view_size"
+            android:layout_height="@dimen/surface_view_size"
+            android:layout_gravity="center"/>
+
+    </RelativeLayout>
 
 </FrameLayout>
