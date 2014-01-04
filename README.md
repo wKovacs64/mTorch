@@ -27,9 +27,9 @@ This project was created in Android Studio and uses the Gradle build system.
             * Android Support Repository
             * Android Support Library
 
-After you have the system requirements installed and configured and you've cloned a copy of the git repository, simple leverage the Gradle wrapper to build: `gradlew build`
-
-That's it! You should now have an installable APK in the `<project_root>/mTorch/build/apk` directory.
+#### Build It
+* After you have the system requirements installed and configured and you've cloned a copy of the git repository, simple leverage the Gradle wrapper to build: `gradlew build`
+* That's it! You should now have an installable APK in the `<project_root>/mTorch/build/apk` directory.
 
 ## Contributing
 You can use the Import Project feature in Android Studio and point at the project root directory to start hacking on this app.
