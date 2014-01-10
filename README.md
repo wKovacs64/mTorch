@@ -9,9 +9,9 @@ I wrote this app because I felt there was a real niche for something that could 
 This project was created in Android Studio and uses the Gradle build system.
 
 #### System Requirements:
-* [Oracle Java JDK 6](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+* [Oracle Java JDK 7](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
     * Set environment variable JAVA_HOME to JDK installation location
-    * JDK 7 may work if you already have it installed, I haven't tested it
+    * JDK 6 works as well, if you prefer
 
 * [Android SDK](https://developer.android.com/sdk)
     * Latest version recommended
