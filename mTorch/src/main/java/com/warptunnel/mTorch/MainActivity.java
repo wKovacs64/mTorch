@@ -281,11 +281,11 @@ public class MainActivity extends ActionBarActivity {
         }
 
         private void toggleImage() {
-            //Log.d(TAG, "toggleImage | mCameraDevice.isFlashlightOn() = " +
-            //        mCameraDevice.isFlashlightOn());
+            Log.d(TAG, "toggleImage | mCameraDevice.isFlashlightOn() = " +
+                    mCameraDevice.isFlashlightOn());
 
-            if (mCameraDevice.isFlashlightOn()) mImageButton.setImageResource(R.drawable.torch_off);
-            else mImageButton.setImageResource(R.drawable.torch_on);
+            if (mCameraDevice.isFlashlightOn()) mImageButton.setImageResource(R.drawable.torch_on);
+            else mImageButton.setImageResource(R.drawable.torch_off);
         }
 
     }
