@@ -1,6 +1,7 @@
 package com.warptunnel.mTorch;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -65,7 +66,7 @@ public class MainActivity extends ActionBarActivity {
                 return true;
             case R.id.menu_settings:
                 // show Settings
-                Toast.makeText(this, R.string.nyi, Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
         }
         return super.onOptionsItemSelected(item);
