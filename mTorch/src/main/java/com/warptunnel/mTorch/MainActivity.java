@@ -193,12 +193,12 @@ public class MainActivity extends ActionBarActivity {
             Log.d(TAG, "********** onPause **********");
 
             // toggle the torch if it is on
-            if (mCameraDevice.isFlashlightOn()) {
+            if (mCameraDevice != null && mCameraDevice.isFlashlightOn()) {
                 if (!mCameraDevice.toggleCameraLED(false)) {
                     Log.e(TAG, getString(R.string.error_toggle_failed));
                     return;
                 }
-                mImageButton.setSelected(false);
+                if (mImageButton != null) mImageButton.setSelected(false);
             }
         }
 
@@ -209,7 +209,7 @@ public class MainActivity extends ActionBarActivity {
 
             // don't stop preview too early; releaseCamera() does it anyway and it might need the
             // preview to toggle the torch off cleanly
-            mCameraDevice.releaseCamera();
+            if (mCameraDevice != null) mCameraDevice.releaseCamera();
         }
 
         @Override
@@ -218,14 +218,14 @@ public class MainActivity extends ActionBarActivity {
             Log.d(TAG, "********** onDestroy **********");
 
             // toggle the torch if it is on
-            if (mCameraDevice.isFlashlightOn()) {
+            if (mCameraDevice != null && mCameraDevice.isFlashlightOn()) {
                 if (!mCameraDevice.toggleCameraLED(false)) {
                     Log.e(TAG, getString(R.string.error_toggle_failed));
                 }
             }
 
-            mCameraDevice.releaseCamera();
-            mImageButton.setSelected(false);
+            if (mCameraDevice != null) mCameraDevice.releaseCamera();
+            if (mImageButton != null) mImageButton.setSelected(false);
         }
 
         @Override
