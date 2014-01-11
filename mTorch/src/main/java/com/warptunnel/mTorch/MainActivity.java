@@ -35,8 +35,12 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
+        // Start our service which controls the camera, in case this is the first time the app
+        // has been launched (otherwise, it should start at boot)
+        startService(new Intent(this, mTorchService.class));
+
+        setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new MainFragment())
@@ -115,6 +119,8 @@ public class MainActivity extends ActionBarActivity {
             mContext = mActivity.getApplicationContext();
 
             // Check for flash capability
+            // TODO: This is also implemented in mTorchService, so maybe we could record that
+            // TODO: result and just check that rather than re-checking here?
             if (!mContext.getPackageManager().hasSystemFeature(PackageManager
                     .FEATURE_CAMERA_FLASH)) {
                 Log.e(TAG, getString(R.string.error_no_flash));
