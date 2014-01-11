@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="@string/persistence"
+        android:title="@string/persistence"
+        android:summary="@string/persistence_summary"/>
+
+</PreferenceScreen>
