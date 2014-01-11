@@ -86,7 +86,6 @@ public class MainActivity extends ActionBarActivity {
         private final Condition mSurfaceHolderIsSet = mSurfaceLock.newCondition();
         private ImageButton mImageButton;
         private CameraDevice mCameraDevice;
-        private boolean mHasFlash;
         private Context mContext;
         private FragmentActivity mActivity;
         private SurfaceView mCameraPreview;
@@ -115,9 +114,8 @@ public class MainActivity extends ActionBarActivity {
             mContext = mActivity.getApplicationContext();
 
             // Check for flash capability
-            mHasFlash = mContext.getPackageManager().hasSystemFeature(PackageManager
-                    .FEATURE_CAMERA_FLASH);
-            if (!mHasFlash) {
+            if (!mContext.getPackageManager().hasSystemFeature(PackageManager
+                    .FEATURE_CAMERA_FLASH)) {
                 Log.e(TAG, getString(R.string.error_no_flash));
                 Toast.makeText(mContext, R.string.error_no_flash, Toast.LENGTH_LONG).show();
                 mActivity.finish();
