@@ -87,7 +87,6 @@ public class MainActivity extends ActionBarActivity {
         private ImageButton mImageButton;
         private CameraDevice mCameraDevice;
         private boolean mHasFlash;
-        private boolean mFlashOn;
         private Context mContext;
         private FragmentActivity mActivity;
         private SurfaceView mCameraPreview;
@@ -114,9 +113,6 @@ public class MainActivity extends ActionBarActivity {
             // Obtain Activity and Context for communicating with UI later
             mActivity = getActivity();
             mContext = mActivity.getApplicationContext();
-
-            // Initially, the flash will be off.   ...right?
-            mFlashOn = false;
 
             // Check for flash capability
             mHasFlash = mContext.getPackageManager().hasSystemFeature(PackageManager
@@ -278,18 +274,18 @@ public class MainActivity extends ActionBarActivity {
         }
 
         private boolean toggleTorch() {
-            Log.d(TAG, "toggleTorch | mFlashOn was " + mFlashOn + " when image was pressed");
+            Log.d(TAG, "toggleTorch | mCameraDevice.isFlashlightOn() was " +
+                    mCameraDevice.isFlashlightOn() + " when image was pressed");
 
-            return mCameraDevice.toggleCameraLED(!mFlashOn);
+            return mCameraDevice.toggleCameraLED(!mCameraDevice.isFlashlightOn());
         }
 
         private void toggleImage() {
-            //Log.d(TAG, "toggleImage | mFlashOn = " + mFlashOn);
+            //Log.d(TAG, "toggleImage | mCameraDevice.isFlashlightOn() = " +
+            //        mCameraDevice.isFlashlightOn());
 
-            if (mFlashOn) mImageButton.setImageResource(R.drawable.torch_off);
+            if (mCameraDevice.isFlashlightOn()) mImageButton.setImageResource(R.drawable.torch_off);
             else mImageButton.setImageResource(R.drawable.torch_on);
-
-            mFlashOn = !mFlashOn;
         }
 
     }
