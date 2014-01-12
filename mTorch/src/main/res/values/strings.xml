@@ -16,7 +16,6 @@
     <string name="about_donations_text">Donations:</string>
     <string name="about_version_text">Version:</string>
     <string name="app_name">mTorch</string>
-    <string name="behavior">Behavior</string>
     <string name="debug_flash_found">DEBUG: Flash capability detected!</string>
     <string name="error_camera_unavailable">ERROR: unable to acquire camera</string>
     <string name="error_holder_failed">ERROR: unable to get SurfaceHolder</string>
