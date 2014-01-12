@@ -122,30 +122,6 @@ public class MainActivity extends ActionBarActivity {
                 mImageButton.setOnClickListener(this);
                 mImageButton.setEnabled(false);
 
-                // Get the Camera device
-//                mCameraDevice = new CameraDevice();
-
-                // Get the camera preview SurfaceView
-//                mCameraPreview = (SurfaceView) mActivity.findViewById(R.id.camera_preview);
-                /**
-                 * Get a throw-away SurfaceHolder and add a callback to it. We'll get and store
-                 * the result in mSurfaceHolder and start the camera preview in the callback once
-                 * we know the SurfaceHolder has been created successfully.
-                 */
-//                SurfaceHolder localHolder = mCameraPreview.getHolder();
-//                if (localHolder != null) {
-//                    localHolder.addCallback(this);
-//                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-//                        localHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-//                    }
-//                } else {
-//                    Log.e(TAG, getString(R.string.error_holder_failed));
-//                    Toast.makeText(mContext, R.string.error_holder_failed,
-//                            Toast.LENGTH_LONG).show();
-//                    mActivity.finish();
-//                    return;
-//                }
-
                 // Allow the toggle image to be clicked
                 mImageButton.setEnabled(true);
 
@@ -159,21 +135,6 @@ public class MainActivity extends ActionBarActivity {
             super.onResume();
             Log.d(TAG, "********** onResume **********");
 
-            // when we get here from onPause(), the camera would have been released and
-            // now re-acquired, but that means the camera has now no surface holder
-            // to flush to! so remember the state of the surface holder, and reset
-            // it immediately after re-acquiring
-//            if (!mCameraDevice.acquireCamera()) {
-//                // bail fast if we cannot acquire the camera device to begin with - perhaps some
-//                // background service outside of our control is holding it hostage
-//                Log.e(TAG, getString(R.string.error_camera_unavailable));
-//                Toast.makeText(mContext, R.string.error_camera_unavailable,
-//                        Toast.LENGTH_LONG).show();
-//                mActivity.finish();
-//            }
-//            if (mSurfaceHolder != null) {
-//                mCameraDevice.setPreviewDisplayAndStartPreview(mSurfaceHolder);
-//            }
             mTorchEnabled = mTorchService.isRunning;
             updateImageButton();
         }
@@ -183,14 +144,6 @@ public class MainActivity extends ActionBarActivity {
             super.onPause();
             Log.d(TAG, "********** onPause **********");
 
-            // toggle the torch if it is on
-//            if (mCameraDevice != null && mCameraDevice.isFlashlightOn()) {
-//                if (!mCameraDevice.toggleCameraLED(false)) {
-//                    Log.e(TAG, getString(R.string.error_toggle_failed));
-//                    return;
-//                }
-//                if (mImageButton != null) mImageButton.setSelected(false);
-//            }
         }
 
         @Override
@@ -198,9 +151,6 @@ public class MainActivity extends ActionBarActivity {
             super.onStop();
             Log.d(TAG, "********** onStop **********");
 
-            // don't stop preview too early; releaseCamera() does it anyway and it might need the
-            // preview to toggle the torch off cleanly
-//            if (mCameraDevice != null) mCameraDevice.releaseCamera();
         }
 
         @Override
@@ -218,17 +168,6 @@ public class MainActivity extends ActionBarActivity {
         public void onClick(View v) {
             Log.d(TAG, "********** onClick **********");
 
-            // Toggle torch and image
-//            if (toggleTorch()) updateImageButton();
-//            else {
-//                Log.e(TAG, getString(R.string.error_toggle_failed));
-//                Toast.makeText(mContext, R.string.error_toggle_failed, Toast.LENGTH_LONG).show();
-//                mActivity.finish();
-//            }
-
-            // Start our service which controls the camera, in case this is the first time the app
-            // has been launched (otherwise, it should start at boot)
-            //startService(new Intent(this, mTorchService.class));
             toggleTorch();
         }
 

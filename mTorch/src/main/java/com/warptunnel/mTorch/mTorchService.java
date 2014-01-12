@@ -22,13 +22,13 @@ import java.util.concurrent.locks.ReentrantLock;
 public class mTorchService extends Service implements SurfaceHolder.Callback {
 
     private static final String TAG = mTorchService.class.getSimpleName();
+    static boolean isRunning;
     private final Lock mSurfaceLock = new ReentrantLock();
     private final Condition mSurfaceHolderIsSet = mSurfaceLock.newCondition();
     private CameraDevice mCameraDevice;
     private SurfaceView mOverlayPreview;
     private SurfaceHolder mSurfaceHolder;
     private LinearLayout mOverlayLayout;
-    static boolean isRunning;
 
     public mTorchService() {
     }
@@ -54,7 +54,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
         // Dynamically create the overlay layout and surface preview contained within
         createOverlay();
 
-        // Create the holder for the preview
+        // Create the holder for the preview, store it in the callback
         SurfaceHolder localHolder = mOverlayPreview.getHolder();
         if (localHolder != null) {
             localHolder.addCallback(this);
@@ -92,7 +92,8 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "********** onStartCommand **********");
-        return Service.START_NOT_STICKY; // not sure if this is really what we want
+        // is START_NOT_STICKY what we really want?
+        return Service.START_NOT_STICKY;
     }
 
     private void startTorch() {
