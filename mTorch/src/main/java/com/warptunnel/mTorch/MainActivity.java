@@ -2,8 +2,10 @@ package com.warptunnel.mTorch;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
@@ -172,6 +174,7 @@ public class MainActivity extends ActionBarActivity {
 //            if (mSurfaceHolder != null) {
 //                mCameraDevice.setPreviewDisplayAndStartPreview(mSurfaceHolder);
 //            }
+            mTorchEnabled = mTorchService.isRunning;
             updateImageButton();
         }
 
@@ -205,15 +208,10 @@ public class MainActivity extends ActionBarActivity {
             super.onDestroy();
             Log.d(TAG, "********** onDestroy **********");
 
-            // toggle the torch if it is on
-//            if (mCameraDevice != null && mCameraDevice.isFlashlightOn()) {
-//                if (!mCameraDevice.toggleCameraLED(false)) {
-//                    Log.e(TAG, getString(R.string.error_toggle_failed));
-//                }
-//            }
-//
-//            if (mCameraDevice != null) mCameraDevice.releaseCamera();
-//            if (mImageButton != null) mImageButton.setSelected(false);
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
+            boolean persist = sharedPref.getBoolean(getString(R.string.persistence), false);
+
+            if (!persist) mContext.stopService(new Intent(mContext, mTorchService.class));
         }
 
         @Override

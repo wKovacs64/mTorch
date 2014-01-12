@@ -29,6 +29,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
     private SurfaceView mOverlayPreview;
     private SurfaceHolder mSurfaceHolder;
     private LinearLayout mOverlayLayout;
+    static boolean isRunning;
 
     public mTorchService() {
     }
@@ -66,6 +67,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
             stopSelf();
         }
 
+        isRunning = true;
     }
 
     private void createOverlay() {
@@ -99,6 +101,8 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
     public void onDestroy() {
         Log.d(TAG, "********** onDestroy **********");
         super.onDestroy();
+
+        isRunning = false;
 
         // Shut the torch off if it was on when we got shut down
         if (mCameraDevice != null && mCameraDevice.isFlashlightOn()) {
