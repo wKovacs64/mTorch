@@ -151,6 +151,10 @@ public class MainActivity extends ActionBarActivity {
             super.onStop();
             Log.d(TAG, "********** onStop **********");
 
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
+            boolean persist = sharedPref.getBoolean(getString(R.string.persistence), false);
+
+            if (!persist) mContext.stopService(new Intent(mContext, mTorchService.class));
         }
 
         @Override
@@ -158,10 +162,6 @@ public class MainActivity extends ActionBarActivity {
             super.onDestroy();
             Log.d(TAG, "********** onDestroy **********");
 
-            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
-            boolean persist = sharedPref.getBoolean(getString(R.string.persistence), false);
-
-            if (!persist) mContext.stopService(new Intent(mContext, mTorchService.class));
         }
 
         @Override
