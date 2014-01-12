@@ -1,10 +1,13 @@
 package com.warptunnel.mTorch;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -22,7 +25,9 @@ import java.util.concurrent.locks.ReentrantLock;
 public class mTorchService extends Service implements SurfaceHolder.Callback {
 
     private static final String TAG = mTorchService.class.getSimpleName();
-    static boolean isRunning;
+    private static final int ONGOING_NOTIFICATION_ID = 1;
+    private static boolean mIsRunning;
+    private static boolean mPersist;
     private final Lock mSurfaceLock = new ReentrantLock();
     private final Condition mSurfaceHolderIsSet = mSurfaceLock.newCondition();
     private CameraDevice mCameraDevice;
@@ -37,6 +42,10 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
     public IBinder onBind(Intent intent) {
         // This is a "Started" service (not a "Bound" service)
         return null;
+    }
+
+    public static boolean isRunning() {
+        return mIsRunning;
     }
 
     @Override
@@ -66,11 +75,27 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
             stopSelf();
         }
 
-        isRunning = true;
+        mPersist = false;
+        mIsRunning = true;
+    }
+
+    private void goForeground() {
+        Log.d(TAG, "********** goForeground **********");
+
+        Intent launchActivity = new Intent(this, MainActivity.class);
+        PendingIntent pIntent = PendingIntent.getActivity(this, 0, launchActivity, 0);
+        Notification notification = new NotificationCompat.Builder(this)
+                .setContentTitle(getString(R.string.app_name))
+                .setContentText(getString(R.string.notification_text)).setContentIntent(pIntent)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setSmallIcon(R.drawable.ic_launcher).build();
+
+        startForeground(ONGOING_NOTIFICATION_ID, notification);
     }
 
     private void createOverlay() {
         Log.d(TAG, "********** createOverlay **********");
+
         if (mOverlayLayout == null) {
             WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams(1, 1,
                     WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
@@ -92,7 +117,12 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "********** onStartCommand **********");
-        // is START_NOT_STICKY what we really want?
+
+        if (intent.hasExtra(getString(R.string.persistence))) {
+            mPersist = intent.getBooleanExtra(getString(R.string.persistence), false);
+        }
+        if (mPersist) goForeground();
+
         return Service.START_NOT_STICKY;
     }
 
@@ -123,7 +153,8 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
         Log.d(TAG, "********** onDestroy **********");
         super.onDestroy();
 
-        isRunning = false;
+        if (mPersist) stopForeground(true);
+        mIsRunning = false;
 
         // Shut the torch off if it was on when we got shut down
         if (mCameraDevice != null && mCameraDevice.isFlashlightOn()) {

@@ -34,7 +34,6 @@
             android:label="@string/menu_settings">
         </activity>
 
-        <!--suppress AndroidDomInspection -->
         <service
             android:name=".mTorchService"
             android:icon="@drawable/ic_launcher">

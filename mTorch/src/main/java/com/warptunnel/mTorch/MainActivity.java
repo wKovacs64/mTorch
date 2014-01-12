@@ -135,7 +135,7 @@ public class MainActivity extends ActionBarActivity {
             super.onResume();
             Log.d(TAG, "********** onResume **********");
 
-            mTorchEnabled = mTorchService.isRunning;
+            mTorchEnabled = mTorchService.isRunning();
             updateImageButton();
         }
 
@@ -175,9 +175,17 @@ public class MainActivity extends ActionBarActivity {
             Log.d(TAG, "toggleTorch | mTorchEnabled was " + mTorchEnabled + " when image was " +
                     "pressed; changing to " + !mTorchEnabled);
 
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
+            boolean persist = sharedPref.getBoolean(getString(R.string.persistence), false);
+
             // Use the service to start/stop the torch (start = on, stop = off)
-            if (mTorchEnabled) mContext.stopService(new Intent(mContext, mTorchService.class));
-            else mContext.startService(new Intent(mContext, mTorchService.class));
+            if (mTorchEnabled) {
+                mContext.stopService(new Intent(mContext, mTorchService.class));
+            }
+            else {
+                mContext.startService(new Intent(mContext, mTorchService.class).putExtra
+                        (getString(R.string.persistence), persist));
+            }
 
             mTorchEnabled = !mTorchEnabled;
             updateImageButton();
