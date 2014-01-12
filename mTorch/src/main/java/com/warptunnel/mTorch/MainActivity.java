@@ -1,12 +1,9 @@
 package com.warptunnel.mTorch;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
@@ -14,19 +11,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.Toast;
-
-import com.swijaya.galaxytorch.CameraDevice;
-
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -37,10 +26,6 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Start our service which controls the camera, in case this is the first time the app
-        // has been launched (otherwise, it should start at boot)
-        //startService(new Intent(this, mTorchService.class));
 
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
@@ -85,34 +70,16 @@ public class MainActivity extends ActionBarActivity {
         if (mAboutDialog.isShowing()) mAboutDialog.dismiss();
     }
 
-    public static class MainFragment extends Fragment implements View.OnClickListener,
-            SurfaceHolder.Callback {
+    public static class MainFragment extends Fragment implements View.OnClickListener {
 
         private static final String TAG = MainFragment.class.getSimpleName();
-        private final Lock mSurfaceLock = new ReentrantLock();
-        private final Condition mSurfaceHolderIsSet = mSurfaceLock.newCondition();
         private ImageButton mImageButton;
-        private CameraDevice mCameraDevice;
         private Context mContext;
         private FragmentActivity mActivity;
-        private SurfaceView mCameraPreview;
-        private SurfaceHolder mSurfaceHolder;
-        private mTorchService mService;
-        private boolean mBound;
-        private ServiceConnection mConnection = new ServiceConnection() {
-
-            public void onServiceConnected(ComponentName className, IBinder binder) {
-                mTorchService.LocalBinder localBinder = (mTorchService.LocalBinder) binder;
-                mService = localBinder.getService();
-            }
-
-            public void onServiceDisconnected(ComponentName className) {
-                mService = null;
-            }
-        };
+        private boolean mTorchEnabled;
 
         public MainFragment() {
-            mBound = false;
+            mTorchEnabled = false;
         }
 
         @Override
@@ -135,8 +102,6 @@ public class MainActivity extends ActionBarActivity {
             mContext = mActivity.getApplicationContext();
 
             // Check for flash capability
-            // TODO: This is also implemented in mTorchService, so maybe we could record that
-            // TODO: result and just check that rather than re-checking here?
             if (!mContext.getPackageManager().hasSystemFeature(PackageManager
                     .FEATURE_CAMERA_FLASH)) {
                 Log.e(TAG, getString(R.string.error_no_flash));
@@ -207,6 +172,7 @@ public class MainActivity extends ActionBarActivity {
 //            if (mSurfaceHolder != null) {
 //                mCameraDevice.setPreviewDisplayAndStartPreview(mSurfaceHolder);
 //            }
+            updateImageButton();
         }
 
         @Override
@@ -255,68 +221,36 @@ public class MainActivity extends ActionBarActivity {
             Log.d(TAG, "********** onClick **********");
 
             // Toggle torch and image
-//            if (toggleTorch()) toggleImage();
+//            if (toggleTorch()) updateImageButton();
 //            else {
 //                Log.e(TAG, getString(R.string.error_toggle_failed));
 //                Toast.makeText(mContext, R.string.error_toggle_failed, Toast.LENGTH_LONG).show();
 //                mActivity.finish();
 //            }
-            Intent serviceIntent = new Intent(mContext, mTorchService.class);
-            if (mBound) {
-                Log.d(TAG, "BOUND: going to unbind now");
-                mContext.unbindService(mConnection);
-            } else {
-                Log.d(TAG, "UNBOUND: going to bind now");
-                mContext.bindService(serviceIntent, mConnection, Context.BIND_AUTO_CREATE);
-            }
-            mBound = !mBound;
-        }
 
-        @Override
-        public void surfaceCreated(SurfaceHolder holder) {
-            Log.d(TAG, "********** surfaceCreated **********");
-
-            // atomically set the surface holder and start camera preview
-            mSurfaceLock.lock();
-            try {
-                mSurfaceHolder = holder;
-                mCameraDevice.setPreviewDisplayAndStartPreview(mSurfaceHolder);
-                mSurfaceHolderIsSet.signalAll();
-            } finally {
-                mSurfaceLock.unlock();
-            }
-        }
-
-        @Override
-        public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-            Log.d(TAG, "********** surfaceChanged **********");
-
-            // I don't think there's anything interesting we need to do in this method,
-            // but it's required to implement.
-        }
-
-        @Override
-        public void surfaceDestroyed(SurfaceHolder holder) {
-            Log.d(TAG, "********** surfaceDestroyed **********");
-
-            mCameraDevice.stopPreview();
-            mSurfaceHolder = null;
+            // Start our service which controls the camera, in case this is the first time the app
+            // has been launched (otherwise, it should start at boot)
+            //startService(new Intent(this, mTorchService.class));
+            if (toggleTorch()) updateImageButton();
         }
 
         private boolean toggleTorch() {
-//            Log.d(TAG, "toggleTorch | mCameraDevice.isFlashlightOn() was " +
-//                    mCameraDevice.isFlashlightOn() + " when image was pressed");
-//
-//            return mCameraDevice.toggleCameraLED(!mCameraDevice.isFlashlightOn());
+            Log.d(TAG, "toggleTorch | mTorchEnabled was " + mTorchEnabled + " when image was " +
+                    "pressed; changing to " + !mTorchEnabled);
+
+            if (mTorchEnabled) mContext.stopService(new Intent(mContext, mTorchService.class));
+            else mContext.startService(new Intent(mContext, mTorchService.class));
+
+            mTorchEnabled = !mTorchEnabled;
             return true; // DEBUG ONLY - DELETE ME
         }
 
-        private void toggleImage() {
-//            Log.d(TAG, "toggleImage | mCameraDevice.isFlashlightOn() = " +
-//                    mCameraDevice.isFlashlightOn());
-//
-//            if (mCameraDevice.isFlashlightOn()) mImageButton.setImageResource(R.drawable.torch_on);
-//            else mImageButton.setImageResource(R.drawable.torch_off);
+        private void updateImageButton() {
+            Log.d(TAG, "updateImageButton | mTorchEnabled = " + mTorchEnabled + "; setting image " +
+                    "accordingly");
+
+            if (mTorchEnabled) mImageButton.setImageResource(R.drawable.torch_on);
+            else mImageButton.setImageResource(R.drawable.torch_off);
         }
 
     }

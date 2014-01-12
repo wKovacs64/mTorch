@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.Gravity;
@@ -24,7 +25,6 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
     private static final String TAG = mTorchService.class.getSimpleName();
     private final Lock mSurfaceLock = new ReentrantLock();
     private final Condition mSurfaceHolderIsSet = mSurfaceLock.newCondition();
-    private final IBinder mBinder = new LocalBinder();
     private CameraDevice mCameraDevice;
     private SurfaceView mOverlayPreview;
     private SurfaceHolder mSurfaceHolder;
@@ -35,13 +35,8 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
 
     @Override
     public IBinder onBind(Intent intent) {
-        return mBinder;
-    }
-
-    public class LocalBinder extends Binder {
-        mTorchService getService() {
-            return mTorchService.this;
-        }
+        // This is a "Started" service (not a "Bound" service)
+        return null;
     }
 
     @Override
@@ -49,22 +44,11 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
         Log.d(TAG, "********** onCreate **********");
         super.onCreate();
 
-        // Don't think we want this in the service anymore
-/*
-        // Check for flash capability
-        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
-            Log.e(TAG, getString(R.string.error_no_flash));
-            stopSelf();
-        }
-        Log.d(TAG, getString(R.string.debug_flash_found));
-*/
-
-/*
-        // Get the Camera device
+        // Get access to the camera
         mCameraDevice = new CameraDevice();
-
         if (!mCameraDevice.acquireCamera()) {
             Log.e(TAG, getString(R.string.error_camera_unavailable));
+            stopSelf();
         }
 
         // Dynamically create the overlay layout and surface preview contained within
@@ -79,9 +63,9 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
             }
         } else {
             Log.e(TAG, getString(R.string.error_holder_failed));
-            stopSelf(); // ?
+            stopSelf();
         }
-*/
+
     }
 
     private void createOverlay() {
@@ -107,6 +91,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "********** onStartCommand **********");
+        //new TorchToggleTask().execute();
         return Service.START_NOT_STICKY; // not sure if this is really what we want
     }
 
@@ -124,10 +109,12 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
         }
 
         // Release the camera
-        if (mCameraDevice != null) mCameraDevice.releaseCamera();
-        mCameraDevice = null;
+        if (mCameraDevice != null) {
+            mCameraDevice.releaseCamera();
+            mCameraDevice = null;
+        }
 
-        // Remove the overlay layout/preview
+        // Remove the overlay layout and preview
         if (mOverlayLayout != null) {
             WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
             wm.removeView(mOverlayLayout);
