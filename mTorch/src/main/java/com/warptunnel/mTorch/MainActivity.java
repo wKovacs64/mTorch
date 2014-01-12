@@ -229,18 +229,19 @@ public class MainActivity extends ActionBarActivity {
             // Start our service which controls the camera, in case this is the first time the app
             // has been launched (otherwise, it should start at boot)
             //startService(new Intent(this, mTorchService.class));
-            if (toggleTorch()) updateImageButton();
+            toggleTorch();
         }
 
-        private boolean toggleTorch() {
+        private void toggleTorch() {
             Log.d(TAG, "toggleTorch | mTorchEnabled was " + mTorchEnabled + " when image was " +
                     "pressed; changing to " + !mTorchEnabled);
 
+            // Use the service to start/stop the torch (start = on, stop = off)
             if (mTorchEnabled) mContext.stopService(new Intent(mContext, mTorchService.class));
             else mContext.startService(new Intent(mContext, mTorchService.class));
 
             mTorchEnabled = !mTorchEnabled;
-            return true; // DEBUG ONLY - DELETE ME
+            updateImageButton();
         }
 
         private void updateImageButton() {

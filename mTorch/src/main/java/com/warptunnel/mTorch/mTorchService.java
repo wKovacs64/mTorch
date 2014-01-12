@@ -3,7 +3,6 @@ package com.warptunnel.mTorch;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.PixelFormat;
-import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
@@ -93,8 +92,29 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "********** onStartCommand **********");
-        //new TorchToggleTask().execute();
         return Service.START_NOT_STICKY; // not sure if this is really what we want
+    }
+
+    private void startTorch() {
+        Log.d(TAG, "startTorch | mCameraDevice.isFlashlightOn() was " +
+                mCameraDevice.isFlashlightOn() + " when image was pressed");
+
+        mSurfaceLock.lock();
+        try {
+            while (mSurfaceHolder == null) {
+                mSurfaceHolderIsSet.await();
+            }
+        }
+        catch (InterruptedException e) {
+            Log.e(TAG, "ERROR: " + e.getLocalizedMessage());
+            // possible Notification here to alert the user something bad happened?
+            stopSelf();
+        }
+        finally {
+            mSurfaceLock.unlock();
+        }
+
+        if (mCameraDevice != null) mCameraDevice.toggleCameraLED(true);
     }
 
     @Override
@@ -146,6 +166,8 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
         finally {
             mSurfaceLock.unlock();
         }
+
+        startTorch();
     }
 
     @Override
