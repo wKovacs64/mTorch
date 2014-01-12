@@ -1,10 +1,12 @@
 package com.warptunnel.mTorch;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
@@ -38,7 +40,7 @@ public class MainActivity extends ActionBarActivity {
 
         // Start our service which controls the camera, in case this is the first time the app
         // has been launched (otherwise, it should start at boot)
-        startService(new Intent(this, mTorchService.class));
+        //startService(new Intent(this, mTorchService.class));
 
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
@@ -95,8 +97,22 @@ public class MainActivity extends ActionBarActivity {
         private FragmentActivity mActivity;
         private SurfaceView mCameraPreview;
         private SurfaceHolder mSurfaceHolder;
+        private mTorchService mService;
+        private boolean mBound;
+        private ServiceConnection mConnection = new ServiceConnection() {
+
+            public void onServiceConnected(ComponentName className, IBinder binder) {
+                mTorchService.LocalBinder localBinder = (mTorchService.LocalBinder) binder;
+                mService = localBinder.getService();
+            }
+
+            public void onServiceDisconnected(ComponentName className) {
+                mService = null;
+            }
+        };
 
         public MainFragment() {
+            mBound = false;
         }
 
         @Override
@@ -245,6 +261,15 @@ public class MainActivity extends ActionBarActivity {
 //                Toast.makeText(mContext, R.string.error_toggle_failed, Toast.LENGTH_LONG).show();
 //                mActivity.finish();
 //            }
+            Intent serviceIntent = new Intent(mContext, mTorchService.class);
+            if (mBound) {
+                Log.d(TAG, "BOUND: going to unbind now");
+                mContext.unbindService(mConnection);
+            } else {
+                Log.d(TAG, "UNBOUND: going to bind now");
+                mContext.bindService(serviceIntent, mConnection, Context.BIND_AUTO_CREATE);
+            }
+            mBound = !mBound;
         }
 
         @Override

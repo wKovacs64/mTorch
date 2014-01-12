@@ -8,7 +8,7 @@
     android:orientation="vertical">
 
     <SurfaceView
-        android:id="@+id/hidden_preview"
+        android:id="@+id/overlay_preview"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

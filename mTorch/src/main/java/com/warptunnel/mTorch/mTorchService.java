@@ -2,9 +2,8 @@ package com.warptunnel.mTorch;
 
 import android.app.Service;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
-import android.os.Build;
+import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.Gravity;
@@ -25,18 +24,24 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
     private static final String TAG = mTorchService.class.getSimpleName();
     private final Lock mSurfaceLock = new ReentrantLock();
     private final Condition mSurfaceHolderIsSet = mSurfaceLock.newCondition();
+    private final IBinder mBinder = new LocalBinder();
     private CameraDevice mCameraDevice;
-    private SurfaceView mHiddenPreview;
+    private SurfaceView mOverlayPreview;
     private SurfaceHolder mSurfaceHolder;
-    private LinearLayout mHiddenLayout;
+    private LinearLayout mOverlayLayout;
 
     public mTorchService() {
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        // This is a Started Service (unbound).
-        return null;
+        return mBinder;
+    }
+
+    public class LocalBinder extends Binder {
+        mTorchService getService() {
+            return mTorchService.this;
+        }
     }
 
     @Override
@@ -44,15 +49,16 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
         Log.d(TAG, "********** onCreate **********");
         super.onCreate();
 
+        // Don't think we want this in the service anymore
+/*
         // Check for flash capability
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
             Log.e(TAG, getString(R.string.error_no_flash));
             stopSelf();
         }
         Log.d(TAG, getString(R.string.debug_flash_found));
+*/
 
-        // Don't want this in onCreate(), will want wherever we get notified it's time to enable
-        // the torch
 /*
         // Get the Camera device
         mCameraDevice = new CameraDevice();
@@ -61,11 +67,11 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
             Log.e(TAG, getString(R.string.error_camera_unavailable));
         }
 
-        // Dynamically create the hidden layout and hidden surface preview contained within
-        createHiddenPreview();
+        // Dynamically create the overlay layout and surface preview contained within
+        createOverlay();
 
-        // Create the holder for the hidden preview
-        SurfaceHolder localHolder = mHiddenPreview.getHolder();
+        // Create the holder for the preview
+        SurfaceHolder localHolder = mOverlayPreview.getHolder();
         if (localHolder != null) {
             localHolder.addCallback(this);
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
@@ -78,9 +84,9 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
 */
     }
 
-    private void createHiddenPreview() {
-        Log.d(TAG, "********** createHiddenPreview **********");
-        if (mHiddenLayout == null) {
+    private void createOverlay() {
+        Log.d(TAG, "********** createOverlay **********");
+        if (mOverlayLayout == null) {
             WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams(1, 1,
                     WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
                     WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
@@ -88,13 +94,13 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
             layoutParams.gravity = Gravity.BOTTOM;
 
             LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-            mHiddenLayout = (LinearLayout) inflater.inflate(R.layout.hidden, null);
-            mHiddenPreview = (SurfaceView) mHiddenLayout.findViewById(R.id.hidden_preview);
+            mOverlayLayout = (LinearLayout) inflater.inflate(R.layout.overlay, null);
+            mOverlayPreview = (SurfaceView) mOverlayLayout.findViewById(R.id.overlay_preview);
 
             WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
-            wm.addView(mHiddenLayout, layoutParams);
+            wm.addView(mOverlayLayout, layoutParams);
         } else {
-            Log.e(TAG, "ERROR: mHiddenLayout already had a value");
+            Log.e(TAG, "ERROR: mOverlayLayout already had a value");
         }
     }
 
@@ -121,18 +127,18 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
         if (mCameraDevice != null) mCameraDevice.releaseCamera();
         mCameraDevice = null;
 
-        // Remove the hidden layout/preview
-        if (mHiddenLayout != null) {
+        // Remove the overlay layout/preview
+        if (mOverlayLayout != null) {
             WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
-            wm.removeView(mHiddenLayout);
-            mHiddenLayout = null;
+            wm.removeView(mOverlayLayout);
+            mOverlayLayout = null;
         }
-        mHiddenPreview = null;
+        mOverlayPreview = null;
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        Log.d(TAG, "********** (hidden) surfaceCreated **********");
+        Log.d(TAG, "********** (overlay) surfaceCreated **********");
 
         if (mCameraDevice == null) {
             Log.w(TAG, "WARN: mCameraDevice is null");
@@ -153,7 +159,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        Log.d(TAG, "********** (hidden) surfaceChanged **********");
+        Log.d(TAG, "********** (overlay) surfaceChanged **********");
 
         // I don't think there's anything interesting we need to do in this method,
         // but it's required to implement.
@@ -161,7 +167,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.d(TAG, "********** (hidden) surfaceDestroyed **********");
+        Log.d(TAG, "********** (overlay) surfaceDestroyed **********");
 
         // I don't think there's anything interesting we need to do in this method,
         // but it's required to implement.
