@@ -28,11 +28,8 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
     private static final int ONGOING_NOTIFICATION_ID = 1;
     private static boolean mIsRunning;
     private static boolean mPersist;
-    private final Lock mSurfaceLock = new ReentrantLock();
-    private final Condition mSurfaceHolderIsSet = mSurfaceLock.newCondition();
     private CameraDevice mCameraDevice;
     private SurfaceView mOverlayPreview;
-    private SurfaceHolder mSurfaceHolder;
     private FrameLayout mOverlayLayout;
 
     public mTorchService() {
@@ -130,21 +127,6 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
         Log.d(TAG, "startTorch | mCameraDevice.isFlashlightOn() was " +
                 mCameraDevice.isFlashlightOn() + " when image was pressed");
 
-        mSurfaceLock.lock();
-        try {
-            while (mSurfaceHolder == null) {
-                mSurfaceHolderIsSet.await();
-            }
-        }
-        catch (InterruptedException e) {
-            Log.e(TAG, "ERROR: " + e.getLocalizedMessage());
-            // possible Notification here to alert the user something bad happened?
-            stopSelf();
-        }
-        finally {
-            mSurfaceLock.unlock();
-        }
-
         if (mCameraDevice != null) mCameraDevice.toggleCameraLED(true);
     }
 
@@ -188,17 +170,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
             return;
         }
 
-        // atomically set the surface holder and start camera preview
-        mSurfaceLock.lock();
-        try {
-            mSurfaceHolder = holder;
-            mCameraDevice.setPreviewDisplayAndStartPreview(holder);
-            mSurfaceHolderIsSet.signalAll();
-        }
-        finally {
-            mSurfaceLock.unlock();
-        }
-
+        mCameraDevice.setPreviewDisplayAndStartPreview(holder);
         startTorch();
     }
 
