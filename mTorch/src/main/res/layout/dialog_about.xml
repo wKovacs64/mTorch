@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -10,8 +9,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <RelativeLayout
-            xmlns:tools="http://schemas.android.com/tools"
+        <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:ignore="UselessParent">
@@ -20,7 +18,7 @@
                 android:id="@+id/about_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/about_description"/>
+                android:text="@string/about_description" />
 
             <View
                 android:id="@+id/about_divider01"
@@ -29,28 +27,28 @@
                 android:layout_below="@id/about_description"
                 android:layout_marginBottom="@dimen/divider_vertical_margin"
                 android:layout_marginTop="@dimen/divider_vertical_margin"
-                android:background="@drawable/white_transparent_gradient"/>
+                android:background="@drawable/white_transparent_gradient" />
 
             <TextView
                 android:id="@+id/about_version_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/about_divider01"
-                android:text="@string/about_version_text"/>
+                android:text="@string/about_version_text" />
 
             <TextView
                 android:id="@+id/about_version_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_below="@id/about_divider01"/>
+                android:layout_below="@id/about_divider01" />
 
             <TextView
                 android:id="@+id/about_donations_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/about_version_text"
-                android:text="@string/about_donations_text"/>
+                android:text="@string/about_donations_text" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -58,14 +56,14 @@
                 android:layout_alignParentRight="true"
                 android:layout_below="@id/about_version_text"
                 android:autoLink="web"
-                android:text="@string/about_donations_link"/>
+                android:text="@string/about_donations_link" />
 
             <TextView
                 android:id="@+id/about_author_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/about_donations_text"
-                android:text="@string/about_author_text"/>
+                android:text="@string/about_author_text" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -73,7 +71,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_below="@id/about_donations_text"
                 android:autoLink="web"
-                android:text="@string/about_author_name"/>
+                android:text="@string/about_author_name" />
 
             <View
                 android:id="@+id/about_divider02"
@@ -82,14 +80,17 @@
                 android:layout_below="@id/about_author_text"
                 android:layout_marginBottom="@dimen/divider_vertical_margin"
                 android:layout_marginTop="@dimen/divider_vertical_margin"
-                android:background="@drawable/white_transparent_gradient"/>
+                android:background="@drawable/white_transparent_gradient" />
 
             <TextView
                 android:id="@+id/about_disclaimer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/about_divider02"
-                android:text="@string/about_disclaimer"/>
+                android:text="@string/about_disclaimer" />
+
         </RelativeLayout>
+
     </LinearLayout>
+
 </ScrollView>

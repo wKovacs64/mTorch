@@ -14,7 +14,7 @@ import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 
 import com.swijaya.galaxytorch.CameraDevice;
 
@@ -33,7 +33,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
     private CameraDevice mCameraDevice;
     private SurfaceView mOverlayPreview;
     private SurfaceHolder mSurfaceHolder;
-    private LinearLayout mOverlayLayout;
+    private FrameLayout mOverlayLayout;
 
     public mTorchService() {
     }
@@ -104,7 +104,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
             layoutParams.gravity = Gravity.BOTTOM;
 
             LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-            mOverlayLayout = (LinearLayout) inflater.inflate(R.layout.overlay, null);
+            mOverlayLayout = (FrameLayout) inflater.inflate(R.layout.overlay, null);
             mOverlayPreview = (SurfaceView) mOverlayLayout.findViewById(R.id.overlay_preview);
 
             WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);

@@ -1,5 +1,6 @@
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.warptunnel.mTorch.MainActivity.MainFragment">
+    tools:context=".MainActivity.MainFragment">
 
     <ImageButton
         android:id="@+id/torch_image_button"
@@ -17,6 +18,6 @@
         android:background="@android:color/transparent"
         android:contentDescription="@string/touch_me"
         android:scaleType="fitCenter"
-        android:src="@drawable/torch_off"/>
+        android:src="@drawable/torch_off" />
 
 </RelativeLayout>
