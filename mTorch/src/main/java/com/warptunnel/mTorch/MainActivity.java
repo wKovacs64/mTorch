@@ -66,6 +66,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         super.onStart();
         Log.d(TAG, "********** onStart **********");
 
+        // Start the service that will handle the camera
+        mContext.startService(new Intent(mContext, mTorchService.class));
     }
 
     @Override
@@ -73,7 +75,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         super.onResume();
         Log.d(TAG, "********** onResume **********");
 
-        mTorchEnabled = mTorchService.isRunning();
+        mTorchEnabled = mTorchService.isTorchOn();
         updateImageButton();
     }
 
@@ -95,7 +97,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         // Check if the user enabled persistence and stop the service if not
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
         boolean persist = sharedPref.getBoolean(getString(R.string.persistence), false);
-        if (!persist) mContext.stopService(new Intent(mContext, mTorchService.class));
+
+        // If no persistence or if the torch is off, stop the service
+        if (!persist || !mTorchEnabled) {
+            mContext.stopService(new Intent(mContext, mTorchService.class));
+        }
     }
 
     @Override
@@ -146,11 +152,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         // Use the service to start/stop the torch (start = on, stop = off)
         if (mTorchEnabled) {
-            mContext.stopService(new Intent(mContext, mTorchService.class));
+            mContext.startService(new Intent(mContext, mTorchService.class)
+                    .putExtra(getString(R.string.stop_torch), true));
         }
         else {
-            mContext.startService(new Intent(mContext, mTorchService.class).putExtra
-                    (getString(R.string.persistence), persist));
+            mContext.startService(new Intent(mContext, mTorchService.class)
+                    .putExtra(getString(R.string.persistence), persist)
+                    .putExtra(getString(R.string.start_torch), true));
         }
 
         mTorchEnabled = !mTorchEnabled;
