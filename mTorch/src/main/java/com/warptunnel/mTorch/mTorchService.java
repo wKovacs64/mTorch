@@ -28,6 +28,8 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
     private static final int ONGOING_NOTIFICATION_ID = 1;
     private static boolean mIsRunning;
     private static boolean mPersist;
+    private static boolean mSurfaceCreated;
+    private static boolean mIsTorchOn;
     private CameraDevice mCameraDevice;
     private SurfaceView mOverlayPreview;
     private FrameLayout mOverlayLayout;
@@ -43,6 +45,10 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
 
     public static boolean isRunning() {
         return mIsRunning;
+    }
+
+    public static boolean isTorchOn() {
+        return mIsTorchOn;
     }
 
     @Override
@@ -72,8 +78,10 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
             stopSelf();
         }
 
+        mSurfaceCreated = false;
         mPersist = false;
         mIsRunning = true;
+        mIsTorchOn = false;
     }
 
     private void goForeground() {
@@ -115,10 +123,30 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "********** onStartCommand **********");
 
-        if (intent.hasExtra(getString(R.string.persistence))) {
-            mPersist = intent.getBooleanExtra(getString(R.string.persistence), false);
+        // Check if this is really a call to start the torch or just the service starting up
+        if (intent.hasExtra(getString(R.string.start_torch))) {
+
+            // Do we have the surface? We should, unless the user was impossibly quick to press the
+            // toggle and the surfaceCreated callback wasn't reached yet.
+            if (mSurfaceCreated) {
+                // Let's light this candle!
+                startTorch();
+
+                // Check for persistence user setting, enter foreground mode if present
+                if (intent.hasExtra(getString(R.string.persistence))) {
+                    mPersist = intent.getBooleanExtra(getString(R.string.persistence), false);
+                }
+                if (mPersist) goForeground();
+            }
+            else {
+                Log.e(TAG, "ERROR: tried to call startTorch but mSurfaceCreated = false");
+                stopSelf();
+            }
+        } else if (intent.hasExtra(getString(R.string.stop_torch))) {
+            mCameraDevice.toggleCameraLED(false);
+            mIsTorchOn = mCameraDevice.isFlashlightOn();
+            if (mPersist) stopForeground(true);
         }
-        if (mPersist) goForeground();
 
         return Service.START_NOT_STICKY;
     }
@@ -127,7 +155,10 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
         Log.d(TAG, "startTorch | mCameraDevice.isFlashlightOn() was " +
                 mCameraDevice.isFlashlightOn() + " when image was pressed");
 
-        if (mCameraDevice != null) mCameraDevice.toggleCameraLED(true);
+        if (mCameraDevice != null) {
+            mCameraDevice.toggleCameraLED(true);
+            mIsTorchOn = mCameraDevice.isFlashlightOn();
+        }
     }
 
     @Override
@@ -171,7 +202,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
         }
 
         mCameraDevice.setPreviewDisplayAndStartPreview(holder);
-        startTorch();
+        mSurfaceCreated = true;
     }
 
     @Override
@@ -186,7 +217,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
     public void surfaceDestroyed(SurfaceHolder holder) {
         Log.d(TAG, "********** (overlay) surfaceDestroyed **********");
 
-        // I don't think there's anything interesting we need to do in this method,
-        // but it's required to implement.
+        mSurfaceCreated = false;
+        mIsTorchOn = false;
     }
 }
