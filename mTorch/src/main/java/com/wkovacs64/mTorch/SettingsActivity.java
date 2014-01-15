@@ -1,4 +1,4 @@
-package com.warptunnel.mTorch;
+package com.wkovacs64.mTorch;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
