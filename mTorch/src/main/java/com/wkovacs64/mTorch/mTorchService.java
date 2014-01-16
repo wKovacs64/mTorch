@@ -1,4 +1,4 @@
-package com.warptunnel.mTorch;
+package com.wkovacs64.mTorch;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -17,10 +17,6 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.swijaya.galaxytorch.CameraDevice;
-
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class mTorchService extends Service implements SurfaceHolder.Callback {
 

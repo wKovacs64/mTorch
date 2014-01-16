@@ -1,4 +1,4 @@
-package com.warptunnel.mTorch;
+package com.wkovacs64.mTorch;
 
 import android.content.Context;
 import android.content.Intent;
@@ -172,5 +172,4 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         if (mTorchEnabled) mImageButton.setImageResource(R.drawable.torch_on);
         else mImageButton.setImageResource(R.drawable.torch_off);
     }
-
 }
