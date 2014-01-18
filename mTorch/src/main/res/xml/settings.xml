@@ -8,4 +8,10 @@
         android:summary="@string/persistence_summary"
         android:title="@string/persistence" />
 
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="@string/settings_auto_on"
+        android:summary="@string/settings_auto_on_summary"
+        android:title="@string/settings_auto_on" />
+
 </PreferenceScreen>
