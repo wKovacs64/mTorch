@@ -11,6 +11,7 @@ This project was created in Android Studio and uses the Gradle build system.
 #### System Requirements:
 * [Oracle Java JDK 7](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
     * Set environment variable JAVA_HOME to JDK installation location
+	* You may want to set ANDROID_STUDIO_JDK to the same path or if JAVA_HOME already points elsewhere
     * JDK 6 works as well, if you prefer
 
 * [Android SDK](https://developer.android.com/sdk)
