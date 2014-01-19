@@ -1,11 +1,14 @@
 package com.wkovacs64.mTorch;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -15,13 +18,18 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import java.util.Set;
+
 public class MainActivity extends ActionBarActivity implements View.OnClickListener {
 
+    public final static String INTERNAL_INTENT = MainActivity.class.getPackage().getName() +
+            "INTERNAL_INTENT";
     private static final String TAG = MainActivity.class.getSimpleName();
+    private boolean mTorchEnabled;
     private AboutDialog mAboutDialog;
     private Context mContext;
     private ImageButton mImageButton;
-    private boolean mTorchEnabled;
+    private BroadcastReceiver mBroadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +67,23 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             // Keep the screen on while the app is open
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
+
+        // Register to receive broadcasts from the service
+        mBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d(TAG, "Broadcast received...");
+                Bundle extras = intent.getExtras();
+                if (extras != null) {
+                    Set<String> ks = extras.keySet();
+
+                    if (ks.contains(getString(R.string.settings_auto_on))) {
+                        Log.d(TAG, "Intent included Auto On extra, toggling torch...");
+                        toggleTorch();
+                    }
+                }
+            }
+        };
     }
 
     @Override
@@ -66,8 +91,21 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         super.onStart();
         Log.d(TAG, "********** onStart **********");
 
+        Intent startItUp = new Intent(mContext, mTorchService.class);
+        IntentFilter toggleIntent = new IntentFilter(INTERNAL_INTENT);
+
+        // Listen for intents from the service
+        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver, toggleIntent);
+
+        // Enable torch on launch? (assume false)
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
+        if (sharedPref.getBoolean(getString(R.string.settings_auto_on), false) &&
+                !mTorchService.isTorchOn()) {
+            startItUp.putExtra(getString(R.string.settings_auto_on), true);
+        }
+
         // Start the service that will handle the camera
-        mContext.startService(new Intent(mContext, mTorchService.class));
+        mContext.startService(startItUp);
     }
 
     @Override
@@ -90,6 +128,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     protected void onStop() {
         super.onStop();
         Log.d(TAG, "********** onStop **********");
+
+        // Stop listening for broadcasts from the service
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver);
 
         // Close the About dialog if we're stopping anyway
         if (mAboutDialog.isShowing()) mAboutDialog.dismiss();
