@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.PixelFormat;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
@@ -56,10 +57,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
 
         // Get access to the camera
         mCameraDevice = new CameraDevice();
-        if (!mCameraDevice.acquireCamera()) {
-            Log.e(TAG, getString(R.string.error_camera_unavailable));
-            stopSelf();
-        }
+        new CameraDeviceAcquire().execute(mCameraDevice);
 
         // Dynamically create the overlay layout and surface preview contained within
         createOverlay();
@@ -215,7 +213,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
         }
 
         // Start the preview
-        mCameraDevice.setPreviewDisplayAndStartPreview(holder);
+        new CameraDeviceStartPreview().execute(mCameraDevice, holder);
         mSurfaceCreated = true;
 
         // If the Auto On feature is enabled, broadcast an intent back to MainActivity to toggle
@@ -245,5 +243,54 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
         // Housekeeping
         mSurfaceCreated = false;
         mIsTorchOn = false;
+    }
+
+    private class CameraDeviceStartPreview extends AsyncTask<Object, Void, Boolean> {
+
+        private final String TAG = CameraDeviceStartPreview.class.getSimpleName();
+
+        @Override
+        protected Boolean doInBackground(Object... params) {
+            if (params == null || params.length != 2) {
+                Log.wtf(TAG, "ERROR: this task requires a CameraDevice and a SurfaceHolder");
+                return false;
+            }
+
+            CameraDevice cameraDevice = (CameraDevice) params[0];
+            SurfaceHolder holder = (SurfaceHolder) params[1];
+
+            cameraDevice.setPreviewDisplayAndStartPreview(holder);
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if (!success) stopSelf();
+        }
+    }
+
+    private class CameraDeviceAcquire extends AsyncTask<CameraDevice, Void, Boolean> {
+
+        private final String TAG = CameraDeviceAcquire.class.getSimpleName();
+
+        @Override
+        protected Boolean doInBackground(CameraDevice... params) {
+            if (params == null || params.length != 1) {
+                Log.wtf(TAG, "ERROR: this task requires a CameraDevice");
+                return false;
+            }
+
+            if (!params[0].acquireCamera()) {
+                Log.e(TAG, getString(R.string.error_camera_unavailable));
+                return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if (!success) stopSelf();
+        }
     }
 }
