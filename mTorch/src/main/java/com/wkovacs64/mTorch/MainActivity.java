@@ -137,7 +137,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         // Check if the user enabled persistence and stop the service if not
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
-        boolean persist = sharedPref.getBoolean(getString(R.string.persistence), false);
+        boolean persist = sharedPref.getBoolean(getString(R.string.settings_persistence), false);
 
         // If no persistence or if the torch is off, stop the service
         if (!persist || !mTorchEnabled) {
@@ -189,7 +189,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 "pressed; changing to " + !mTorchEnabled);
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
-        boolean persist = sharedPref.getBoolean(getString(R.string.persistence), false);
+        boolean persist = sharedPref.getBoolean(getString(R.string.settings_persistence), false);
 
         // Use the service to start/stop the torch (start = on, stop = off)
         if (mTorchEnabled) {
@@ -198,7 +198,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
         else {
             mContext.startService(new Intent(mContext, mTorchService.class)
-                    .putExtra(getString(R.string.persistence), persist)
+                    .putExtra(getString(R.string.settings_persistence), persist)
                     .putExtra(getString(R.string.start_torch), true));
         }
 

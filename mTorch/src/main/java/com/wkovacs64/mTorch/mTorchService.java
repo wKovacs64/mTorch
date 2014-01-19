@@ -136,8 +136,9 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
                 startTorch();
 
                 // Check for persistence user setting, enter foreground mode if present
-                if (intent.hasExtra(getString(R.string.persistence))) {
-                    mPersist = intent.getBooleanExtra(getString(R.string.persistence), false);
+                if (intent.hasExtra(getString(R.string.settings_persistence))) {
+                    mPersist = intent.getBooleanExtra(getString(R.string.settings_persistence),
+                            false);
                 }
                 if (mPersist) goForeground();
             }
