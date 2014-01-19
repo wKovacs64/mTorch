@@ -8,6 +8,7 @@ import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -26,6 +27,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
     private static boolean mPersist;
     private static boolean mSurfaceCreated;
     private static boolean mIsTorchOn;
+    private static boolean mAutoOn;
     private CameraDevice mCameraDevice;
     private SurfaceView mOverlayPreview;
     private FrameLayout mOverlayLayout;
@@ -74,15 +76,19 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
             stopSelf();
         }
 
+        // Initializations
         mSurfaceCreated = false;
         mPersist = false;
         mIsRunning = true;
         mIsTorchOn = false;
+        mAutoOn = false;
     }
 
     private void goForeground() {
         Log.d(TAG, "********** goForeground **********");
 
+        // Enter foreground mode to keep the service running and provide a notification to return
+        // to the app
         Intent launchActivity = new Intent(this, MainActivity.class);
         PendingIntent pIntent = PendingIntent.getActivity(this, 0, launchActivity, 0);
         Notification notification = new NotificationCompat.Builder(this)
@@ -97,6 +103,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
     private void createOverlay() {
         Log.d(TAG, "********** createOverlay **********");
 
+        // Create an overlay to hold the camera preview and add it to the Window Manager
         if (mOverlayLayout == null) {
             WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams(1, 1,
                     WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
@@ -139,9 +146,14 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
                 stopSelf();
             }
         } else if (intent.hasExtra(getString(R.string.stop_torch))) {
+            // Stop the torch
             mCameraDevice.toggleCameraLED(false);
             mIsTorchOn = mCameraDevice.isFlashlightOn();
             if (mPersist) stopForeground(true);
+        } else if (intent.hasExtra(getString(R.string.settings_auto_on))) {
+            // Take note of the state of the Auto On feature so the SurfaceHolder callback will
+            // know to tell MainActivity to toggle the torch properly
+            mAutoOn = true;
         }
 
         return Service.START_NOT_STICKY;
@@ -151,6 +163,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
         Log.d(TAG, "startTorch | mCameraDevice.isFlashlightOn() was " +
                 mCameraDevice.isFlashlightOn() + " when image was pressed");
 
+        // Assuming we have a valid CameraDevice, fire it up
         if (mCameraDevice != null) {
             mCameraDevice.toggleCameraLED(true);
             mIsTorchOn = mCameraDevice.isFlashlightOn();
@@ -162,8 +175,11 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
         Log.d(TAG, "********** onDestroy **********");
         super.onDestroy();
 
-        if (mPersist) stopForeground(true);
         mIsRunning = false;
+
+        // If this service was told to stop for some reason and persistence was enabled,
+        // stop running in foreground mode
+        if (mPersist) stopForeground(true);
 
         // Shut the torch off if it was on when we got shut down
         if (mCameraDevice != null && mCameraDevice.isFlashlightOn()) {
@@ -197,8 +213,20 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
             return;
         }
 
+        // Start the preview
         mCameraDevice.setPreviewDisplayAndStartPreview(holder);
         mSurfaceCreated = true;
+
+        // If the Auto On feature is enabled, broadcast an intent back to MainActivity to toggle
+        // the torch and update the UI accordingly
+        if (mAutoOn) {
+            Log.d(TAG, "Broadcasting toggleIntent...");
+
+            // send intent back to MainActivity to call toggleTorch();
+            Intent toggleIntent = new Intent(MainActivity.INTERNAL_INTENT);
+            toggleIntent.putExtra(getString(R.string.settings_auto_on), true);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(toggleIntent);
+        }
     }
 
     @Override
@@ -213,6 +241,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
     public void surfaceDestroyed(SurfaceHolder holder) {
         Log.d(TAG, "********** (overlay) surfaceDestroyed **********");
 
+        // Housekeeping
         mSurfaceCreated = false;
         mIsTorchOn = false;
     }
