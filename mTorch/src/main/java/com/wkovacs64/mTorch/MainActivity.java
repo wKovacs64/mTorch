@@ -32,6 +32,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private ImageButton mImageButton;
     private BroadcastReceiver mBroadcastReceiver;
     private SharedPreferences prefs;
+    private boolean mAutoOn;
+    private boolean mPersist;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,9 +41,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         Log.d(TAG, "********** onCreate **********");
         setContentView(R.layout.activity_main);
 
-        // Watch for preference changes so we can react if necessary
+        // Read preferences
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        prefs.registerOnSharedPreferenceChangeListener(this);
+        mAutoOn = prefs.getBoolean(getString(R.string.settings_auto_on), false);
+        mPersist = prefs.getBoolean(getString(R.string.settings_persistence), false);
 
         // Assume flash off on launch (certainly true the first time)
         mTorchEnabled = false;
@@ -103,12 +106,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         // Listen for intents from the service
         LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver, toggleIntent);
 
-        // Enable torch on launch? (assume false)
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
-        if (sharedPref.getBoolean(getString(R.string.settings_auto_on), false) &&
-                !mTorchService.isTorchOn()) {
-            startItUp.putExtra(getString(R.string.settings_auto_on), true);
-        }
+        // Listen for preference changes so we can react if necessary
+        prefs.registerOnSharedPreferenceChangeListener(this);
+
+        // Pass the service our preferences as extras on the startup intent
+        startItUp.putExtra(getString(R.string.settings_auto_on), mAutoOn);
+        startItUp.putExtra(getString(R.string.settings_persistence), mPersist);
 
         // Start the service that will handle the camera
         mContext.startService(startItUp);
@@ -144,12 +147,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         // Close the About dialog if we're stopping anyway
         if (mAboutDialog.isShowing()) mAboutDialog.dismiss();
 
-        // Check if the user enabled persistence
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
-        boolean persist = sharedPref.getBoolean(getString(R.string.settings_persistence), false);
-
         // If no persistence or if the torch is off, stop the service
-        if (!persist || !mTorchEnabled) {
+        if (!mPersist || !mTorchEnabled) {
             mContext.stopService(new Intent(mContext, mTorchService.class));
         }
     }
@@ -197,9 +196,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         Log.d(TAG, "toggleTorch | mTorchEnabled was " + mTorchEnabled + " when image was " +
                 "pressed; changing to " + !mTorchEnabled);
 
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
-        boolean persist = sharedPref.getBoolean(getString(R.string.settings_persistence), false);
-
         // Use the service to start/stop the torch (start = on, stop = off)
         if (mTorchEnabled) {
             mContext.startService(new Intent(mContext, mTorchService.class)
@@ -207,7 +203,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
         else {
             mContext.startService(new Intent(mContext, mTorchService.class)
-                    .putExtra(getString(R.string.settings_persistence), persist)
                     .putExtra(getString(R.string.start_torch), true));
         }
 
@@ -227,9 +222,18 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
         Log.d(TAG, "SharedPreferences: " + key + " has changed");
 
-        // Settings have changed - notify the service
         Intent settingsChangedIntent = new Intent(mContext, mTorchService.class);
-        settingsChangedIntent.putExtra(key, prefs.getBoolean(key, false));
+
+        // Settings have changed, observe the new value
+        if (key.equals(getString(R.string.settings_auto_on))) {
+            mAutoOn = prefs.getBoolean(key, false);
+            settingsChangedIntent.putExtra(key, mAutoOn);
+        } else if (key.equals(getString(R.string.settings_persistence))) {
+            mPersist = prefs.getBoolean(key, false);
+            settingsChangedIntent.putExtra(key, mPersist);
+        }
+
+        // Notify the service
         mContext.startService(settingsChangedIntent);
     }
 }
