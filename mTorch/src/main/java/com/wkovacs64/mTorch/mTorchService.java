@@ -127,6 +127,18 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "********** onStartCommand **********");
 
+        // Check for persistence user setting
+        if (intent.hasExtra(getString(R.string.settings_persistence))) {
+                mPersist = intent.getBooleanExtra(getString(R.string.settings_persistence), false);
+
+            // If the user enables persistence while the torch is already lit, goForeground
+            // If the user disables persistence while the torch is already lit, stopForeground
+            if (mIsTorchOn) {
+                if (mPersist) goForeground();
+                else stopForeground(true);
+            }
+        }
+
         // Check if this is really a call to start the torch or just the service starting up
         if (intent.hasExtra(getString(R.string.start_torch))) {
 
@@ -137,10 +149,6 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
                 startTorch();
 
                 // Check for persistence user setting, enter foreground mode if present
-                if (intent.hasExtra(getString(R.string.settings_persistence))) {
-                    mPersist = intent.getBooleanExtra(getString(R.string.settings_persistence),
-                            false);
-                }
                 if (mPersist) goForeground();
             }
             else {

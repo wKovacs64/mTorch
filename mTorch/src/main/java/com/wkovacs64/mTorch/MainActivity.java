@@ -20,7 +20,8 @@ import android.widget.Toast;
 
 import java.util.Set;
 
-public class MainActivity extends ActionBarActivity implements View.OnClickListener {
+public class MainActivity extends ActionBarActivity implements View.OnClickListener,
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
     public final static String INTERNAL_INTENT = MainActivity.class.getPackage().getName() +
             "INTERNAL_INTENT";
@@ -30,12 +31,17 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private Context mContext;
     private ImageButton mImageButton;
     private BroadcastReceiver mBroadcastReceiver;
+    private SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "********** onCreate **********");
         setContentView(R.layout.activity_main);
+
+        // Watch for preference changes so we can react if necessary
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.registerOnSharedPreferenceChangeListener(this);
 
         // Assume flash off on launch (certainly true the first time)
         mTorchEnabled = false;
@@ -132,10 +138,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         // Stop listening for broadcasts from the service
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver);
 
+        // Stop listening for preference changes
+        prefs.unregisterOnSharedPreferenceChangeListener(this);
+
         // Close the About dialog if we're stopping anyway
         if (mAboutDialog.isShowing()) mAboutDialog.dismiss();
 
-        // Check if the user enabled persistence and stop the service if not
+        // Check if the user enabled persistence
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
         boolean persist = sharedPref.getBoolean(getString(R.string.settings_persistence), false);
 
@@ -212,5 +221,15 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         if (mTorchEnabled) mImageButton.setImageResource(R.drawable.torch_on);
         else mImageButton.setImageResource(R.drawable.torch_off);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+        Log.d(TAG, "SharedPreferences: " + key + " has changed");
+
+        // Settings have changed - notify the service
+        Intent settingsChangedIntent = new Intent(mContext, mTorchService.class);
+        settingsChangedIntent.putExtra(key, prefs.getBoolean(key, false));
+        mContext.startService(settingsChangedIntent);
     }
 }
