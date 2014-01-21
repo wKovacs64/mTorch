@@ -9,7 +9,7 @@
     </style>
 
     <!-- Settings Dialog Theme -->
-    <style name="SettingsTheme" parent="android:Theme.DeviceDefault.Dialog">
+    <style name="SettingsTheme" parent="android:Theme.Dialog">
         <!-- Customize your theme here. -->
     </style>
 
