@@ -14,7 +14,6 @@ public class SettingsActivity extends PreferenceActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "********** Settings **********");
 
-        setTitle(getString(R.string.app_name) + " " + getString(R.string.menu_settings));
         addPreferencesFromResource(R.xml.settings);
     }
 }
