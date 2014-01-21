@@ -57,7 +57,10 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
 
         // Get access to the camera
         mCameraDevice = new CameraDevice();
-        new CameraDeviceAcquire().execute(mCameraDevice);
+        if (!mCameraDevice.acquireCamera()) {
+            Log.e(TAG, getString(R.string.error_camera_unavailable));
+            stopSelf();
+        }
 
         // Dynamically create the overlay layout and surface preview contained within
         createOverlay();
@@ -260,31 +263,6 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
             SurfaceHolder holder = (SurfaceHolder) params[1];
 
             cameraDevice.setPreviewDisplayAndStartPreview(holder);
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean success) {
-            if (!success) stopSelf();
-        }
-    }
-
-    private class CameraDeviceAcquire extends AsyncTask<CameraDevice, Void, Boolean> {
-
-        private final String TAG = CameraDeviceAcquire.class.getSimpleName();
-
-        @Override
-        protected Boolean doInBackground(CameraDevice... params) {
-            if (params == null || params.length != 1) {
-                Log.wtf(TAG, "ERROR: this task requires a CameraDevice");
-                return false;
-            }
-
-            if (!params[0].acquireCamera()) {
-                Log.e(TAG, getString(R.string.error_camera_unavailable));
-                return false;
-            }
-
             return true;
         }
 
