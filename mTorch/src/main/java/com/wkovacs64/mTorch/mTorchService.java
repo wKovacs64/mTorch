@@ -127,6 +127,23 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "********** onStartCommand **********");
 
+        // Check for 'auto on' user setting
+        if (intent.hasExtra(getString(R.string.settings_auto_on))) {
+            mAutoOn = intent.getBooleanExtra(getString(R.string.settings_auto_on), false);
+        }
+
+        // Check for persistence user setting
+        if (intent.hasExtra(getString(R.string.settings_persistence))) {
+                mPersist = intent.getBooleanExtra(getString(R.string.settings_persistence), false);
+
+            // If the user enables persistence while the torch is already lit, goForeground
+            // If the user disables persistence while the torch is already lit, stopForeground
+            if (mIsTorchOn) {
+                if (mPersist) goForeground();
+                else stopForeground(true);
+            }
+        }
+
         // Check if this is really a call to start the torch or just the service starting up
         if (intent.hasExtra(getString(R.string.start_torch))) {
 
@@ -137,10 +154,6 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
                 startTorch();
 
                 // Check for persistence user setting, enter foreground mode if present
-                if (intent.hasExtra(getString(R.string.settings_persistence))) {
-                    mPersist = intent.getBooleanExtra(getString(R.string.settings_persistence),
-                            false);
-                }
                 if (mPersist) goForeground();
             }
             else {
@@ -152,10 +165,6 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
             mCameraDevice.toggleCameraLED(false);
             mIsTorchOn = mCameraDevice.isFlashlightOn();
             if (mPersist) stopForeground(true);
-        } else if (intent.hasExtra(getString(R.string.settings_auto_on))) {
-            // Take note of the state of the Auto On feature so the SurfaceHolder callback will
-            // know to tell MainActivity to toggle the torch properly
-            mAutoOn = true;
         }
 
         return Service.START_NOT_STICKY;

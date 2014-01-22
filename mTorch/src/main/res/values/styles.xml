@@ -8,4 +8,9 @@
         <item name="android:windowBackground">@android:color/black</item>
     </style>
 
+    <!-- Settings Dialog Theme -->
+    <style name="SettingsTheme" parent="android:Theme.Dialog">
+        <!-- Customize your theme here. -->
+    </style>
+
 </resources>
