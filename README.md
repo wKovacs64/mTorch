@@ -42,3 +42,6 @@ Designed and developed by Justin R. Hall. Special thanks to [Santoso Wijaya](htt
 
 ## License/Copying
 mTorch is distributed under the MIT License. See the [LICENSE](../blob/master/LICENSE) file for further details.
+
+## Donating
+If you feel like donating for some unfathomable reason, I accept [Bitcoin](http://mTorch.wkovacs64.com).
