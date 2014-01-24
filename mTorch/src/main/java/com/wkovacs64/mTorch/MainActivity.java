@@ -43,8 +43,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         // Read preferences
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        mAutoOn = prefs.getBoolean(getString(R.string.settings_auto_on), false);
-        mPersist = prefs.getBoolean(getString(R.string.settings_persistence), false);
+        mAutoOn = prefs.getBoolean(getString(R.string.settings_auto_on_key), false);
+        mPersist = prefs.getBoolean(getString(R.string.settings_persistence_key), false);
 
         // Assume flash off on launch (certainly true the first time)
         mTorchEnabled = false;
@@ -86,7 +86,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 if (extras != null) {
                     Set<String> ks = extras.keySet();
 
-                    if (ks.contains(getString(R.string.settings_auto_on))) {
+                    if (ks.contains(getString(R.string.settings_auto_on_key))) {
                         Log.d(TAG, "Intent included Auto On extra, toggling torch...");
                         toggleTorch();
                     }
@@ -110,8 +110,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         prefs.registerOnSharedPreferenceChangeListener(this);
 
         // Pass the service our preferences as extras on the startup intent
-        startItUp.putExtra(getString(R.string.settings_auto_on), mAutoOn);
-        startItUp.putExtra(getString(R.string.settings_persistence), mPersist);
+        startItUp.putExtra(getString(R.string.settings_auto_on_key), mAutoOn);
+        startItUp.putExtra(getString(R.string.settings_persistence_key), mPersist);
 
         // Start the service that will handle the camera
         mContext.startService(startItUp);
@@ -221,10 +221,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         Intent settingsChangedIntent = new Intent(mContext, mTorchService.class);
 
         // Settings have changed, observe the new value
-        if (key.equals(getString(R.string.settings_auto_on))) {
+        if (key.equals(getString(R.string.settings_auto_on_key))) {
             mAutoOn = prefs.getBoolean(key, false);
             settingsChangedIntent.putExtra(key, mAutoOn);
-        } else if (key.equals(getString(R.string.settings_persistence))) {
+        } else if (key.equals(getString(R.string.settings_persistence_key))) {
             mPersist = prefs.getBoolean(key, false);
             settingsChangedIntent.putExtra(key, mPersist);
         }

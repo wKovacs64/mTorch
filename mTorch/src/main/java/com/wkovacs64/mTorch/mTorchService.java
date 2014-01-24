@@ -128,13 +128,13 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
         Log.d(TAG, "********** onStartCommand **********");
 
         // Check for 'auto on' user setting
-        if (intent.hasExtra(getString(R.string.settings_auto_on))) {
-            mAutoOn = intent.getBooleanExtra(getString(R.string.settings_auto_on), false);
+        if (intent.hasExtra(getString(R.string.settings_auto_on_key))) {
+            mAutoOn = intent.getBooleanExtra(getString(R.string.settings_auto_on_key), false);
         }
 
         // Check for persistence user setting
-        if (intent.hasExtra(getString(R.string.settings_persistence))) {
-                mPersist = intent.getBooleanExtra(getString(R.string.settings_persistence), false);
+        if (intent.hasExtra(getString(R.string.settings_persistence_key))) {
+            mPersist = intent.getBooleanExtra(getString(R.string.settings_persistence_key), false);
 
             // If the user enables persistence while the torch is already lit, goForeground
             // If the user disables persistence while the torch is already lit, stopForeground
@@ -235,7 +235,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
 
             // send intent back to MainActivity to call toggleTorch();
             Intent toggleIntent = new Intent(MainActivity.INTERNAL_INTENT);
-            toggleIntent.putExtra(getString(R.string.settings_auto_on), true);
+            toggleIntent.putExtra(getString(R.string.settings_auto_on_key), true);
             LocalBroadcastManager.getInstance(this).sendBroadcast(toggleIntent);
         }
     }
