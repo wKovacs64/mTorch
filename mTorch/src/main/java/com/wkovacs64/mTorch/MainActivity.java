@@ -1,4 +1,4 @@
-package com.wkovacs64.mTorch;
+package com.wkovacs64.mtorch;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

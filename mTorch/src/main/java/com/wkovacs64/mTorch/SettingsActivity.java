@@ -1,4 +1,4 @@
-package com.wkovacs64.mTorch;
+package com.wkovacs64.mtorch;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
