@@ -6,7 +6,7 @@ I wrote this app because I felt there was a real niche for something that could 
 
 ## Building
 
-This project was created in Android Studio and uses the Gradle build system.
+This project was created in [Android Studio](http://developer.android.com/sdk/installing/studio.html) and uses the [Gradle build system](http://www.gradleware.com/resources/tech/android). The first time you build something using the Gradle wrapper script, it will download the appropriate version of Gradle which can be relatively large (~150 MB). By default, it will save it in the `.gradle` subdirectory of your home directory. If you wish to override this location, set the environment variable GRADLE_USER_HOME to a more desirable path. If you already have Gradle installed on your system and would like to use that instead, make sure you set the GRADLE_HOME environment variable to the location where Gradle is installed and use the `gradle` command instead of the `gradlew` wrapper script to perform the build.
 
 #### System Requirements:
 * [Oracle Java JDK 7](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
