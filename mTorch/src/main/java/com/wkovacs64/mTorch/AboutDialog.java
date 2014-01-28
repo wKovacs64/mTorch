@@ -44,6 +44,5 @@ public class AboutDialog extends Dialog {
         // Populate version number
         mAboutVersion = (TextView) findViewById(R.id.about_version_number);
         mAboutVersion.setText(mVersion);
-
     }
 }
