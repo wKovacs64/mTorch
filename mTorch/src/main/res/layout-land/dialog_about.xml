@@ -44,11 +44,11 @@
                 android:layout_below="@id/about_divider01" />
 
             <TextView
-                android:id="@+id/about_donations_text"
+                android:id="@+id/about_homepage_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/about_version_text"
-                android:text="@string/about_donations_text" />
+                android:text="@string/about_homepage_text" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -56,20 +56,20 @@
                 android:layout_alignParentRight="true"
                 android:layout_below="@id/about_version_text"
                 android:autoLink="web"
-                android:text="@string/about_donations_link" />
+                android:text="@string/about_homepage_link" />
 
             <TextView
                 android:id="@+id/about_author_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/about_donations_text"
+                android:layout_below="@id/about_homepage_text"
                 android:text="@string/about_author_text" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_below="@id/about_donations_text"
+                android:layout_below="@id/about_homepage_text"
                 android:autoLink="web"
                 android:text="@string/about_author_name" />
 
