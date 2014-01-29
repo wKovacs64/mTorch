@@ -4,7 +4,7 @@
 
     <string name="about_author_name" translatable="false">Justin R. Hall</string>
     <string name="about_author_text">Author:</string>
-    <string name="about_description">\u0020is a minimalistic torch app for Android. It is objectively superior to every other torch or flashlight app ever created for any platform in the history of computing. The previous statement is completely false.</string>
+    <string name="about_description">\u0020is a minimalistic torch/flashlight app for Android. It is objectively and measurably superior to every other app ever created for any platform in the history of computing. Period. It is technologically impossible for a better app to exist, and that\'s a proven fact. It\'s science. The previous statements are entirely false, except for the first sentence.</string>
     <string name="about_disclaimer">THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</string>
     <string name="about_homepage_link" translatable="false">mtorch.wkovacs64.com</string>
     <string name="about_homepage_text">Homepage:</string>
