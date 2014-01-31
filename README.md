@@ -1,6 +1,6 @@
 # mTorch
 
-mTorch is a minimalistic torch app for Android. It is objectively superior to every other torch or flashlight app ever created for any platform in the history of computing. The previous statement is completely false. 
+[mTorch](http://mtorch.wkovacs64.com) is a minimalistic torch app for Android. It is objectively superior to every other torch or flashlight app ever created for any platform in the history of computing. The previous statement is completely false. 
 
 I wrote this app because I felt there was a real niche for something that could make your mobile device act as a flashlight. Bumping around in the dark can be dangerous and I can never find a flashlight when I need one - but I _always_ have my mobile phone in my pocket. I scoured the Play Store and other third-party app collections and just couldn't find anything that would accomplish such a feat. Thus, I felt compelled to create one myself. (What's the markdown for sarcasm? There are probably more torch apps on the Play Store than any other type of app. I just did it for fun and as a learning experience.)
 
@@ -33,9 +33,7 @@ This project was created in [Android Studio](http://developer.android.com/sdk/in
 * That's it! You should now have an installable APK in the `<project_root>/mTorch/build/apk` directory.
 
 ## Contributing
-You can use the Import Project feature in Android Studio and point at the project root directory to start hacking on this app.
-
-_More contributing details to come._
+You can use the Import Project feature in Android Studio and point at the project root directory to start hacking on this app. Feel free to send me pull requests with fixes or improvements. I also welcome localization efforts if you would like to [translate](http://mtorch.wkovacs64.com/translate) some strings.
 
 ## Developed By
 Designed and developed by Justin R. Hall. Special thanks to [Santoso Wijaya](https://github.com/santa4nt), see the [CONTRIBUTORS](../blob/master/CONTRIBUTORS) file for further details.
