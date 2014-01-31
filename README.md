@@ -1,6 +1,6 @@
-# mTorch
+# [mTorch](http://mtorch.wkovacs64.com)
 
-[mTorch](http://mtorch.wkovacs64.com) is a minimalistic torch app for Android. It is objectively superior to every other torch or flashlight app ever created for any platform in the history of computing. The previous statement is completely false. 
+mTorch is a minimalistic torch/flashlight app for Android. It is objectively and measurably superior to every other app ever created for any platform in the history of computing. Period. It is technologically impossible for a better app to exist, and that's a proven fact. It's science. The previous statements are entirely false, except for the first sentence.
 
 I wrote this app because I felt there was a real niche for something that could make your mobile device act as a flashlight. Bumping around in the dark can be dangerous and I can never find a flashlight when I need one - but I _always_ have my mobile phone in my pocket. I scoured the Play Store and other third-party app collections and just couldn't find anything that would accomplish such a feat. Thus, I felt compelled to create one myself. (What's the markdown for sarcasm? There are probably more torch apps on the Play Store than any other type of app. I just did it for fun and as a learning experience.)
 
