@@ -36,10 +36,10 @@ This project was created in [Android Studio](http://developer.android.com/sdk/in
 You can use the Import Project feature in Android Studio and point at the project root directory to start hacking on this app. Feel free to send me pull requests with fixes or improvements. I also welcome localization efforts if you would like to [translate](http://mtorch.wkovacs64.com/translate) some strings.
 
 ## Developed By
-Designed and developed by Justin R. Hall. Special thanks to [Santoso Wijaya](https://github.com/santa4nt), see the [CONTRIBUTORS](../blob/master/CONTRIBUTORS) file for further details.
+Designed and developed by Justin R. Hall. Special thanks to [Santoso Wijaya](https://github.com/santa4nt), see the [CONTRIBUTORS](../master/CONTRIBUTORS) file for further details.
 
 ## License/Copying
-mTorch is distributed under the MIT License. See the [LICENSE](../blob/master/LICENSE) file for further details.
+mTorch is distributed under the MIT License. See the [LICENSE](../master/LICENSE) file for further details.
 
 ## Donating
 If you feel like donating for some unfathomable reason, I accept [Bitcoin](http://mTorch.wkovacs64.com).
