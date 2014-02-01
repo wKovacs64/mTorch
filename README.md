@@ -2,7 +2,7 @@
 
 mTorch is a minimalistic torch/flashlight app for Android. It is objectively and measurably superior to every other app ever created for any platform in the history of computing. Period. It is technologically impossible for a better app to exist, and that's a proven fact. It's science. The previous statements are entirely false, except for the first sentence.
 
-I wrote this app because I felt there was a real niche for something that could make your mobile device act as a flashlight. Bumping around in the dark can be dangerous and I can never find a flashlight when I need one - but I _always_ have my mobile phone in my pocket. I scoured the Play Store and other third-party app collections and just couldn't find anything that would accomplish such a feat. Thus, I felt compelled to create one myself. (What's the markdown for sarcasm? There are probably more torch apps on the Play Store than any other type of app. I just did it for fun and as a learning experience.)
+I realize there are probably more torch apps on the Play Store than any other type of app, and most of them are probably much more polished and feature-rich than mine. Honestly, I just did it to have a little fun and learn some more Android. If anyone finds it useful and prefers the minimalistic approach I took with it, all the better.
 
 ## Building
 
