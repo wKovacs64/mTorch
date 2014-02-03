@@ -127,13 +127,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d(TAG, "********** onPause **********");
-
-    }
-
-    @Override
     protected void onStop() {
         super.onStop();
         Log.d(TAG, "********** onStop **********");
@@ -151,13 +144,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         if (!mPersist || !mTorchEnabled) {
             mContext.stopService(new Intent(mContext, mTorchService.class));
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "********** onDestroy **********");
-
     }
 
     @Override
