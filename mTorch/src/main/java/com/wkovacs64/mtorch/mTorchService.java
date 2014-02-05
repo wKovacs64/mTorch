@@ -23,6 +23,7 @@ import com.swijaya.galaxytorch.CameraDevice;
 public class mTorchService extends Service implements SurfaceHolder.Callback {
 
     private static final String TAG = mTorchService.class.getSimpleName();
+    private static final String DEATH_THREAT = "die";
     private static final String SETTINGS_AUTO_ON_KEY = "auto_on";
     private static final String SETTINGS_PERSISTENCE_KEY = "persistence";
     private static final int ONGOING_NOTIFICATION_ID = 1;
@@ -59,32 +60,29 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
 
         // Get access to the camera
         mCameraDevice = new CameraDevice();
-        if (!mCameraDevice.acquireCamera()) {
-            Log.e(TAG, getString(R.string.error_camera_unavailable));
-            stopSelf();
-        }
+        if (mCameraDevice.acquireCamera()) {
+            // Dynamically create the overlay layout and surface preview contained within
+            createOverlay();
 
-        // Dynamically create the overlay layout and surface preview contained within
-        createOverlay();
-
-        // Create the holder for the preview, store it in the callback
-        SurfaceHolder localHolder = mOverlayPreview.getHolder();
-        if (localHolder != null) {
-            localHolder.addCallback(this);
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-                localHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+            // Create the holder for the preview, store it in the callback
+            SurfaceHolder localHolder = mOverlayPreview.getHolder();
+            if (localHolder != null) {
+                localHolder.addCallback(this);
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+                    localHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+                }
+            } else {
+                Log.e(TAG, "ERROR: unable to get SurfaceHolder");
+                die(getString(R.string.error_camera_unavailable));
             }
-        } else {
-            Log.e(TAG, "ERROR: unable to get SurfaceHolder");
-            stopSelf();
-        }
 
-        // Initializations
-        mSurfaceCreated = false;
-        mPersist = false;
-        mIsRunning = true;
-        mIsTorchOn = false;
-        mAutoOn = false;
+            // Initializations
+            mSurfaceCreated = false;
+            mPersist = false;
+            mIsRunning = true;
+            mIsTorchOn = false;
+            mAutoOn = false;
+        } else die(getString(R.string.error_camera_unavailable));
     }
 
     private void goForeground() {
@@ -157,11 +155,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
 
                 // Check for persistence user setting, enter foreground mode if present
                 if (mPersist) goForeground();
-            }
-            else {
-                Log.e(TAG, "ERROR: tried to call startTorch but mSurfaceCreated = false");
-                stopSelf();
-            }
+            } else die("ERROR: tried to call startTorch but mSurfaceCreated = false");
         } else if (intent.hasExtra("stop_torch")) {
             // Stop the torch
             mCameraDevice.toggleCameraLED(false);
@@ -281,5 +275,17 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
         protected void onPostExecute(Boolean success) {
             if (!success) stopSelf();
         }
+    }
+
+    private void die(String errMsg) {
+        Log.e(TAG, errMsg);
+
+        // send intent back to MainActivity to finish()
+        Intent deathThreat = new Intent(MainActivity.INTERNAL_INTENT);
+        deathThreat.putExtra(DEATH_THREAT, errMsg);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(deathThreat);
+
+        // Stop the service
+        stopSelf();
     }
 }

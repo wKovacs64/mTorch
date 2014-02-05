@@ -26,6 +26,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public final static String INTERNAL_INTENT = MainActivity.class.getPackage().getName() +
             "INTERNAL_INTENT";
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String DEATH_THREAT = "die";
     private static final String SETTINGS_AUTO_ON_KEY = "auto_on";
     private static final String SETTINGS_PERSISTENCE_KEY = "persistence";
     private boolean mTorchEnabled;
@@ -91,6 +92,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     if (ks.contains(SETTINGS_AUTO_ON_KEY)) {
                         Log.d(TAG, "DEBUG: intent included Auto On extra, toggling torch...");
                         toggleTorch();
+                    } else if (ks.contains(DEATH_THREAT)) {
+                        Log.d(TAG, "DEBUG: received death threat from service... shutting down!");
+                        Toast.makeText(mContext, intent.getStringExtra(DEATH_THREAT),
+                                Toast.LENGTH_LONG).show();
+                        finish();
                     }
                 }
             }
