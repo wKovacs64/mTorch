@@ -6,12 +6,12 @@
         android:defaultValue="false"
         android:key="auto_on"
         android:summary="@string/settings_auto_on_summary"
-        android:title="@string/settings_auto_on" />
+        android:title="@string/settings_auto_on_title" />
 
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="persistence"
         android:summary="@string/settings_persistence_summary"
-        android:title="@string/settings_persistence" />
+        android:title="@string/settings_persistence_title" />
 
 </PreferenceScreen>
