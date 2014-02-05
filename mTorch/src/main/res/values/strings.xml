@@ -10,9 +10,7 @@
     <string name="about_homepage_text">Homepage:</string>
     <string name="about_version_text">Version:</string>
     <string name="app_name" translatable="false">mTorch</string>
-    <string name="debug_flash_found">DEBUG: flash capability detected!</string>
     <string name="error_camera_unavailable">ERROR: unable to acquire camera</string>
-    <string name="error_holder_failed">ERROR: unable to get SurfaceHolder</string>
     <string name="error_no_flash">ERROR: no flash detected</string>
     <string name="menu_about">About</string>
     <string name="menu_settings">Settings</string>

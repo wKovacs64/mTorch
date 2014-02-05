@@ -63,7 +63,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             finish();
             return;
         }
-        Log.d(TAG, getString(R.string.debug_flash_found));
+        Log.d(TAG, "DEBUG: flash capability detected!");
 
         // Set up the clickable toggle image
         mImageButton = (ImageButton) findViewById(R.id.torch_image_button);

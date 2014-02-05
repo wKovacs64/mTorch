@@ -73,7 +73,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
                 localHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
             }
         } else {
-            Log.e(TAG, getString(R.string.error_holder_failed));
+            Log.e(TAG, "ERROR: unable to get SurfaceHolder");
             stopSelf();
         }
 
