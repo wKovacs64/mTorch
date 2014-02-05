@@ -184,8 +184,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         // Use the service to start/stop the torch (start = on, stop = off)
         Intent toggleIntent = new Intent(mContext, mTorchService.class);
-        if (mTorchEnabled) toggleIntent.putExtra(getString(R.string.stop_torch), true);
-        else toggleIntent.putExtra(getString(R.string.start_torch), true);
+        if (mTorchEnabled) toggleIntent.putExtra("stop_torch", true);
+        else toggleIntent.putExtra("start_torch", true);
         mContext.startService(toggleIntent);
 
         mTorchEnabled = !mTorchEnabled;

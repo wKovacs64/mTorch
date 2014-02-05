@@ -145,7 +145,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
         }
 
         // Check if this is really a call to start the torch or just the service starting up
-        if (intent.hasExtra(getString(R.string.start_torch))) {
+        if (intent.hasExtra("start_torch")) {
 
             // Do we have the surface? We should, unless the user was impossibly quick to press the
             // toggle and the surfaceCreated callback wasn't reached yet.
@@ -160,7 +160,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
                 Log.e(TAG, "ERROR: tried to call startTorch but mSurfaceCreated = false");
                 stopSelf();
             }
-        } else if (intent.hasExtra(getString(R.string.stop_torch))) {
+        } else if (intent.hasExtra("stop_torch")) {
             // Stop the torch
             mCameraDevice.toggleCameraLED(false);
             mIsTorchOn = mCameraDevice.isFlashlightOn();
