@@ -4,13 +4,13 @@
 
     <CheckBoxPreference
         android:defaultValue="false"
-        android:key="@string/settings_auto_on_key"
+        android:key="auto_on"
         android:summary="@string/settings_auto_on_summary"
         android:title="@string/settings_auto_on" />
 
     <CheckBoxPreference
         android:defaultValue="false"
-        android:key="@string/settings_persistence_key"
+        android:key="persistence"
         android:summary="@string/settings_persistence_summary"
         android:title="@string/settings_persistence" />
 

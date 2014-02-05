@@ -26,6 +26,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public final static String INTERNAL_INTENT = MainActivity.class.getPackage().getName() +
             "INTERNAL_INTENT";
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String SETTINGS_AUTO_ON_KEY = "auto_on";
+    private static final String SETTINGS_PERSISTENCE_KEY = "persistence";
     private boolean mTorchEnabled;
     private AboutDialog mAboutDialog;
     private Context mContext;
@@ -43,8 +45,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         // Read preferences
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        mAutoOn = prefs.getBoolean(getString(R.string.settings_auto_on_key), false);
-        mPersist = prefs.getBoolean(getString(R.string.settings_persistence_key), false);
+        mAutoOn = prefs.getBoolean(SETTINGS_AUTO_ON_KEY, false);
+        mPersist = prefs.getBoolean(SETTINGS_PERSISTENCE_KEY, false);
 
         // Assume flash off on launch (certainly true the first time)
         mTorchEnabled = false;
@@ -86,7 +88,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 if (extras != null) {
                     Set<String> ks = extras.keySet();
 
-                    if (ks.contains(getString(R.string.settings_auto_on_key))) {
+                    if (ks.contains(SETTINGS_AUTO_ON_KEY)) {
                         Log.d(TAG, "DEBUG: intent included Auto On extra, toggling torch...");
                         toggleTorch();
                     }
@@ -110,8 +112,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         prefs.registerOnSharedPreferenceChangeListener(this);
 
         // Pass the service our preferences as extras on the startup intent
-        startItUp.putExtra(getString(R.string.settings_auto_on_key), mAutoOn);
-        startItUp.putExtra(getString(R.string.settings_persistence_key), mPersist);
+        startItUp.putExtra(SETTINGS_AUTO_ON_KEY, mAutoOn);
+        startItUp.putExtra(SETTINGS_PERSISTENCE_KEY, mPersist);
 
         // Start the service that will handle the camera
         mContext.startService(startItUp);
@@ -207,10 +209,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         Intent settingsChangedIntent = new Intent(mContext, mTorchService.class);
 
         // Settings have changed, observe the new value
-        if (key.equals(getString(R.string.settings_auto_on_key))) {
+        if (key.equals(SETTINGS_AUTO_ON_KEY)) {
             mAutoOn = prefs.getBoolean(key, false);
             settingsChangedIntent.putExtra(key, mAutoOn);
-        } else if (key.equals(getString(R.string.settings_persistence_key))) {
+        } else if (key.equals(SETTINGS_PERSISTENCE_KEY)) {
             mPersist = prefs.getBoolean(key, false);
             settingsChangedIntent.putExtra(key, mPersist);
         }

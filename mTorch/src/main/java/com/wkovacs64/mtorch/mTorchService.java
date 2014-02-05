@@ -23,6 +23,8 @@ import com.swijaya.galaxytorch.CameraDevice;
 public class mTorchService extends Service implements SurfaceHolder.Callback {
 
     private static final String TAG = mTorchService.class.getSimpleName();
+    private static final String SETTINGS_AUTO_ON_KEY = "auto_on";
+    private static final String SETTINGS_PERSISTENCE_KEY = "persistence";
     private static final int ONGOING_NOTIFICATION_ID = 1;
     private static boolean mIsRunning;
     private static boolean mPersist;
@@ -128,13 +130,13 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
         Log.d(TAG, "********** onStartCommand **********");
 
         // Check for 'auto on' user setting
-        if (intent.hasExtra(getString(R.string.settings_auto_on_key))) {
-            mAutoOn = intent.getBooleanExtra(getString(R.string.settings_auto_on_key), false);
+        if (intent.hasExtra(SETTINGS_AUTO_ON_KEY)) {
+            mAutoOn = intent.getBooleanExtra(SETTINGS_AUTO_ON_KEY, false);
         }
 
         // Check for persistence user setting
-        if (intent.hasExtra(getString(R.string.settings_persistence_key))) {
-            mPersist = intent.getBooleanExtra(getString(R.string.settings_persistence_key), false);
+        if (intent.hasExtra(SETTINGS_PERSISTENCE_KEY)) {
+            mPersist = intent.getBooleanExtra(SETTINGS_PERSISTENCE_KEY, false);
 
             // If the user enables persistence while the torch is already lit, goForeground
             // If the user disables persistence while the torch is already lit, stopForeground
@@ -235,7 +237,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
 
             // send intent back to MainActivity to call toggleTorch();
             Intent toggleIntent = new Intent(MainActivity.INTERNAL_INTENT);
-            toggleIntent.putExtra(getString(R.string.settings_auto_on_key), true);
+            toggleIntent.putExtra(SETTINGS_AUTO_ON_KEY, true);
             LocalBroadcastManager.getInstance(this).sendBroadcast(toggleIntent);
         }
     }
