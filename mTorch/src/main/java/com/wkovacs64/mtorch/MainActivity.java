@@ -67,7 +67,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         // Set up the clickable toggle image
         mImageButton = (ImageButton) findViewById(R.id.torch_image_button);
-        if (mImageButton == null) Log.e(TAG, "mImageButton was NULL");
+        if (mImageButton == null) Log.e(TAG, "ERROR: mImageButton was NULL");
         else {
             mImageButton.setImageResource(R.drawable.torch_off);
             mImageButton.setOnClickListener(this);
@@ -81,13 +81,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         mBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Log.d(TAG, "Broadcast received...");
+                Log.d(TAG, "DEBUG: broadcast received...");
                 Bundle extras = intent.getExtras();
                 if (extras != null) {
                     Set<String> ks = extras.keySet();
 
                     if (ks.contains(getString(R.string.settings_auto_on_key))) {
-                        Log.d(TAG, "Intent included Auto On extra, toggling torch...");
+                        Log.d(TAG, "DEBUG: intent included Auto On extra, toggling torch...");
                         toggleTorch();
                     }
                 }
@@ -179,7 +179,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     private void toggleTorch() {
-        Log.d(TAG, "toggleTorch | mTorchEnabled was " + mTorchEnabled + " when image was " +
+        Log.d(TAG, "DEBUG: toggleTorch | mTorchEnabled was " + mTorchEnabled + " when image was " +
                 "pressed; changing to " + !mTorchEnabled);
 
         // Use the service to start/stop the torch (start = on, stop = off)
@@ -193,8 +193,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     private void updateImageButton() {
-        Log.d(TAG, "updateImageButton | mTorchEnabled = " + mTorchEnabled + "; setting image " +
-                "accordingly");
+        Log.d(TAG, "DEBUG: updateImageButton | mTorchEnabled = " + mTorchEnabled + "; setting " +
+                "image accordingly");
 
         if (mTorchEnabled) mImageButton.setImageResource(R.drawable.torch_on);
         else mImageButton.setImageResource(R.drawable.torch_off);
@@ -202,7 +202,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-        Log.d(TAG, "SharedPreferences: " + key + " has changed");
+        Log.d(TAG, "DEBUG: SharedPreferences: " + key + " has changed");
 
         Intent settingsChangedIntent = new Intent(mContext, mTorchService.class);
 

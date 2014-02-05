@@ -171,7 +171,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
     }
 
     private void startTorch() {
-        Log.d(TAG, "startTorch | mCameraDevice.isFlashlightOn() was " +
+        Log.d(TAG, "DEBUG: startTorch | mCameraDevice.isFlashlightOn() was " +
                 mCameraDevice.isFlashlightOn() + " when image was pressed");
 
         // Assuming we have a valid CameraDevice, fire it up
@@ -194,7 +194,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
 
         // Shut the torch off if it was on when we got shut down
         if (mCameraDevice != null && mCameraDevice.isFlashlightOn()) {
-            Log.w(TAG, "Torch still on, better shut it off");
+            Log.w(TAG, "WARN: torch still on, better shut it off");
             if (!mCameraDevice.toggleCameraLED(false)) {
                 Log.e(TAG, "ERROR: could not toggle torch");
             }
@@ -231,7 +231,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
         // If the Auto On feature is enabled, broadcast an intent back to MainActivity to toggle
         // the torch and update the UI accordingly
         if (mAutoOn) {
-            Log.d(TAG, "Broadcasting toggleIntent...");
+            Log.d(TAG, "DEBUG: broadcasting toggleIntent...");
 
             // send intent back to MainActivity to call toggleTorch();
             Intent toggleIntent = new Intent(MainActivity.INTERNAL_INTENT);
@@ -264,7 +264,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
         @Override
         protected Boolean doInBackground(Object... params) {
             if (params == null || params.length != 2) {
-                Log.wtf(TAG, "ERROR: this task requires a CameraDevice and a SurfaceHolder");
+                Log.wtf(TAG, "WTF: this task requires a CameraDevice and a SurfaceHolder");
                 return false;
             }
 
