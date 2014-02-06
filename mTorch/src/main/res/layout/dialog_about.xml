@@ -87,7 +87,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/about_divider02"
-                android:text="@string/about_disclaimer" />
+                android:text="@string/about_disclaimer"
+                android:textSize="@dimen/about_disclaimer_text_size" />
 
         </RelativeLayout>
 
