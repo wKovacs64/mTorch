@@ -2,6 +2,9 @@
 
 <resources>
 
+    <string name="app_name" translatable="false">mTorch</string>
+
+    <!-- About dialog -->
     <string name="about_author_name" translatable="false">Justin R. Hall</string>
     <string name="about_author_text">Author:</string>
     <string name="about_description">\u0020is a minimalistic torch/flashlight app for Android. It is objectively and measurably superior to every other app ever created for any platform in the history of computing. Period. It is technologically impossible for a better app to exist, and that\'s a proven fact. It\'s science. The previous statements are entirely false, except for the first sentence.</string>
@@ -9,17 +12,24 @@
     <string name="about_homepage_link" translatable="false">mtorch.wkovacs64.com</string>
     <string name="about_homepage_text">Homepage:</string>
     <string name="about_version_text">Version:</string>
-    <string name="app_name" translatable="false">mTorch</string>
+
+    <!-- User-visible error messages -->
     <string name="error_camera_unavailable">ERROR: unable to acquire camera</string>
     <string name="error_no_flash">ERROR: no flash detected</string>
+
+    <!-- Menu options -->
     <string name="menu_about">About</string>
     <string name="menu_settings">Settings</string>
+
+    <!-- Miscellaneous -->
     <string name="notification_text">Press to return to app</string>
+    <string name="touch_me">Touch me!</string>
+    <string name="unknown">Unknown</string>
+
+    <!-- Settings -->
     <string name="settings_auto_on_title">Auto On</string>
     <string name="settings_auto_on_summary">Automatically enable the torch on launch</string>
     <string name="settings_persistence_title">Persistence</string>
     <string name="settings_persistence_summary">Keep the torch on after leaving the app</string>
-    <string name="touch_me">Touch me!</string>
-    <string name="unknown">Unknown</string>
 
 </resources>
