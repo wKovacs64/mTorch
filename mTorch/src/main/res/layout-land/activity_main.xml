@@ -19,7 +19,7 @@
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:background="@android:color/transparent"
-        android:contentDescription="@string/touch_me"
+        android:contentDescription="@string/torch_toggle"
         android:scaleType="fitCenter"
         android:src="@drawable/torch_off" />
 

@@ -23,7 +23,7 @@
 
     <!-- Miscellaneous -->
     <string name="notification_text">Press to return to app</string>
-    <string name="touch_me">Touch me!</string>
+    <string name="torch_toggle">Torch toggle</string>
     <string name="unknown">Unknown</string>
 
     <!-- Settings -->
