@@ -18,7 +18,6 @@ android {
             runProguard true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
                     'proguard-rules.txt'
-            signingConfig signingConfigs.release
         }
     }
 }
@@ -34,6 +33,7 @@ if (hasProperty('storeFile')) {
     android.signingConfigs.release.storePassword = storePassword
     android.signingConfigs.release.keyAlias = keyAlias
     android.signingConfigs.release.keyPassword = keyPassword
+    android.buildTypes.release.signingConfig = android.signingConfigs.release
 } else {
     android.buildTypes.release.signingConfig = null
 }
