@@ -1,5 +1,6 @@
 package com.wkovacs64.mtorch;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -101,6 +102,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
         startForeground(ONGOING_NOTIFICATION_ID, notification);
     }
 
+    @SuppressLint("InflateParams")
     private void createOverlay() {
         Log.d(TAG, "********** createOverlay **********");
 
