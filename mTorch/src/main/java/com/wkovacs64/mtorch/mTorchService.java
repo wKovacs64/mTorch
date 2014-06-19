@@ -97,7 +97,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(getString(R.string.notification_text)).setContentIntent(pIntent)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setSmallIcon(R.drawable.ic_launcher).build();
+                .setSmallIcon(R.drawable.ic_stat_notify).build();
 
         startForeground(ONGOING_NOTIFICATION_ID, notification);
     }
