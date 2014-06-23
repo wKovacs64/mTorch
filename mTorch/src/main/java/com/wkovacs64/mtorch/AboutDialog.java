@@ -30,7 +30,7 @@ public class AboutDialog extends Dialog {
 
         // Insert application name in front of existing description text
         mAboutDesc = (TextView) findViewById(R.id.about_description);
-        mAboutDesc.setText(mContext.getString(R.string.app_name) + mAboutDesc.getText());
+        mAboutDesc.setText(mContext.getString(R.string.app_name) + " " + mAboutDesc.getText());
 
         // Find version number
         try {
