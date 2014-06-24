@@ -33,7 +33,7 @@ This project was created in [Android Studio](http://developer.android.com/sdk/in
 * That's it! You should now have an installable APK in the `<project_root>/mTorch/build/apk` directory.
 
 ## Contributing
-You can use the Import Project feature in Android Studio and point at the project root directory to start hacking on this app. Feel free to send me pull requests with fixes or improvements. I also welcome localization efforts if you would like to [translate](http://mtorch.wkovacs64.com/translate) some strings.
+You can use the Import Project feature in Android Studio and point at the project root directory to start hacking on this app. Feel free to send me pull requests with fixes or improvements. I also welcome localization efforts if you would like to [translate](https://crowdin.net/project/mtorch) some strings.
 
 ## Developed By
 Designed and developed by Justin R. Hall. Special thanks to [Santoso Wijaya](https://github.com/santa4nt), see the [CONTRIBUTORS](../master/CONTRIBUTORS) file for further details.
