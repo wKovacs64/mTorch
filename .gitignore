@@ -14,6 +14,9 @@
 # Custom script for building signed release
 release
 
+# Crowdin.net translation platform
+crowdin.yaml
+
 # Eclipse/other project files
 *.pydevproject
 .project
