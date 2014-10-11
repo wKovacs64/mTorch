@@ -30,7 +30,7 @@ This project was created in [Android Studio](http://developer.android.com/sdk/in
 
 #### Build It:
 * After you have the system requirements installed and configured and you've cloned a copy of the git repository, simple leverage the Gradle wrapper to build: `gradlew build`
-* That's it! You should now have an installable APK in the `<project_root>/mTorch/build/apk` directory.
+* That's it! You should now have an installable APK in the `<project_root>/mTorch/build/outputs/apk` directory.
 
 ## Contributing
 You can use the Import Project feature in Android Studio and point at the project root directory to start hacking on this app. Feel free to send me pull requests with fixes or improvements. I also welcome localization efforts if you would like to [translate](https://crowdin.com/project/mtorch) some strings.
