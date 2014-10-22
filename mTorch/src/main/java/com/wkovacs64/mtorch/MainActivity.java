@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,12 +38,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private SharedPreferences prefs;
     private boolean mAutoOn;
     private boolean mPersist;
+    private Toolbar mActionBarToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "********** onCreate **********");
         setContentView(R.layout.activity_main);
+
+        // Get the ActionBar/Toolbar widget
+        mActionBarToolbar = getActionBarToolbar();
 
         // Read preferences
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -225,5 +230,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         // Notify the service
         mContext.startService(settingsChangedIntent);
+    }
+
+    protected Toolbar getActionBarToolbar() {
+        if (mActionBarToolbar == null) {
+            mActionBarToolbar = (Toolbar) findViewById(R.id.actionbar_toolbar);
+            if (mActionBarToolbar != null) {
+                setSupportActionBar(mActionBarToolbar);
+            }
+        }
+
+        return mActionBarToolbar;
     }
 }

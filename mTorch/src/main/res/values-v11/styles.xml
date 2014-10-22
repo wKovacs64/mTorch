@@ -3,8 +3,6 @@
 <resources>
 
     <!-- Settings Dialog Theme -->
-    <style name="SettingsTheme" parent="android:Theme.Holo.Dialog">
-        <!-- Customize your theme here. -->
-    </style>
+    <style name="SettingsTheme" parent="android:Theme.Holo.Dialog" />
 
 </resources>
