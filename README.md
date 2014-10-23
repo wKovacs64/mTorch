@@ -22,7 +22,7 @@ This project was created in [Android Studio](http://developer.android.com/sdk/in
             * Android SDK Tools
             * Android SDK Platform-tools
             * Android SDK Build-tools
-        * Android 4.4.2 (API19):
+        * Android 5.0 (API 21):
             * SDK Platform
         * Extras:
             * Android Support Repository
