@@ -184,6 +184,10 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
         Log.d(TAG, "********** onDestroy **********");
         super.onDestroy();
 
+        // Set torch to off first, in the off case the activity/service is 
+        // restarted too quickly.
+        mIsTorchOn = false;
+        
         mIsRunning = false;
 
         // If this service was told to stop for some reason and persistence was enabled,
