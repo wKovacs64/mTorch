@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <!-- Settings Dialog Theme -->
+    <style name="SettingsTheme" parent="Theme.AppCompat.Dialog" />
+
+</resources>
