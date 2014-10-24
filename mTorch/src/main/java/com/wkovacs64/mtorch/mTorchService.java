@@ -28,7 +28,6 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
     private static final String SETTINGS_AUTO_ON_KEY = "auto_on";
     private static final String SETTINGS_PERSISTENCE_KEY = "persistence";
     private static final int ONGOING_NOTIFICATION_ID = 1;
-    private static boolean mIsRunning;
     private static boolean mPersist;
     private static boolean mSurfaceCreated;
     private static boolean mIsTorchOn;
@@ -44,10 +43,6 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
     public IBinder onBind(Intent intent) {
         // This is a "Started" service (not a "Bound" service)
         return null;
-    }
-
-    public static boolean isRunning() {
-        return mIsRunning;
     }
 
     public static boolean isTorchOn() {
@@ -80,7 +75,6 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
             // Initializations
             mSurfaceCreated = false;
             mPersist = false;
-            mIsRunning = true;
             mIsTorchOn = false;
             mAutoOn = false;
         } else die(getString(R.string.error_camera_unavailable));
@@ -184,11 +178,9 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
         Log.d(TAG, "********** onDestroy **********");
         super.onDestroy();
 
-        // Set torch to off first, in the off case the activity/service is 
-        // restarted too quickly.
+        // Set torch to off, in case the activity/service is restarted too quickly before the
+        // SurfaceHolder has been destroyed
         mIsTorchOn = false;
-        
-        mIsRunning = false;
 
         // If this service was told to stop for some reason and persistence was enabled,
         // stop running in foreground mode

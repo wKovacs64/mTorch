@@ -30,14 +30,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private static final String DEATH_THREAT = "die";
     private static final String SETTINGS_AUTO_ON_KEY = "auto_on";
     private static final String SETTINGS_PERSISTENCE_KEY = "persistence";
+    private boolean mAutoOn;
+    private boolean mPersist;
     private boolean mTorchEnabled;
     private AboutDialog mAboutDialog;
     private Context mContext;
     private ImageButton mImageButton;
     private BroadcastReceiver mBroadcastReceiver;
     private SharedPreferences prefs;
-    private boolean mAutoOn;
-    private boolean mPersist;
     private Toolbar mActionBarToolbar;
 
     @Override
