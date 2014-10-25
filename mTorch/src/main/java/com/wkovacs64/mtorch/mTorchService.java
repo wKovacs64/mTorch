@@ -88,6 +88,8 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
         Intent launchActivity = new Intent(this, MainActivity.class);
         PendingIntent pIntent = PendingIntent.getActivity(this, 0, launchActivity, 0);
         Notification notification = new NotificationCompat.Builder(this)
+                .setCategory(NotificationCompat.CATEGORY_SERVICE)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(getString(R.string.notification_text)).setContentIntent(pIntent)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
