@@ -32,6 +32,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
     private static boolean mSurfaceCreated;
     private static boolean mIsTorchOn;
     private static boolean mAutoOn;
+    private AsyncTask<Object, Void, Boolean> mStartPreviewTask;
     private CameraDevice mCameraDevice;
     private SurfaceView mOverlayPreview;
     private FrameLayout mOverlayLayout;
@@ -180,6 +181,12 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
         Log.d(TAG, "********** onDestroy **********");
         super.onDestroy();
 
+        // Cancel any currently running CameraDeviceStartPreview tasks (should never happen anyway)
+        if (mStartPreviewTask != null) {
+            Log.wtf(TAG, "Canceling mStartPreviewTask...");
+            mStartPreviewTask.cancel(true);
+        }
+
         // Set torch to off, in case the activity/service is restarted too quickly before the
         // SurfaceHolder has been destroyed
         mIsTorchOn = false;
@@ -221,7 +228,8 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
         }
 
         // Start the preview
-        new CameraDeviceStartPreview().execute(mCameraDevice, holder);
+        mStartPreviewTask = new CameraDeviceStartPreview();
+        mStartPreviewTask.execute(mCameraDevice, holder);
         mSurfaceCreated = true;
 
         // If the Auto On feature is enabled, broadcast an intent back to MainActivity to toggle
@@ -273,6 +281,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
 
         @Override
         protected void onPostExecute(Boolean success) {
+            mStartPreviewTask = null;
             if (!success) stopSelf();
         }
     }
