@@ -1,4 +1,4 @@
-# [mTorch](http://mtorch.wkovacs64.com)
+# [mTorch](https://wkovacs64.github.io/mTorch/)
 
 mTorch is a minimalistic torch/flashlight app for Android. It is objectively and measurably superior to every other app ever created for any platform in the history of computing. Period. It is technologically impossible for a better app to exist, and that's a proven fact. It's science. The previous statements are entirely false, except for the first sentence.
 
