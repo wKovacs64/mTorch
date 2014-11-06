@@ -5,14 +5,16 @@
 
     <CheckBoxPreference
         android:defaultValue="false"
-        android:key="auto_on"
-        android:summary="@string/settings_auto_on_summary"
+        android:key="@string/settings_auto_on_key"
+        android:summaryOn="@string/settings_auto_on_summary_on"
+        android:summaryOff="@string/settings_auto_on_summary_off"
         android:title="@string/settings_auto_on_title" />
 
     <CheckBoxPreference
         android:defaultValue="false"
-        android:key="persistence"
-        android:summary="@string/settings_persistence_summary"
+        android:key="@string/settings_persistence_key"
+        android:summaryOn="@string/settings_persistence_summary_on"
+        android:summaryOff="@string/settings_persistence_summary_off"
         android:title="@string/settings_persistence_title" />
 
 </PreferenceScreen>
