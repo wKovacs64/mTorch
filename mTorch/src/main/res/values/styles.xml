@@ -16,10 +16,15 @@
         <item name="colorAccent">@color/accent</item>
     </style>
 
-    <!-- ActionBar/Toolbar Title -->
-    <style name="ActionBar.TitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+    <!-- App Bar -->
+    <style name="AppBar">
+        <item name="android:background">@color/primary</item>
+    </style>
+
+    <!-- App Bar Text -->
+    <style name="AppBar.TitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:textColor">@color/primary_text</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">@dimen/app_bar_text_size</item>
     </style>
 
     <!-- Settings Dialog Theme -->

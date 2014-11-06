@@ -38,7 +38,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private ImageButton mImageButton;
     private BroadcastReceiver mBroadcastReceiver;
     private SharedPreferences prefs;
-    private Toolbar mActionBarToolbar;
+    private Toolbar mAppBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +46,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         Log.d(TAG, "********** onCreate **********");
         setContentView(R.layout.activity_main);
 
-        // Get the ActionBar/Toolbar widget
-        mActionBarToolbar = getActionBarToolbar();
+        // Get the ActionBar/Toolbar widget (App Bar)
+        mAppBar = getAppBar();
 
         // Read preferences
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -232,14 +232,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         mContext.startService(settingsChangedIntent);
     }
 
-    protected Toolbar getActionBarToolbar() {
-        if (mActionBarToolbar == null) {
-            mActionBarToolbar = (Toolbar) findViewById(R.id.actionbar_toolbar);
-            if (mActionBarToolbar != null) {
-                setSupportActionBar(mActionBarToolbar);
+    protected Toolbar getAppBar() {
+        if (mAppBar == null) {
+            mAppBar = (Toolbar) findViewById(R.id.app_bar);
+            if (mAppBar != null) {
+                setSupportActionBar(mAppBar);
             }
         }
 
-        return mActionBarToolbar;
+        return mAppBar;
     }
 }
