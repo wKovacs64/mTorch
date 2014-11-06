@@ -9,8 +9,6 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,7 +19,7 @@ import android.widget.Toast;
 
 import java.util.Set;
 
-public class MainActivity extends ActionBarActivity implements View.OnClickListener,
+public class MainActivity extends BaseActivity implements View.OnClickListener,
         SharedPreferences.OnSharedPreferenceChangeListener {
 
     public final static String INTERNAL_INTENT = MainActivity.class.getPackage().getName() +
@@ -38,16 +36,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private ImageButton mImageButton;
     private BroadcastReceiver mBroadcastReceiver;
     private SharedPreferences prefs;
-    private Toolbar mAppBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "********** onCreate **********");
         setContentView(R.layout.activity_main);
-
-        // Get the ActionBar/Toolbar widget (App Bar)
-        mAppBar = getAppBar();
 
         // Read preferences
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -230,16 +224,5 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         // Notify the service
         mContext.startService(settingsChangedIntent);
-    }
-
-    protected Toolbar getAppBar() {
-        if (mAppBar == null) {
-            mAppBar = (Toolbar) findViewById(R.id.app_bar);
-            if (mAppBar != null) {
-                setSupportActionBar(mAppBar);
-            }
-        }
-
-        return mAppBar;
     }
 }
