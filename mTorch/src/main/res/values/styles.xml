@@ -14,6 +14,10 @@
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <!-- colorAccent is used as the default value for colorControlActivated which is used to tint widgets -->
         <item name="colorAccent">@color/accent</item>
+
+        <!-- Text Colors -->
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
     </style>
 
     <!-- App Bar -->
@@ -23,6 +27,17 @@
 
     <!-- App Bar Text -->
     <style name="AppBar.TitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title" />
+
+    <!-- About Dialog: TextView Widgets -->
+    <style name="AboutDialog.Description" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/text_secondary</item>
+    </style>
+    <style name="AboutDialog.Disclaimer" parent="TextAppearance.AppCompat.Caption" />
+
+    <!-- About Dialog: Link(s) -->
+    <style name="AboutDialog.Link" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:textColorLink">@color/accent</item>
+    </style>
 
     <!-- Settings Dialog Theme -->
     <style name="SettingsTheme" parent="android:Theme.Dialog" />

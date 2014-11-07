@@ -2,13 +2,15 @@
 
 <resources>
 
-    <!-- Transparent -->
-    <color name="primary">@android:color/transparent</color>
-    <!-- Transparent -->
-    <color name="primary_dark">@android:color/transparent</color>
-    <!-- Teal 200 -->
-    <color name="accent">#80cbc4</color>
+    <!-- Black -->
+    <color name="primary">@android:color/black</color>
+    <!-- Black -->
+    <color name="primary_dark">@android:color/black</color>
+    <!-- Blue A100 -->
+    <color name="accent">#82b1ff</color>
     <!-- White -->
-    <color name="primary_text">@android:color/white</color>
+    <color name="text_primary">@android:color/white</color>
+    <!-- White, 87% Opacity -->
+    <color name="text_secondary">#DEFFFFFF</color>
 
 </resources>

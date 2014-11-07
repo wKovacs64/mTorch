@@ -27,6 +27,7 @@
                 android:id="@+id/about_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                style="@style/AboutDialog.Description"
                 android:text="@string/about_description" />
 
             <View
@@ -43,6 +44,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/about_divider01"
+                style="@style/AboutDialog.Description"
                 android:text="@string/about_version_text" />
 
             <TextView
@@ -51,13 +53,15 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:layout_below="@id/about_divider01" />
+                android:layout_below="@id/about_divider01"
+                style="@style/AboutDialog.Description" />
 
             <TextView
                 android:id="@+id/about_homepage_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/about_version_text"
+                style="@style/AboutDialog.Description"
                 android:text="@string/about_homepage_text" />
 
             <TextView
@@ -67,9 +71,11 @@
                 android:layout_alignParentEnd="true"
                 android:layout_below="@id/about_version_text"
                 android:autoLink="web"
+                style="@style/AboutDialog.Link"
                 android:text="@string/about_homepage_link" />
 
             <TextView
+                style="@style/AboutDialog.Description"
                 android:id="@+id/about_author_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -83,6 +89,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_below="@id/about_homepage_text"
                 android:autoLink="web"
+                style="@style/AboutDialog.Description"
                 android:text="@string/about_author_name" />
 
             <View
@@ -100,7 +107,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/about_divider02"
                 android:text="@string/about_disclaimer"
-                android:textSize="@dimen/about_disclaimer_text_size" />
+                style="@style/AboutDialog.Disclaimer" />
 
         </RelativeLayout>
 
