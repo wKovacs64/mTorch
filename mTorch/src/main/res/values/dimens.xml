@@ -10,6 +10,5 @@
     <dimen name="surface_view_size">1dp</dimen>
     <dimen name="divider_height">2dp</dimen>
     <dimen name="divider_vertical_margin">10dp</dimen>
-    <dimen name="app_bar_text_size">20sp</dimen>
 
 </resources>

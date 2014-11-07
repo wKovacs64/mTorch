@@ -22,10 +22,7 @@
     </style>
 
     <!-- App Bar Text -->
-    <style name="AppBar.TitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
-        <item name="android:textColor">@color/primary_text</item>
-        <item name="android:textSize">@dimen/app_bar_text_size</item>
-    </style>
+    <style name="AppBar.TitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title" />
 
     <!-- Settings Dialog Theme -->
     <style name="SettingsTheme" parent="android:Theme.Dialog" />
