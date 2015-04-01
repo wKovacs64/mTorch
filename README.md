@@ -21,8 +21,8 @@ This project was created in [Android Studio](http://developer.android.com/sdk/in
         * Tools:
             * Android SDK Tools
             * Android SDK Platform-tools
-            * Android SDK Build-tools
-        * Android 5.0 (API 21):
+            * Android SDK Build-tools (22.0.1)
+        * Android 5.1 (API 22):
             * SDK Platform
         * Extras:
             * Android Support Repository
@@ -33,7 +33,7 @@ This project was created in [Android Studio](http://developer.android.com/sdk/in
 * That's it! You should now have an installable APK in the `<project_root>/mTorch/build/outputs/apk` directory.
 
 ## Contributing
-You can use the Import Project feature in Android Studio and point at the project root directory to start hacking on this app. Feel free to send me pull requests with fixes or improvements. I also welcome localization efforts if you would like to [translate](https://crowdin.com/project/mtorch) some strings.
+You can use the "Open an existing Android Studio project" option in Android Studio and point at the project root directory to start hacking on this app. Feel free to send me pull requests with fixes or improvements. I also welcome localization efforts if you would like to [translate](https://crowdin.com/project/mtorch) some strings.
 
 [![Crowdin](https://d322cqt584bo4o.cloudfront.net/mtorch/localized.png)](https://crowdin.com/project/mtorch)
 
