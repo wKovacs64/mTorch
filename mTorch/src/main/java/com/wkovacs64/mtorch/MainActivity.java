@@ -9,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,18 +18,21 @@ import android.widget.Toast;
 
 import java.util.Set;
 
+import timber.log.Timber;
+
 public class MainActivity extends BaseActivity implements View.OnClickListener,
         SharedPreferences.OnSharedPreferenceChangeListener {
 
-    public final static String INTERNAL_INTENT = MainActivity.class.getPackage().getName() +
+    public static final String INTERNAL_INTENT = MainActivity.class.getPackage().getName() +
             "INTERNAL_INTENT";
-    private static final String TAG = MainActivity.class.getSimpleName();
     private static final String DEATH_THREAT = "die";
     private static final String SETTINGS_AUTO_ON_KEY = "auto_on";
     private static final String SETTINGS_PERSISTENCE_KEY = "persistence";
+
     private boolean mAutoOn;
     private boolean mPersist;
     private boolean mTorchEnabled;
+
     private AboutDialog mAboutDialog;
     private Context mContext;
     private ImageButton mImageButton;
@@ -40,7 +42,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "********** onCreate **********");
+        Timber.d("********** onCreate **********");
         setContentView(R.layout.activity_main);
 
         // Read preferences
@@ -60,16 +62,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         // Check for flash capability
         if (!mContext.getPackageManager().hasSystemFeature(PackageManager
                 .FEATURE_CAMERA_FLASH)) {
-            Log.e(TAG, getString(R.string.error_no_flash));
+            Timber.d(getString(R.string.error_no_flash));
             Toast.makeText(mContext, R.string.error_no_flash, Toast.LENGTH_LONG).show();
             finish();
             return;
         }
-        Log.d(TAG, "DEBUG: flash capability detected!");
+        Timber.d("DEBUG: flash capability detected!");
 
         // Set up the clickable toggle image
         mImageButton = (ImageButton) findViewById(R.id.torch_image_button);
-        if (mImageButton == null) Log.e(TAG, "ERROR: mImageButton was NULL");
+        if (mImageButton == null) Timber.e("ERROR: mImageButton was NULL");
         else {
             mImageButton.setImageResource(R.drawable.torch_off);
             mImageButton.setOnClickListener(this);
@@ -83,16 +85,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         mBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Log.d(TAG, "DEBUG: broadcast received...");
+                Timber.d("DEBUG: broadcast received...");
                 Bundle extras = intent.getExtras();
                 if (extras != null) {
                     Set<String> ks = extras.keySet();
 
                     if (ks.contains(SETTINGS_AUTO_ON_KEY)) {
-                        Log.d(TAG, "DEBUG: intent included Auto On extra, toggling torch...");
+                        Timber.d("DEBUG: intent included Auto On extra, toggling torch...");
                         toggleTorch();
                     } else if (ks.contains(DEATH_THREAT)) {
-                        Log.d(TAG, "DEBUG: received death threat from service... shutting down!");
+                        Timber.d("DEBUG: received death threat from service... shutting down!");
                         Toast.makeText(mContext, intent.getStringExtra(DEATH_THREAT),
                                 Toast.LENGTH_LONG).show();
                         finish();
@@ -105,7 +107,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d(TAG, "********** onStart **********");
+        Timber.d("********** onStart **********");
 
         Intent startItUp = new Intent(mContext, TorchService.class);
         IntentFilter toggleIntent = new IntentFilter(INTERNAL_INTENT);
@@ -127,7 +129,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "********** onResume **********");
+        Timber.d("********** onResume **********");
 
         mTorchEnabled = TorchService.isTorchOn();
         updateImageButton();
@@ -136,7 +138,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d(TAG, "********** onStop **********");
+        Timber.d("********** onStop **********");
 
         // Stop listening for broadcasts from the service
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver);
@@ -180,13 +182,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void onClick(View v) {
-        Log.d(TAG, "********** onClick **********");
+        Timber.d("********** onClick **********");
 
         toggleTorch();
     }
 
     private void toggleTorch() {
-        Log.d(TAG, "DEBUG: toggleTorch | mTorchEnabled was " + mTorchEnabled + " when image was " +
+        Timber.d("DEBUG: toggleTorch | mTorchEnabled was " + mTorchEnabled + " when image was " +
                 "pressed; changing to " + !mTorchEnabled);
 
         // Use the service to start/stop the torch (start = on, stop = off)
@@ -200,7 +202,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     }
 
     private void updateImageButton() {
-        Log.d(TAG, "DEBUG: updateImageButton | mTorchEnabled = " + mTorchEnabled + "; setting " +
+        Timber.d("DEBUG: updateImageButton | mTorchEnabled = " + mTorchEnabled + "; setting " +
                 "image accordingly");
 
         if (mTorchEnabled) mImageButton.setImageResource(R.drawable.torch_on);
@@ -209,7 +211,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-        Log.d(TAG, "DEBUG: SharedPreferences: " + key + " has changed");
+        Timber.d("DEBUG: SharedPreferences: " + key + " has changed");
 
         Intent settingsChangedIntent = new Intent(mContext, TorchService.class);
 

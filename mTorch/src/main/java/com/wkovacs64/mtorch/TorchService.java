@@ -11,7 +11,6 @@ import android.os.Build;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -21,17 +20,20 @@ import android.widget.FrameLayout;
 
 import com.swijaya.galaxytorch.CameraDevice;
 
+import timber.log.Timber;
+
 public class TorchService extends Service implements SurfaceHolder.Callback {
 
-    private static final String TAG = TorchService.class.getSimpleName();
     private static final String DEATH_THREAT = "die";
     private static final String SETTINGS_AUTO_ON_KEY = "auto_on";
     private static final String SETTINGS_PERSISTENCE_KEY = "persistence";
     private static final int ONGOING_NOTIFICATION_ID = 1;
+
     private static boolean mPersist;
     private static boolean mSurfaceCreated;
     private static boolean mIsTorchOn;
     private static boolean mAutoOn;
+
     private AsyncTask<Object, Void, Boolean> mStartPreviewTask;
     private CameraDevice mCameraDevice;
     private SurfaceView mOverlayPreview;
@@ -52,7 +54,7 @@ public class TorchService extends Service implements SurfaceHolder.Callback {
 
     @Override
     public void onCreate() {
-        Log.d(TAG, "********** onCreate **********");
+        Timber.d("********** onCreate **********");
         super.onCreate();
 
         // Get access to the camera
@@ -70,7 +72,7 @@ public class TorchService extends Service implements SurfaceHolder.Callback {
                     localHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
                 }
             } else {
-                Log.e(TAG, "ERROR: unable to get SurfaceHolder");
+                Timber.e("ERROR: unable to get SurfaceHolder");
                 die(getString(R.string.error_camera_unavailable));
             }
 
@@ -83,7 +85,7 @@ public class TorchService extends Service implements SurfaceHolder.Callback {
     }
 
     private void goForeground() {
-        Log.d(TAG, "********** goForeground **********");
+        Timber.d("********** goForeground **********");
 
         // Enter foreground mode to keep the service running and provide a notification to return
         // to the app
@@ -102,7 +104,7 @@ public class TorchService extends Service implements SurfaceHolder.Callback {
 
     @SuppressLint("InflateParams")
     private void createOverlay() {
-        Log.d(TAG, "********** createOverlay **********");
+        Timber.d("********** createOverlay **********");
 
         // Create an overlay to hold the camera preview and add it to the Window Manager
         if (mOverlayLayout == null) {
@@ -119,13 +121,13 @@ public class TorchService extends Service implements SurfaceHolder.Callback {
             WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
             wm.addView(mOverlayLayout, layoutParams);
         } else {
-            Log.e(TAG, "ERROR: mOverlayLayout already had a value");
+            Timber.e("ERROR: mOverlayLayout already had a value");
         }
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "********** onStartCommand **********");
+        Timber.d("********** onStartCommand **********");
 
         // Check for 'auto on' user setting
         if (intent.hasExtra(SETTINGS_AUTO_ON_KEY)) {
@@ -167,7 +169,7 @@ public class TorchService extends Service implements SurfaceHolder.Callback {
     }
 
     private void startTorch() {
-        Log.d(TAG, "DEBUG: startTorch | mCameraDevice.isFlashlightOn() was " +
+        Timber.d("DEBUG: startTorch | mCameraDevice.isFlashlightOn() was " +
                 mCameraDevice.isFlashlightOn() + " when image was pressed");
 
         // Fire it up
@@ -177,12 +179,12 @@ public class TorchService extends Service implements SurfaceHolder.Callback {
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "********** onDestroy **********");
+        Timber.d("********** onDestroy **********");
         super.onDestroy();
 
         // Cancel any currently running CameraDeviceStartPreview tasks (should never happen anyway)
         if (mStartPreviewTask != null) {
-            Log.wtf(TAG, "Canceling mStartPreviewTask...");
+            Timber.wtf("Canceling mStartPreviewTask...");
             mStartPreviewTask.cancel(true);
         }
 
@@ -196,9 +198,9 @@ public class TorchService extends Service implements SurfaceHolder.Callback {
 
         // Shut the torch off if it was on when we got shut down
         if (mCameraDevice != null && mCameraDevice.isFlashlightOn()) {
-            Log.w(TAG, "WARN: torch still on, better shut it off");
+            Timber.w("WARN: torch still on, better shut it off");
             if (!mCameraDevice.toggleCameraLED(false)) {
-                Log.e(TAG, "ERROR: could not toggle torch");
+                Timber.e("ERROR: could not toggle torch");
             }
         }
 
@@ -219,10 +221,10 @@ public class TorchService extends Service implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        Log.d(TAG, "********** (overlay) surfaceCreated **********");
+        Timber.d("********** (overlay) surfaceCreated **********");
 
         if (mCameraDevice == null) {
-            Log.w(TAG, "WARN: mCameraDevice is null");
+            Timber.w("WARN: mCameraDevice is null");
             return;
         }
 
@@ -234,7 +236,7 @@ public class TorchService extends Service implements SurfaceHolder.Callback {
         // If the Auto On feature is enabled, broadcast an intent back to MainActivity to toggle
         // the torch and update the UI accordingly
         if (mAutoOn) {
-            Log.d(TAG, "DEBUG: broadcasting toggleIntent...");
+            Timber.d("DEBUG: broadcasting toggleIntent...");
 
             // send intent back to MainActivity to call toggleTorch();
             Intent toggleIntent = new Intent(MainActivity.INTERNAL_INTENT);
@@ -245,7 +247,7 @@ public class TorchService extends Service implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        Log.d(TAG, "********** (overlay) surfaceChanged **********");
+        Timber.d("********** (overlay) surfaceChanged **********");
 
         // I don't think there's anything interesting we need to do in this method,
         // but it's required to implement.
@@ -253,7 +255,7 @@ public class TorchService extends Service implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.d(TAG, "********** (overlay) surfaceDestroyed **********");
+        Timber.d("********** (overlay) surfaceDestroyed **********");
 
         // Housekeeping
         mSurfaceCreated = false;
@@ -267,7 +269,7 @@ public class TorchService extends Service implements SurfaceHolder.Callback {
         @Override
         protected Boolean doInBackground(Object... params) {
             if (params == null || params.length != 2) {
-                Log.wtf(TAG, "WTF: this task requires a CameraDevice and a SurfaceHolder");
+                Timber.wtf("WTF: this task requires a CameraDevice and a SurfaceHolder");
                 return false;
             }
 
@@ -286,7 +288,7 @@ public class TorchService extends Service implements SurfaceHolder.Callback {
     }
 
     private void die(String errMsg) {
-        Log.e(TAG, errMsg);
+        Timber.e(errMsg);
 
         // send intent back to MainActivity to finish()
         Intent deathThreat = new Intent(MainActivity.INTERNAL_INTENT);

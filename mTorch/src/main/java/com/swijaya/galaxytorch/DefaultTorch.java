@@ -24,11 +24,10 @@
 package com.swijaya.galaxytorch;
 
 import android.hardware.Camera;
-import android.util.Log;
+
+import timber.log.Timber;
 
 public class DefaultTorch implements CameraDevice.Torch {
-
-    private static final String TAG = DefaultTorch.class.getSimpleName();
 
     /**
      * Generally, the following simple steps should suffice to turn on the
@@ -40,7 +39,7 @@ public class DefaultTorch implements CameraDevice.Torch {
     }
 
     private void setFlashMode(Camera camera, String mode) {
-        Log.v(TAG, "Setting flash mode: " + mode);
+        Timber.v("Setting flash mode: " + mode);
         Camera.Parameters params = camera.getParameters();
         params.setFlashMode(mode);
         camera.setParameters(params);

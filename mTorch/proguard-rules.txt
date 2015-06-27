@@ -1,12 +1,4 @@
 # Add project specific ProGuard rules here.
 
-# Remove debug logs:
--assumenosideeffects class android.util.Log {
-    public static *** v(...);
-    public static *** i(...);
-    public static *** d(...);
-    public static *** w(...);
-    public static *** e(...);
-    public static *** wtf(...);
-}
-
+# Timber (may only be needed for release builds logging to a third party like Crashlytics)
+-keep public class timber.log.**

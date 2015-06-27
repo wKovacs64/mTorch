@@ -23,12 +23,13 @@
 
 package com.swijaya.galaxytorch;
 
+import android.hardware.Camera;
+import android.view.SurfaceHolder;
+
 import java.io.IOException;
 import java.util.List;
 
-import android.hardware.Camera;
-import android.util.Log;
-import android.view.SurfaceHolder;
+import timber.log.Timber;
 
 public class CameraDevice {
 
@@ -37,8 +38,6 @@ public class CameraDevice {
         public boolean toggleTorch(Camera camera, boolean on);
 
     }
-
-    private static final String TAG = CameraDevice.class.getSimpleName();
 
     private Camera mCamera;
     private CameraDevice.Torch mTorch;
@@ -66,13 +65,13 @@ public class CameraDevice {
      * @return whether the method was successful
      */
     public boolean acquireCamera() {
-        Log.v(TAG, "Acquiring camera...");
+        Timber.v("Acquiring camera...");
         assert (mCamera == null);
         try {
             mCamera = Camera.open();
         }
         catch (RuntimeException e) {
-            Log.e(TAG, "Failed to open camera: " + e.getLocalizedMessage());
+            Timber.e("Failed to open camera: " + e.getLocalizedMessage());
         }
 
         return (mCamera != null);
@@ -80,7 +79,7 @@ public class CameraDevice {
 
     public void releaseCamera() {
         if (mCamera != null) {
-            Log.v(TAG, "Releasing camera...");
+            Timber.v("Releasing camera...");
             if (mIsFlashlightOn) {
                 // attempt to cleanly turn off the torch (in case keeping a
                 // "torch" on is a hackery) prior to release
@@ -95,7 +94,7 @@ public class CameraDevice {
 
     public void stopPreview() {
         if (mIsPreviewStarted && mCamera != null) {
-            Log.v(TAG, "Stopping preview...");
+            Timber.v("Stopping preview...");
             mCamera.stopPreview();
             mIsPreviewStarted = false;
         }
@@ -103,7 +102,7 @@ public class CameraDevice {
 
     public void startPreview() {
         if (!mIsPreviewStarted && mCamera != null) {
-            Log.v(TAG, "Starting preview...");
+            Timber.v("Starting preview...");
             mCamera.startPreview();
             mIsPreviewStarted = true;
         }
@@ -122,16 +121,16 @@ public class CameraDevice {
     public void setPreviewDisplay(SurfaceHolder holder) {
         assert (mCamera != null);
         if (mCamera == null) {
-            Log.wtf(TAG, "surfaceCreated called with NULL camera!");
+            Timber.wtf("surfaceCreated called with NULL camera!");
             return;
         }
 
-        Log.v(TAG, "Setting preview display with a surface holder...");
+        Timber.v("Setting preview display with a surface holder...");
         try {
             mCamera.setPreviewDisplay(holder);
         }
         catch (IOException e) {
-            Log.e(TAG, "Error setting camera preview: " + e.getLocalizedMessage());
+            Timber.e("Error setting camera preview: " + e.getLocalizedMessage());
         }
     }
 
@@ -161,7 +160,7 @@ public class CameraDevice {
     public boolean toggleCameraLED(boolean on) {
         assert (mCamera != null);
         if (mCamera == null) {
-            Log.wtf(TAG, "toggling with NULL camera!");
+            Timber.wtf("toggling with NULL camera!");
             return false;
         }
 
@@ -169,7 +168,7 @@ public class CameraDevice {
         if (!supportsTorchMode()) {
             // for now, bail early
             // XXX: there might be workarounds; use specialized ITorch classes in such cases
-            Log.d(TAG, "This device does not support 'torch' mode");
+            Timber.d("This device does not support 'torch' mode");
             return false;
         }
 
@@ -177,7 +176,7 @@ public class CameraDevice {
         mTorch = new DefaultTorch();
 
         boolean success = false;
-        Log.v(TAG, "Turning " + (on ? "on" : "off") + " camera LED...");
+        Timber.v("Turning " + (on ? "on" : "off") + " camera LED...");
         success = mTorch.toggleTorch(mCamera, on);
         if (success) {
             postFlashlightState(on);
