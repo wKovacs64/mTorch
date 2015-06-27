@@ -43,7 +43,7 @@
         </activity>
 
         <service
-            android:name=".mTorchService"
+            android:name=".TorchService"
             android:icon="@drawable/ic_launcher">
         </service>
 

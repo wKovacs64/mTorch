@@ -107,7 +107,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         super.onStart();
         Log.d(TAG, "********** onStart **********");
 
-        Intent startItUp = new Intent(mContext, mTorchService.class);
+        Intent startItUp = new Intent(mContext, TorchService.class);
         IntentFilter toggleIntent = new IntentFilter(INTERNAL_INTENT);
 
         // Listen for intents from the service
@@ -129,7 +129,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         super.onResume();
         Log.d(TAG, "********** onResume **********");
 
-        mTorchEnabled = mTorchService.isTorchOn();
+        mTorchEnabled = TorchService.isTorchOn();
         updateImageButton();
     }
 
@@ -149,7 +149,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
 
         // If no persistence or if the torch is off, stop the service
         if (!mPersist || !mTorchEnabled) {
-            mContext.stopService(new Intent(mContext, mTorchService.class));
+            mContext.stopService(new Intent(mContext, TorchService.class));
         }
     }
 
@@ -190,7 +190,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
                 "pressed; changing to " + !mTorchEnabled);
 
         // Use the service to start/stop the torch (start = on, stop = off)
-        Intent toggleIntent = new Intent(mContext, mTorchService.class);
+        Intent toggleIntent = new Intent(mContext, TorchService.class);
         if (mTorchEnabled) toggleIntent.putExtra("stop_torch", true);
         else toggleIntent.putExtra("start_torch", true);
         mContext.startService(toggleIntent);
@@ -211,7 +211,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
         Log.d(TAG, "DEBUG: SharedPreferences: " + key + " has changed");
 
-        Intent settingsChangedIntent = new Intent(mContext, mTorchService.class);
+        Intent settingsChangedIntent = new Intent(mContext, TorchService.class);
 
         // Settings have changed, observe the new value
         if (key.equals(SETTINGS_AUTO_ON_KEY)) {

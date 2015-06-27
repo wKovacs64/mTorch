@@ -21,9 +21,9 @@ import android.widget.FrameLayout;
 
 import com.swijaya.galaxytorch.CameraDevice;
 
-public class mTorchService extends Service implements SurfaceHolder.Callback {
+public class TorchService extends Service implements SurfaceHolder.Callback {
 
-    private static final String TAG = mTorchService.class.getSimpleName();
+    private static final String TAG = TorchService.class.getSimpleName();
     private static final String DEATH_THREAT = "die";
     private static final String SETTINGS_AUTO_ON_KEY = "auto_on";
     private static final String SETTINGS_PERSISTENCE_KEY = "persistence";
@@ -37,7 +37,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
     private SurfaceView mOverlayPreview;
     private FrameLayout mOverlayLayout;
 
-    public mTorchService() {
+    public TorchService() {
     }
 
     @Override
