@@ -170,11 +170,9 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
         Log.d(TAG, "DEBUG: startTorch | mCameraDevice.isFlashlightOn() was " +
                 mCameraDevice.isFlashlightOn() + " when image was pressed");
 
-        // Assuming we have a valid CameraDevice, fire it up
-        if (mCameraDevice != null) {
-            mCameraDevice.toggleCameraLED(true);
-            mIsTorchOn = mCameraDevice.isFlashlightOn();
-        }
+        // Fire it up
+        mCameraDevice.toggleCameraLED(true);
+        mIsTorchOn = mCameraDevice.isFlashlightOn();
     }
 
     @Override
