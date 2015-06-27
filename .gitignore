@@ -65,3 +65,8 @@ build/
 
 # Local configuration file (sdk path, etc)
 local.properties
+
+# Crashlytics
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
