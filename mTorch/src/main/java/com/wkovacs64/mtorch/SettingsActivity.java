@@ -8,12 +8,12 @@ public class SettingsActivity extends PreferenceActivity {
 
     private static final String TAG = SettingsActivity.class.getSimpleName();
 
-    @SuppressWarnings("deprecation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "********** Settings **********");
 
+        //noinspection deprecation
         addPreferencesFromResource(R.xml.settings);
     }
 }
