@@ -66,6 +66,7 @@ public class mTorchService extends Service implements SurfaceHolder.Callback {
             if (localHolder != null) {
                 localHolder.addCallback(this);
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+                    //noinspection deprecation
                     localHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
                 }
             } else {
