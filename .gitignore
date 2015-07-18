@@ -11,9 +11,6 @@
 *.iws
 *.iml
 
-# Custom script for building signed release
-release
-
 # Crowdin.net translation platform
 crowdin.yaml
 
