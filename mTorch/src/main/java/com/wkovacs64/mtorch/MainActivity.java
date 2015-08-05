@@ -34,7 +34,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     private boolean mTorchEnabled;
 
     private AboutDialog mAboutDialog;
-    private Context mContext;
     private ImageButton mImageButton;
     private BroadcastReceiver mBroadcastReceiver;
     private SharedPreferences prefs;
@@ -56,14 +55,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         // Set up the About dialog box
         mAboutDialog = new AboutDialog(this);
 
-        // Track this Context for potentially passing it around later
-        mContext = getApplicationContext();
-
         // Check for flash capability
-        if (!mContext.getPackageManager().hasSystemFeature(PackageManager
-                .FEATURE_CAMERA_FLASH)) {
+        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
             Timber.d(getString(R.string.error_no_flash));
-            Toast.makeText(mContext, R.string.error_no_flash, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.error_no_flash, Toast.LENGTH_LONG).show();
             finish();
             return;
         }
@@ -95,7 +90,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
                         toggleTorch();
                     } else if (ks.contains(DEATH_THREAT)) {
                         Timber.d("DEBUG: received death threat from service... shutting down!");
-                        Toast.makeText(mContext, intent.getStringExtra(DEATH_THREAT),
+                        Toast.makeText(MainActivity.this, intent.getStringExtra(DEATH_THREAT),
                                 Toast.LENGTH_LONG).show();
                         finish();
                     }
@@ -109,7 +104,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         super.onStart();
         Timber.d("********** onStart **********");
 
-        Intent startItUp = new Intent(mContext, TorchService.class);
+        Intent startItUp = new Intent(this, TorchService.class);
         IntentFilter toggleIntent = new IntentFilter(INTERNAL_INTENT);
 
         // Listen for intents from the service
@@ -123,7 +118,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         startItUp.putExtra(SETTINGS_PERSISTENCE_KEY, mPersist);
 
         // Start the service that will handle the camera
-        mContext.startService(startItUp);
+        startService(startItUp);
     }
 
     @Override
@@ -151,7 +146,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
 
         // If no persistence or if the torch is off, stop the service
         if (!mPersist || !mTorchEnabled) {
-            mContext.stopService(new Intent(mContext, TorchService.class));
+            stopService(new Intent(this, TorchService.class));
         }
     }
 
@@ -192,10 +187,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
                 "pressed; changing to " + !mTorchEnabled);
 
         // Use the service to start/stop the torch (start = on, stop = off)
-        Intent toggleIntent = new Intent(mContext, TorchService.class);
+        Intent toggleIntent = new Intent(this, TorchService.class);
         if (mTorchEnabled) toggleIntent.putExtra("stop_torch", true);
         else toggleIntent.putExtra("start_torch", true);
-        mContext.startService(toggleIntent);
+        startService(toggleIntent);
 
         mTorchEnabled = !mTorchEnabled;
         updateImageButton();
@@ -213,7 +208,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
         Timber.d("DEBUG: SharedPreferences: " + key + " has changed");
 
-        Intent settingsChangedIntent = new Intent(mContext, TorchService.class);
+        Intent settingsChangedIntent = new Intent(this, TorchService.class);
 
         // Settings have changed, observe the new value
         if (key.equals(SETTINGS_AUTO_ON_KEY)) {
@@ -225,6 +220,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         }
 
         // Notify the service
-        mContext.startService(settingsChangedIntent);
+        startService(settingsChangedIntent);
     }
 }
