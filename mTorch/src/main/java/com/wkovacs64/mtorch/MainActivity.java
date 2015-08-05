@@ -36,7 +36,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     private AboutDialog mAboutDialog;
     private ImageButton mImageButton;
     private BroadcastReceiver mBroadcastReceiver;
-    private SharedPreferences prefs;
+    private SharedPreferences mPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,9 +45,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         setContentView(R.layout.activity_main);
 
         // Read preferences
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        mAutoOn = prefs.getBoolean(SETTINGS_AUTO_ON_KEY, false);
-        mPersist = prefs.getBoolean(SETTINGS_PERSISTENCE_KEY, false);
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        mAutoOn = mPrefs.getBoolean(SETTINGS_AUTO_ON_KEY, false);
+        mPersist = mPrefs.getBoolean(SETTINGS_PERSISTENCE_KEY, false);
 
         // Assume flash off on launch (certainly true the first time)
         mTorchEnabled = false;
@@ -111,7 +111,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver, toggleIntent);
 
         // Listen for preference changes so we can react if necessary
-        prefs.registerOnSharedPreferenceChangeListener(this);
+        mPrefs.registerOnSharedPreferenceChangeListener(this);
 
         // Pass the service our preferences as extras on the startup intent
         startItUp.putExtra(SETTINGS_AUTO_ON_KEY, mAutoOn);
@@ -139,7 +139,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver);
 
         // Stop listening for preference changes
-        prefs.unregisterOnSharedPreferenceChangeListener(this);
+        mPrefs.unregisterOnSharedPreferenceChangeListener(this);
 
         // Close the About dialog if we're stopping anyway
         if (mAboutDialog.isShowing()) mAboutDialog.dismiss();
