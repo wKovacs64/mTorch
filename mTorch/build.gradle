@@ -10,8 +10,8 @@ android {
     defaultConfig {
         minSdkVersion 8
         targetSdkVersion 22
-        versionCode 111
-        versionName '1.1.1'
+        versionCode 120
+        versionName '1.2.0-SNAPSHOT'
     }
     buildTypes {
         release {
