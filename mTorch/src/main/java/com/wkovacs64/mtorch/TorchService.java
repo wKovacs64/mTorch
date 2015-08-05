@@ -28,10 +28,10 @@ public class TorchService extends Service implements SurfaceHolder.Callback {
     private static final String SETTINGS_PERSISTENCE_KEY = "persistence";
     private static final int ONGOING_NOTIFICATION_ID = 1;
 
-    private static boolean mPersist;
-    private static boolean mSurfaceCreated;
-    private static boolean mIsTorchOn;
-    private static boolean mAutoOn;
+    private static boolean sPersist;
+    private static boolean sSurfaceCreated;
+    private static boolean sIsTorchOn;
+    private static boolean sAutoOn;
 
     private CameraDevice mCameraDevice;
     private SurfaceView mOverlayPreview;
@@ -47,7 +47,7 @@ public class TorchService extends Service implements SurfaceHolder.Callback {
     }
 
     public static boolean isTorchOn() {
-        return mIsTorchOn;
+        return sIsTorchOn;
     }
 
     @Override
@@ -75,10 +75,10 @@ public class TorchService extends Service implements SurfaceHolder.Callback {
             }
 
             // Initializations
-            mSurfaceCreated = false;
-            mPersist = false;
-            mIsTorchOn = false;
-            mAutoOn = false;
+            sSurfaceCreated = false;
+            sPersist = false;
+            sIsTorchOn = false;
+            sAutoOn = false;
         } else {
             die(getString(R.string.error_camera_unavailable));
         }
@@ -131,17 +131,17 @@ public class TorchService extends Service implements SurfaceHolder.Callback {
 
         // Check for 'auto on' user setting
         if (intent.hasExtra(SETTINGS_AUTO_ON_KEY)) {
-            mAutoOn = intent.getBooleanExtra(SETTINGS_AUTO_ON_KEY, false);
+            sAutoOn = intent.getBooleanExtra(SETTINGS_AUTO_ON_KEY, false);
         }
 
         // Check for persistence user setting
         if (intent.hasExtra(SETTINGS_PERSISTENCE_KEY)) {
-            mPersist = intent.getBooleanExtra(SETTINGS_PERSISTENCE_KEY, false);
+            sPersist = intent.getBooleanExtra(SETTINGS_PERSISTENCE_KEY, false);
 
             // If the user enables persistence while the torch is already lit, goForeground
             // If the user disables persistence while the torch is already lit, stopForeground
-            if (mIsTorchOn) {
-                if (mPersist) {
+            if (sIsTorchOn) {
+                if (sPersist) {
                     goForeground();
                 } else {
                     stopForeground(true);
@@ -154,20 +154,20 @@ public class TorchService extends Service implements SurfaceHolder.Callback {
 
             // Do we have the surface? We should, unless the user was impossibly quick to press the
             // toggle and the surfaceCreated callback wasn't reached yet.
-            if (mSurfaceCreated) {
+            if (sSurfaceCreated) {
                 // Let's light this candle!
                 startTorch();
 
                 // Check for persistence user setting, enter foreground mode if present
-                if (mPersist) goForeground();
+                if (sPersist) goForeground();
             } else {
-                die("ERROR: tried to call startTorch but mSurfaceCreated = false");
+                die("ERROR: tried to call startTorch but sSurfaceCreated = false");
             }
         } else if (intent.hasExtra("stop_torch")) {
             // Stop the torch
             mCameraDevice.toggleCameraLED(false);
-            mIsTorchOn = mCameraDevice.isFlashlightOn();
-            if (mPersist) stopForeground(true);
+            sIsTorchOn = mCameraDevice.isFlashlightOn();
+            if (sPersist) stopForeground(true);
         }
 
         return Service.START_NOT_STICKY;
@@ -179,7 +179,7 @@ public class TorchService extends Service implements SurfaceHolder.Callback {
 
         // Fire it up
         mCameraDevice.toggleCameraLED(true);
-        mIsTorchOn = mCameraDevice.isFlashlightOn();
+        sIsTorchOn = mCameraDevice.isFlashlightOn();
     }
 
     @Override
@@ -189,11 +189,11 @@ public class TorchService extends Service implements SurfaceHolder.Callback {
 
         // Set torch to off, in case the activity/service is restarted too quickly before the
         // SurfaceHolder has been destroyed
-        mIsTorchOn = false;
+        sIsTorchOn = false;
 
         // If this service was told to stop for some reason and persistence was enabled,
         // stop running in foreground mode
-        if (mPersist) stopForeground(true);
+        if (sPersist) stopForeground(true);
 
         // Shut the torch off if it was on when we got shut down
         if (mCameraDevice != null && mCameraDevice.isFlashlightOn()) {
@@ -229,11 +229,11 @@ public class TorchService extends Service implements SurfaceHolder.Callback {
 
         // Start the preview
         mCameraDevice.setPreviewDisplayAndStartPreview(holder);
-        mSurfaceCreated = true;
+        sSurfaceCreated = true;
 
         // If the Auto On feature is enabled, broadcast an intent back to MainActivity to toggle
         // the torch and update the UI accordingly
-        if (mAutoOn) {
+        if (sAutoOn) {
             Timber.d("DEBUG: broadcasting toggleIntent...");
 
             // send intent back to MainActivity to call toggleTorch();
@@ -256,8 +256,8 @@ public class TorchService extends Service implements SurfaceHolder.Callback {
         Timber.d("********** (overlay) surfaceDestroyed **********");
 
         // Housekeeping
-        mSurfaceCreated = false;
-        mIsTorchOn = false;
+        sSurfaceCreated = false;
+        sIsTorchOn = false;
     }
 
     private void die(String errMsg) {
