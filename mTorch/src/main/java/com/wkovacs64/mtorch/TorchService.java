@@ -6,7 +6,6 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.PixelFormat;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
@@ -34,7 +33,6 @@ public class TorchService extends Service implements SurfaceHolder.Callback {
     private static boolean mIsTorchOn;
     private static boolean mAutoOn;
 
-    private AsyncTask<Object, Void, Boolean> mStartPreviewTask;
     private CameraDevice mCameraDevice;
     private SurfaceView mOverlayPreview;
     private FrameLayout mOverlayLayout;
@@ -182,12 +180,6 @@ public class TorchService extends Service implements SurfaceHolder.Callback {
         Timber.d("********** onDestroy **********");
         super.onDestroy();
 
-        // Cancel any currently running CameraDeviceStartPreview tasks (should never happen anyway)
-        if (mStartPreviewTask != null) {
-            Timber.wtf("Canceling mStartPreviewTask...");
-            mStartPreviewTask.cancel(true);
-        }
-
         // Set torch to off, in case the activity/service is restarted too quickly before the
         // SurfaceHolder has been destroyed
         mIsTorchOn = false;
@@ -229,8 +221,7 @@ public class TorchService extends Service implements SurfaceHolder.Callback {
         }
 
         // Start the preview
-        mStartPreviewTask = new CameraDeviceStartPreview();
-        mStartPreviewTask.execute(mCameraDevice, holder);
+        mCameraDevice.setPreviewDisplayAndStartPreview(holder);
         mSurfaceCreated = true;
 
         // If the Auto On feature is enabled, broadcast an intent back to MainActivity to toggle
@@ -260,31 +251,6 @@ public class TorchService extends Service implements SurfaceHolder.Callback {
         // Housekeeping
         mSurfaceCreated = false;
         mIsTorchOn = false;
-    }
-
-    private class CameraDeviceStartPreview extends AsyncTask<Object, Void, Boolean> {
-
-        private final String TAG = CameraDeviceStartPreview.class.getSimpleName();
-
-        @Override
-        protected Boolean doInBackground(Object... params) {
-            if (params == null || params.length != 2) {
-                Timber.wtf("WTF: this task requires a CameraDevice and a SurfaceHolder");
-                return false;
-            }
-
-            CameraDevice cameraDevice = (CameraDevice) params[0];
-            SurfaceHolder holder = (SurfaceHolder) params[1];
-
-            cameraDevice.setPreviewDisplayAndStartPreview(holder);
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean success) {
-            mStartPreviewTask = null;
-            if (!success) stopSelf();
-        }
     }
 
     private void die(String errMsg) {
