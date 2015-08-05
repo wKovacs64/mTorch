@@ -45,6 +45,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Timber.d("********** onCreate **********");
+
+        // Check for flash capability
+        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
+            Timber.e(getString(R.string.error_no_flash));
+            Toast.makeText(this, R.string.error_no_flash, Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+        Timber.d("DEBUG: flash capability detected!");
+
+        // Set the content
         setContentView(R.layout.activity_main);
 
         // Read preferences
@@ -57,15 +68,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
 
         // Set up the About dialog box
         mAboutDialog = new AboutDialog(this);
-
-        // Check for flash capability
-        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
-            Timber.e(getString(R.string.error_no_flash));
-            Toast.makeText(this, R.string.error_no_flash, Toast.LENGTH_LONG).show();
-            finish();
-            return;
-        }
-        Timber.d("DEBUG: flash capability detected!");
 
         // Set up the clickable toggle image
         mImageButton.setImageResource(R.drawable.torch_off);
