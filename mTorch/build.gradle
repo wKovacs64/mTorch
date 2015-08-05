@@ -28,6 +28,7 @@ android {
 dependencies {
     compile 'com.android.support:appcompat-v7:22.2.1'
     compile 'com.jakewharton.timber:timber:3.1.0'
+    compile 'com.jakewharton:butterknife:7.0.1'
 }
 
 // specify signing properties on the command line

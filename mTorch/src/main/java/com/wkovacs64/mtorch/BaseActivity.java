@@ -3,25 +3,24 @@ package com.wkovacs64.mtorch;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 public abstract class BaseActivity extends AppCompatActivity {
-    private Toolbar mAppBar;
+
+    @Bind(R.id.app_bar)
+    Toolbar mAppBar;
 
     @Override
     public void setContentView(int layoutResID) {
         super.setContentView(layoutResID);
 
-        // Get the ActionBar/Toolbar widget (App Bar)
-        mAppBar = getAppBar();
-    }
+        // Initialize Butter Knife bindings
+        ButterKnife.bind(this);
 
-    protected Toolbar getAppBar() {
-        if (mAppBar == null) {
-            mAppBar = (Toolbar) findViewById(R.id.app_bar);
-            if (mAppBar != null) {
-                setSupportActionBar(mAppBar);
-            }
+        // Initialize the app bar
+        if (mAppBar != null) {
+            setSupportActionBar(mAppBar);
         }
-
-        return mAppBar;
     }
 }

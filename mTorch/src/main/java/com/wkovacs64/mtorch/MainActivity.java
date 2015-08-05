@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import java.util.Set;
 
+import butterknife.Bind;
 import timber.log.Timber;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener,
@@ -34,9 +35,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     private boolean mTorchEnabled;
 
     private AboutDialog mAboutDialog;
-    private ImageButton mImageButton;
     private BroadcastReceiver mBroadcastReceiver;
     private SharedPreferences mPrefs;
+
+    @Bind(R.id.torch_image_button)
+    ImageButton mImageButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,16 +68,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         Timber.d("DEBUG: flash capability detected!");
 
         // Set up the clickable toggle image
-        mImageButton = (ImageButton) findViewById(R.id.torch_image_button);
-        if (mImageButton == null) Timber.e("ERROR: mImageButton was NULL");
-        else {
-            mImageButton.setImageResource(R.drawable.torch_off);
-            mImageButton.setOnClickListener(this);
-            mImageButton.setEnabled(true);
+        mImageButton.setImageResource(R.drawable.torch_off);
+        mImageButton.setOnClickListener(this);
+        mImageButton.setEnabled(true);
 
-            // Keep the screen on while the app is open
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        }
+        // Keep the screen on while the app is open
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         // Register to receive broadcasts from the service
         mBroadcastReceiver = new BroadcastReceiver() {
