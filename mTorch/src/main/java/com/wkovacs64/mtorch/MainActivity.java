@@ -184,8 +184,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     }
 
     private void toggleTorch() {
-        Timber.d("DEBUG: toggleTorch | mTorchEnabled was " + mTorchEnabled + " when image was " +
-                "pressed; changing to " + !mTorchEnabled);
+        Timber.d("DEBUG: toggleTorch | mTorchEnabled was " + mTorchEnabled + " when image was "
+                + "pressed; changing to " + !mTorchEnabled);
 
         // Use the service to start/stop the torch (start = on, stop = off)
         Intent toggleIntent = new Intent(this, TorchService.class);
@@ -197,8 +197,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     }
 
     private void updateImageButton() {
-        Timber.d("DEBUG: updateImageButton | mTorchEnabled = " + mTorchEnabled + "; setting " +
-                "image accordingly");
+        Timber.d("DEBUG: updateImageButton | mTorchEnabled = " + mTorchEnabled + "; setting "
+                + "image accordingly");
 
         mImageButton.setImageResource(mTorchEnabled ? R.drawable.torch_on : R.drawable.torch_off);
     }

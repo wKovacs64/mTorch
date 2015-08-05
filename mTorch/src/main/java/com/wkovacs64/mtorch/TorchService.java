@@ -79,7 +79,9 @@ public class TorchService extends Service implements SurfaceHolder.Callback {
             mPersist = false;
             mIsTorchOn = false;
             mAutoOn = false;
-        } else die(getString(R.string.error_camera_unavailable));
+        } else {
+            die(getString(R.string.error_camera_unavailable));
+        }
     }
 
     private void goForeground() {
@@ -139,8 +141,11 @@ public class TorchService extends Service implements SurfaceHolder.Callback {
             // If the user enables persistence while the torch is already lit, goForeground
             // If the user disables persistence while the torch is already lit, stopForeground
             if (mIsTorchOn) {
-                if (mPersist) goForeground();
-                else stopForeground(true);
+                if (mPersist) {
+                    goForeground();
+                } else {
+                    stopForeground(true);
+                }
             }
         }
 
@@ -155,7 +160,9 @@ public class TorchService extends Service implements SurfaceHolder.Callback {
 
                 // Check for persistence user setting, enter foreground mode if present
                 if (mPersist) goForeground();
-            } else die("ERROR: tried to call startTorch but mSurfaceCreated = false");
+            } else {
+                die("ERROR: tried to call startTorch but mSurfaceCreated = false");
+            }
         } else if (intent.hasExtra("stop_torch")) {
             // Stop the torch
             mCameraDevice.toggleCameraLED(false);
@@ -167,8 +174,8 @@ public class TorchService extends Service implements SurfaceHolder.Callback {
     }
 
     private void startTorch() {
-        Timber.d("DEBUG: startTorch | mCameraDevice.isFlashlightOn() was " +
-                mCameraDevice.isFlashlightOn() + " when image was pressed");
+        Timber.d("DEBUG: startTorch | mCameraDevice.isFlashlightOn() was "
+                + mCameraDevice.isFlashlightOn() + " when image was pressed");
 
         // Fire it up
         mCameraDevice.toggleCameraLED(true);
