@@ -57,7 +57,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
 
         // Check for flash capability
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
-            Timber.d(getString(R.string.error_no_flash));
+            Timber.e(getString(R.string.error_no_flash));
             Toast.makeText(this, R.string.error_no_flash, Toast.LENGTH_LONG).show();
             finish();
             return;
