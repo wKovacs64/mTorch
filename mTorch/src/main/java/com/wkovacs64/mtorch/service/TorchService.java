@@ -1,4 +1,4 @@
-package com.wkovacs64.mtorch;
+package com.wkovacs64.mtorch.service;
 
 import android.annotation.SuppressLint;
 import android.app.Notification;
@@ -18,6 +18,8 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.swijaya.galaxytorch.CameraDevice;
+import com.wkovacs64.mtorch.R;
+import com.wkovacs64.mtorch.ui.activity.MainActivity;
 
 import timber.log.Timber;
 

@@ -1,7 +1,9 @@
-package com.wkovacs64.mtorch;
+package com.wkovacs64.mtorch.ui.activity;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+
+import com.wkovacs64.mtorch.R;
 
 import timber.log.Timber;
 

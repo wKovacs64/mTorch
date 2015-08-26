@@ -1,4 +1,4 @@
-package com.wkovacs64.mtorch;
+package com.wkovacs64.mtorch.ui.activity;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -15,6 +15,10 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.Toast;
+
+import com.wkovacs64.mtorch.R;
+import com.wkovacs64.mtorch.service.TorchService;
+import com.wkovacs64.mtorch.ui.dialog.AboutDialog;
 
 import java.util.Set;
 

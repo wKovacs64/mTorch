@@ -1,4 +1,4 @@
-package com.wkovacs64.mtorch;
+package com.wkovacs64.mtorch.ui.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -7,6 +7,8 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Window;
 import android.widget.TextView;
+
+import com.wkovacs64.mtorch.R;
 
 public class AboutDialog extends Dialog {
     Context mContext;
