@@ -1,5 +1,6 @@
 package com.wkovacs64.mtorch.ui.activity;
 
+import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +8,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Process;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
@@ -21,6 +23,7 @@ import com.wkovacs64.mtorch.R;
 import com.wkovacs64.mtorch.service.TorchService;
 import com.wkovacs64.mtorch.ui.dialog.AboutDialog;
 
+import java.util.List;
 import java.util.Set;
 
 import butterknife.Bind;
@@ -62,16 +65,8 @@ public class MainActivity extends BaseActivity
         mAutoOn = mPrefs.getBoolean(Constants.SETTINGS_KEY_AUTO_ON, false);
         mPersist = mPrefs.getBoolean(Constants.SETTINGS_KEY_PERSISTENCE, false);
 
-        // Assume flash off on launch (certainly true the first time)
-        mTorchEnabled = false;
-
         // Set up the About dialog box
         mAboutDialog = new AboutDialog(this);
-
-        // Set up the clickable toggle image
-        mImageButton.setImageResource(R.drawable.torch_off);
-        mImageButton.setOnClickListener(this);
-        mImageButton.setEnabled(true);
 
         // Keep the screen on while the app is open
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -85,10 +80,10 @@ public class MainActivity extends BaseActivity
                 if (extras != null) {
                     Set<String> ks = extras.keySet();
 
-                    if (ks.contains(Constants.SETTINGS_KEY_AUTO_ON)) {
-                        Timber.d("DEBUG: intent included Auto On extra, toggling torch...");
-                    } else if (ks.contains(Constants.EXTRA_REFRESH_UI)) {
-                        onResume();
+                    if (ks.contains(Constants.EXTRA_UPDATE_UI)) {
+                        // Update the UI according to the command from the service
+                        mTorchEnabled = extras.getBoolean(Constants.EXTRA_UPDATE_UI);
+                        updateUi();
                     } else if (ks.contains(Constants.EXTRA_DEATH_THREAT)) {
                         Timber.d("DEBUG: received death threat from service... shutting down!");
                         Toast.makeText(MainActivity.this,
@@ -107,30 +102,23 @@ public class MainActivity extends BaseActivity
         super.onStart();
         Timber.d("********** onStart **********");
 
-        Intent startItUp = new Intent(this, TorchService.class);
-        IntentFilter toggleIntent = new IntentFilter(Constants.INTENT_INTERNAL);
+        // Listen for command intents from the service
+        IntentFilter command = new IntentFilter(Constants.INTENT_COMMAND);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver, command);
 
-        // Listen for intents from the service
-        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver, toggleIntent);
+        // Listen for toggle image clicks
+        mImageButton.setOnClickListener(this);
 
         // Listen for preference changes so we can react if necessary
         mPrefs.registerOnSharedPreferenceChangeListener(this);
 
         // Pass the service our preferences as extras on the startup intent
-        startItUp.putExtra(Constants.SETTINGS_KEY_AUTO_ON, mAutoOn);
+        Intent startItUp = new Intent(this, TorchService.class);
         startItUp.putExtra(Constants.SETTINGS_KEY_PERSISTENCE, mPersist);
 
-        // Start the service that will handle the camera
+        // Start the service that will control the torch
+        if (mAutoOn) startItUp.putExtra(Constants.EXTRA_START_TORCH, true);
         startService(startItUp);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Timber.d("********** onResume **********");
-
-        mTorchEnabled = TorchService.isTorchOn();
-        updateImageButton();
     }
 
     @Override
@@ -138,18 +126,21 @@ public class MainActivity extends BaseActivity
         super.onStop();
         Timber.d("********** onStop **********");
 
-        // Stop listening for broadcasts from the service
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver);
+        // Stop listening for toggle image clicks
+        mImageButton.setOnClickListener(null);
 
         // Stop listening for preference changes
         mPrefs.unregisterOnSharedPreferenceChangeListener(this);
+
+        // Stop listening for broadcasts from the service
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver);
 
         // Close the About dialog if we're stopping anyway
         if (mAboutDialog.isShowing()) mAboutDialog.dismiss();
 
         // If no persistence or if the torch is off, stop the service
         if (!mPersist || !mTorchEnabled) {
-            stopService(new Intent(this, TorchService.class));
+            killService(getPackageName() + getString(R.string.service_process));
         }
     }
 
@@ -181,8 +172,30 @@ public class MainActivity extends BaseActivity
     @Override
     public void onClick(View v) {
         Timber.d("********** onClick **********");
-
         toggleTorch();
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+        Timber.d("DEBUG: SharedPreferences: " + key + " has changed");
+
+        // Settings have changed, observe the new value
+        if (key.equals(Constants.SETTINGS_KEY_AUTO_ON)) {
+            mAutoOn = prefs.getBoolean(key, false);
+        } else if (key.equals(Constants.SETTINGS_KEY_PERSISTENCE)) {
+            mPersist = prefs.getBoolean(key, false);
+
+            // Create intent to notify the service of the changed setting
+            Intent settingsChangedIntent = new Intent(this, TorchService.class);
+            settingsChangedIntent.putExtra(Constants.SETTINGS_KEY_PERSISTENCE, mPersist);
+            startService(settingsChangedIntent);
+        }
+    }
+
+    private void updateUi() {
+        Timber.d("DEBUG: updating UI...");
+        Timber.d("DEBUG: mTorchEnabled = " + mTorchEnabled + "; setting image accordingly");
+        mImageButton.setImageResource(mTorchEnabled ? R.drawable.torch_on : R.drawable.torch_off);
     }
 
     private void toggleTorch() {
@@ -194,34 +207,18 @@ public class MainActivity extends BaseActivity
         toggleIntent.putExtra(mTorchEnabled
                 ? Constants.EXTRA_STOP_TORCH : Constants.EXTRA_START_TORCH, true);
         startService(toggleIntent);
-
-        mTorchEnabled = !mTorchEnabled;
-        updateImageButton();
     }
 
-    private void updateImageButton() {
-        Timber.d("DEBUG: updateImageButton | mTorchEnabled = " + mTorchEnabled
-                + "; setting image accordingly");
+    private void killService(String processName) {
+        ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> runningAppProcesses
+                = am.getRunningAppProcesses();
 
-        mImageButton.setImageResource(mTorchEnabled ? R.drawable.torch_on : R.drawable.torch_off);
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-        Timber.d("DEBUG: SharedPreferences: " + key + " has changed");
-
-        Intent settingsChangedIntent = new Intent(this, TorchService.class);
-
-        // Settings have changed, observe the new value
-        if (key.equals(Constants.SETTINGS_KEY_AUTO_ON)) {
-            mAutoOn = prefs.getBoolean(key, false);
-            settingsChangedIntent.putExtra(key, mAutoOn);
-        } else if (key.equals(Constants.SETTINGS_KEY_PERSISTENCE)) {
-            mPersist = prefs.getBoolean(key, false);
-            settingsChangedIntent.putExtra(key, mPersist);
+        for (ActivityManager.RunningAppProcessInfo next : runningAppProcesses) {
+            if (next.processName.equals(processName)) {
+                Process.killProcess(next.pid);
+                break;
+            }
         }
-
-        // Notify the service
-        startService(settingsChangedIntent);
     }
 }

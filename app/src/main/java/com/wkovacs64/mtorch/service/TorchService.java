@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.LocalBroadcastManager;
 
 import com.wkovacs64.mtorch.Constants;
 import com.wkovacs64.mtorch.R;
@@ -22,9 +21,7 @@ public class TorchService extends Service {
 
     private static final int ONGOING_NOTIFICATION_ID = 1;
 
-    private static boolean sAutoOn;
-    private static boolean sPersist;
-    private static boolean sTorchIsOn;
+    private boolean mPersist;
 
     private Torch mTorch;
 
@@ -37,13 +34,9 @@ public class TorchService extends Service {
         return null;
     }
 
-    public static boolean isTorchOn() {
-        return sTorchIsOn;
-    }
-
     @Override
     public void onCreate() {
-        Timber.d("********** onCreate **********");
+        Timber.d("########## onCreate ##########");
         super.onCreate();
 
         // Choose the appropriate Torch implementation based on OS version
@@ -65,35 +58,17 @@ public class TorchService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Timber.d("********** onStartCommand **********");
-
-        // Check for 'auto on' user setting
-        if (intent.hasExtra(Constants.SETTINGS_KEY_AUTO_ON)) {
-            sAutoOn = intent.getBooleanExtra(Constants.SETTINGS_KEY_AUTO_ON, false);
-            Timber.d("DEBUG: sAutoOn = " + sAutoOn);
-
-            // If the Auto On feature is enabled and the torch is off, start the torch and broadcast
-            // an intent back to MainActivity to toggle the torch and update the UI accordingly
-            if (sAutoOn && !sTorchIsOn) {
-                mTorch.toggle(true);
-                sTorchIsOn = true;
-                // send intent back to MainActivity to call toggleTorch();
-                Timber.d("DEBUG: broadcasting toggleIntent...");
-                Intent toggleIntent = new Intent(Constants.INTENT_INTERNAL);
-                toggleIntent.putExtra(Constants.EXTRA_REFRESH_UI, true);
-                LocalBroadcastManager.getInstance(this).sendBroadcast(toggleIntent);
-            }
-        }
+        Timber.d("########## onStartCommand ##########");
 
         // Check for persistence user setting
         if (intent.hasExtra(Constants.SETTINGS_KEY_PERSISTENCE)) {
-            sPersist = intent.getBooleanExtra(Constants.SETTINGS_KEY_PERSISTENCE, false);
-            Timber.d("DEBUG: sPersist = " + sPersist);
+            mPersist = intent.getBooleanExtra(Constants.SETTINGS_KEY_PERSISTENCE, false);
+            Timber.d("DEBUG: mPersist = " + mPersist);
 
             // If the user enables persistence while the torch is already lit, goForeground
             // If the user disables persistence while the torch is already lit, stopForeground
-            if (sTorchIsOn) {
-                if (sPersist) {
+            if (mTorch.isOn()) {
+                if (mPersist) {
                     goForeground();
                 } else {
                     stopForeground(true);
@@ -101,43 +76,45 @@ public class TorchService extends Service {
             }
         }
 
-        // Check if this is really a call to start the torch or just the service starting up
         if (intent.hasExtra(Constants.EXTRA_START_TORCH)) {
             Timber.d("DEBUG: startTorch | mTorch.isOn() was " + mTorch.isOn()
                     + " when image was pressed");
 
             // Let's light this candle!
             mTorch.toggle(true);
-            sTorchIsOn = mTorch.isOn();
 
             // Check for persistence user setting, enter foreground mode if present
-            if (sPersist) goForeground();
+            if (mPersist) goForeground();
         } else if (intent.hasExtra(Constants.EXTRA_STOP_TORCH)) {
             Timber.d("DEBUG: stopTorch | mTorch.isOn() was " + mTorch.isOn()
                     + " when image was pressed");
 
             // Snuff out the torch
             mTorch.toggle(false);
-            sTorchIsOn = mTorch.isOn();
 
             // Check for persistence user setting, exit foreground mode if present
-            if (sPersist) stopForeground(true);
+            if (mPersist) stopForeground(true);
         }
+
+        // Tell MainActivity to refresh the UI
+        Timber.d("DEBUG: broadcasting toggleIntent...");
+        Intent toggleIntent = new Intent(Constants.INTENT_COMMAND);
+        toggleIntent.putExtra(Constants.EXTRA_UPDATE_UI, mTorch.isOn());
+        sendBroadcast(toggleIntent);
 
         return Service.START_NOT_STICKY;
     }
 
     @Override
     public void onDestroy() {
-        Timber.d("********** onDestroy **********");
+        Timber.d("########## onDestroy ##########");
         super.onDestroy();
 
         // If this service was told to stop for some reason and persistence was enabled,
         // stop running in foreground mode
-        if (sPersist) stopForeground(true);
+        if (mPersist) stopForeground(true);
 
         // Shut the torch off if it was on when we got shut down
-        sTorchIsOn = false;
         if (mTorch != null && mTorch.isOn()) {
             Timber.w("WARN: torch still on, shutting it off...");
             mTorch.toggle(false);
@@ -155,7 +132,7 @@ public class TorchService extends Service {
      * Service#startForeground}.
      */
     private void goForeground() {
-        Timber.d("********** goForeground **********");
+        Timber.d("########## goForeground ##########");
 
         // Create a notification with pending intent to return to the app
         Intent launchActivity = new Intent(this, MainActivity.class);
@@ -182,9 +159,9 @@ public class TorchService extends Service {
         Timber.e(errMsg);
 
         // Send intent back to MainActivity to finish()
-        Intent deathThreat = new Intent(Constants.INTENT_INTERNAL);
+        Intent deathThreat = new Intent(Constants.INTENT_COMMAND);
         deathThreat.putExtra(Constants.EXTRA_DEATH_THREAT, errMsg);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(deathThreat);
+        sendBroadcast(deathThreat);
 
         // Stop the service
         stopSelf();

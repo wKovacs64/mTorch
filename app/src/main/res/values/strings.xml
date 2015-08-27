@@ -6,6 +6,7 @@
     tools:locale="en">
 
     <string name="app_name" translatable="false">mTorch</string>
+    <string name="service_process" translatable="false">:TorchService</string>
 
     <!-- About dialog -->
     <string name="about_author_name" translatable="false">Justin R. Hall</string>

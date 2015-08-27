@@ -33,6 +33,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ui.activity.SettingsActivity"
             android:label="@string/menu_settings"
@@ -40,9 +41,19 @@
             android:theme="@style/SettingsTheme">
         </activity>
 
+        <receiver
+            android:name=".receiver.CommandReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.wkovacs64.mtorch.command" />
+            </intent-filter>
+        </receiver>
+
         <service
             android:name=".service.TorchService"
-            android:icon="@drawable/ic_launcher">
+            android:icon="@drawable/ic_launcher"
+            android:process="@string/service_process">
         </service>
 
     </application>
