@@ -17,8 +17,8 @@ public final class Constants {
     public static final String SETTINGS_PERSISTENCE_KEY = "persistence";
 
     // Intents
-    public static final String DEATH_THREAT = "die";
     public static final String INTERNAL_INTENT = Constants.class.getPackage().getName()
             + "INTERNAL_INTENT";
-
+    public static final String DEATH_THREAT = "die";
+    public static final String REFRESH_UI = "refresh_ui";
 }

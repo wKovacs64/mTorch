@@ -87,7 +87,8 @@ public class MainActivity extends BaseActivity
 
                     if (ks.contains(Constants.SETTINGS_AUTO_ON_KEY)) {
                         Timber.d("DEBUG: intent included Auto On extra, toggling torch...");
-                        toggleTorch();
+                    } else if (ks.contains(Constants.REFRESH_UI)) {
+                        onResume();
                     } else if (ks.contains(Constants.DEATH_THREAT)) {
                         Timber.d("DEBUG: received death threat from service... shutting down!");
                         Toast.makeText(MainActivity.this,

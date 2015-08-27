@@ -24,7 +24,7 @@ public class TorchService extends Service {
 
     private static boolean sAutoOn;
     private static boolean sPersist;
-    private static boolean sIsTorchOn;
+    private static boolean sTorchIsOn;
 
     private Torch mTorch;
 
@@ -38,7 +38,7 @@ public class TorchService extends Service {
     }
 
     public static boolean isTorchOn() {
-        return sIsTorchOn;
+        return sTorchIsOn;
     }
 
     @Override
@@ -61,17 +61,6 @@ public class TorchService extends Service {
             // TODO: better error handling, possibly
             die(getString(R.string.error_camera_unavailable));
         }
-
-        // If the Auto On feature is enabled, broadcast an intent back to MainActivity to toggle
-        // the torch and update the UI accordingly
-        if (sAutoOn) {
-            Timber.d("DEBUG: broadcasting toggleIntent...");
-
-            // send intent back to MainActivity to call toggleTorch();
-            Intent toggleIntent = new Intent(Constants.INTERNAL_INTENT);
-            toggleIntent.putExtra(Constants.SETTINGS_AUTO_ON_KEY, true);
-            LocalBroadcastManager.getInstance(this).sendBroadcast(toggleIntent);
-        }
     }
 
     @Override
@@ -81,15 +70,29 @@ public class TorchService extends Service {
         // Check for 'auto on' user setting
         if (intent.hasExtra(Constants.SETTINGS_AUTO_ON_KEY)) {
             sAutoOn = intent.getBooleanExtra(Constants.SETTINGS_AUTO_ON_KEY, false);
+            Timber.d("DEBUG: sAutoOn = " + sAutoOn);
+
+            // If the Auto On feature is enabled and the torch is off, start the torch and broadcast
+            // an intent back to MainActivity to toggle the torch and update the UI accordingly
+            if (sAutoOn && !sTorchIsOn) {
+                mTorch.toggle(true);
+                sTorchIsOn = true;
+                // send intent back to MainActivity to call toggleTorch();
+                Timber.d("DEBUG: broadcasting toggleIntent...");
+                Intent toggleIntent = new Intent(Constants.INTERNAL_INTENT);
+                toggleIntent.putExtra(Constants.REFRESH_UI, true);
+                LocalBroadcastManager.getInstance(this).sendBroadcast(toggleIntent);
+            }
         }
 
         // Check for persistence user setting
         if (intent.hasExtra(Constants.SETTINGS_PERSISTENCE_KEY)) {
             sPersist = intent.getBooleanExtra(Constants.SETTINGS_PERSISTENCE_KEY, false);
+            Timber.d("DEBUG: sPersist = " + sPersist);
 
             // If the user enables persistence while the torch is already lit, goForeground
             // If the user disables persistence while the torch is already lit, stopForeground
-            if (mTorch.isOn()) {
+            if (sTorchIsOn) {
                 if (sPersist) {
                     goForeground();
                 } else {
@@ -105,7 +108,7 @@ public class TorchService extends Service {
 
             // Let's light this candle!
             mTorch.toggle(true);
-            sIsTorchOn = mTorch.isOn();
+            sTorchIsOn = mTorch.isOn();
 
             // Check for persistence user setting, enter foreground mode if present
             if (sPersist) goForeground();
@@ -115,7 +118,7 @@ public class TorchService extends Service {
 
             // Snuff out the torch
             mTorch.toggle(false);
-            sIsTorchOn = mTorch.isOn();
+            sTorchIsOn = mTorch.isOn();
 
             // Check for persistence user setting, exit foreground mode if present
             if (sPersist) stopForeground(true);
@@ -134,6 +137,7 @@ public class TorchService extends Service {
         if (sPersist) stopForeground(true);
 
         // Shut the torch off if it was on when we got shut down
+        sTorchIsOn = false;
         if (mTorch != null && mTorch.isOn()) {
             Timber.w("WARN: torch still on, shutting it off...");
             mTorch.toggle(false);
