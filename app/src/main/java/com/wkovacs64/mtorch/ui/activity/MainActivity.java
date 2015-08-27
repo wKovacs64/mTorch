@@ -66,7 +66,7 @@ public class MainActivity extends BaseActivity
         mPersist = mPrefs.getBoolean(Constants.SETTINGS_KEY_PERSISTENCE, false);
 
         // Set up the About dialog box
-        mAboutDialog = new AboutDialog(this);
+        mAboutDialog = AboutDialog.newInstance();
 
         // Register to receive broadcasts from the service
         mBroadcastReceiver = new BroadcastReceiver() {
@@ -119,6 +119,14 @@ public class MainActivity extends BaseActivity
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        // Close the About dialog if we're stopping anyway
+        if (mAboutDialog.isVisible()) mAboutDialog.dismiss();
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         Timber.d("********** onStop **********");
@@ -131,9 +139,6 @@ public class MainActivity extends BaseActivity
 
         // Stop listening for broadcasts from the service
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver);
-
-        // Close the About dialog if we're stopping anyway
-        if (mAboutDialog.isShowing()) mAboutDialog.dismiss();
 
         // If no persistence or if the torch is off, stop the service
         if (!mPersist || !mTorchEnabled) {
@@ -156,7 +161,7 @@ public class MainActivity extends BaseActivity
         switch (item.getItemId()) {
             case R.id.menu_about:
                 // show About dialog
-                mAboutDialog.show();
+                mAboutDialog.show(getSupportFragmentManager(), AboutDialog.TAG);
                 return true;
             case R.id.menu_settings:
                 // show Settings
