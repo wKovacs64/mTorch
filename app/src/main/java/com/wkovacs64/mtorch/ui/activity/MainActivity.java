@@ -68,9 +68,6 @@ public class MainActivity extends BaseActivity
         // Set up the About dialog box
         mAboutDialog = new AboutDialog(this);
 
-        // Keep the screen on while the app is open
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
         // Register to receive broadcasts from the service
         mBroadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -194,8 +191,17 @@ public class MainActivity extends BaseActivity
 
     private void updateUi() {
         Timber.d("DEBUG: updating UI...");
+
+        // Set the corresponding toggle image
         Timber.d("DEBUG: mTorchEnabled = " + mTorchEnabled + "; setting image accordingly");
         mImageButton.setImageResource(mTorchEnabled ? R.drawable.torch_on : R.drawable.torch_off);
+
+        // Keep the screen on while the app is open and the torch is on
+        if (mTorchEnabled) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        } else {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
     }
 
     private void toggleTorch() {
