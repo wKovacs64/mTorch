@@ -59,8 +59,8 @@ public class MainActivity extends BaseActivity
 
         // Read preferences
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        mAutoOn = mPrefs.getBoolean(Constants.SETTINGS_AUTO_ON_KEY, false);
-        mPersist = mPrefs.getBoolean(Constants.SETTINGS_PERSISTENCE_KEY, false);
+        mAutoOn = mPrefs.getBoolean(Constants.SETTINGS_KEY_AUTO_ON, false);
+        mPersist = mPrefs.getBoolean(Constants.SETTINGS_KEY_PERSISTENCE, false);
 
         // Assume flash off on launch (certainly true the first time)
         mTorchEnabled = false;
@@ -85,14 +85,14 @@ public class MainActivity extends BaseActivity
                 if (extras != null) {
                     Set<String> ks = extras.keySet();
 
-                    if (ks.contains(Constants.SETTINGS_AUTO_ON_KEY)) {
+                    if (ks.contains(Constants.SETTINGS_KEY_AUTO_ON)) {
                         Timber.d("DEBUG: intent included Auto On extra, toggling torch...");
-                    } else if (ks.contains(Constants.REFRESH_UI)) {
+                    } else if (ks.contains(Constants.EXTRA_REFRESH_UI)) {
                         onResume();
-                    } else if (ks.contains(Constants.DEATH_THREAT)) {
+                    } else if (ks.contains(Constants.EXTRA_DEATH_THREAT)) {
                         Timber.d("DEBUG: received death threat from service... shutting down!");
                         Toast.makeText(MainActivity.this,
-                                intent.getStringExtra(Constants.DEATH_THREAT),
+                                intent.getStringExtra(Constants.EXTRA_DEATH_THREAT),
                                 Toast.LENGTH_LONG)
                                 .show();
                         finish();
@@ -108,7 +108,7 @@ public class MainActivity extends BaseActivity
         Timber.d("********** onStart **********");
 
         Intent startItUp = new Intent(this, TorchService.class);
-        IntentFilter toggleIntent = new IntentFilter(Constants.INTERNAL_INTENT);
+        IntentFilter toggleIntent = new IntentFilter(Constants.INTENT_INTERNAL);
 
         // Listen for intents from the service
         LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver, toggleIntent);
@@ -117,8 +117,8 @@ public class MainActivity extends BaseActivity
         mPrefs.registerOnSharedPreferenceChangeListener(this);
 
         // Pass the service our preferences as extras on the startup intent
-        startItUp.putExtra(Constants.SETTINGS_AUTO_ON_KEY, mAutoOn);
-        startItUp.putExtra(Constants.SETTINGS_PERSISTENCE_KEY, mPersist);
+        startItUp.putExtra(Constants.SETTINGS_KEY_AUTO_ON, mAutoOn);
+        startItUp.putExtra(Constants.SETTINGS_KEY_PERSISTENCE, mPersist);
 
         // Start the service that will handle the camera
         startService(startItUp);
@@ -191,7 +191,8 @@ public class MainActivity extends BaseActivity
 
         // Use the service to start/stop the torch (start = on, stop = off)
         Intent toggleIntent = new Intent(this, TorchService.class);
-        toggleIntent.putExtra(mTorchEnabled ? "stop_torch" : "start_torch", true);
+        toggleIntent.putExtra(mTorchEnabled
+                ? Constants.EXTRA_STOP_TORCH : Constants.EXTRA_START_TORCH, true);
         startService(toggleIntent);
 
         mTorchEnabled = !mTorchEnabled;
@@ -212,10 +213,10 @@ public class MainActivity extends BaseActivity
         Intent settingsChangedIntent = new Intent(this, TorchService.class);
 
         // Settings have changed, observe the new value
-        if (key.equals(Constants.SETTINGS_AUTO_ON_KEY)) {
+        if (key.equals(Constants.SETTINGS_KEY_AUTO_ON)) {
             mAutoOn = prefs.getBoolean(key, false);
             settingsChangedIntent.putExtra(key, mAutoOn);
-        } else if (key.equals(Constants.SETTINGS_PERSISTENCE_KEY)) {
+        } else if (key.equals(Constants.SETTINGS_KEY_PERSISTENCE)) {
             mPersist = prefs.getBoolean(key, false);
             settingsChangedIntent.putExtra(key, mPersist);
         }

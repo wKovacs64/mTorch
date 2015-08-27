@@ -13,12 +13,16 @@ public final class Constants {
     }
 
     // SharedPreferences Keys
-    public static final String SETTINGS_AUTO_ON_KEY = "auto_on";
-    public static final String SETTINGS_PERSISTENCE_KEY = "persistence";
+    public static final String SETTINGS_KEY_AUTO_ON = "auto_on";
+    public static final String SETTINGS_KEY_PERSISTENCE = "persistence";
 
     // Intents
-    public static final String INTERNAL_INTENT = Constants.class.getPackage().getName()
-            + "INTERNAL_INTENT";
-    public static final String DEATH_THREAT = "die";
-    public static final String REFRESH_UI = "refresh_ui";
+    public static final String INTENT_INTERNAL = Constants.class.getPackage().getName()
+            + "INTENT_INTERNAL";
+
+    // Extras
+    public static final String EXTRA_DEATH_THREAT = "die";
+    public static final String EXTRA_REFRESH_UI = "refresh_ui";
+    public static final String EXTRA_START_TORCH = "start_torch";
+    public static final String EXTRA_STOP_TORCH = "stop_torch";
 }

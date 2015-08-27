@@ -68,8 +68,8 @@ public class TorchService extends Service {
         Timber.d("********** onStartCommand **********");
 
         // Check for 'auto on' user setting
-        if (intent.hasExtra(Constants.SETTINGS_AUTO_ON_KEY)) {
-            sAutoOn = intent.getBooleanExtra(Constants.SETTINGS_AUTO_ON_KEY, false);
+        if (intent.hasExtra(Constants.SETTINGS_KEY_AUTO_ON)) {
+            sAutoOn = intent.getBooleanExtra(Constants.SETTINGS_KEY_AUTO_ON, false);
             Timber.d("DEBUG: sAutoOn = " + sAutoOn);
 
             // If the Auto On feature is enabled and the torch is off, start the torch and broadcast
@@ -79,15 +79,15 @@ public class TorchService extends Service {
                 sTorchIsOn = true;
                 // send intent back to MainActivity to call toggleTorch();
                 Timber.d("DEBUG: broadcasting toggleIntent...");
-                Intent toggleIntent = new Intent(Constants.INTERNAL_INTENT);
-                toggleIntent.putExtra(Constants.REFRESH_UI, true);
+                Intent toggleIntent = new Intent(Constants.INTENT_INTERNAL);
+                toggleIntent.putExtra(Constants.EXTRA_REFRESH_UI, true);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(toggleIntent);
             }
         }
 
         // Check for persistence user setting
-        if (intent.hasExtra(Constants.SETTINGS_PERSISTENCE_KEY)) {
-            sPersist = intent.getBooleanExtra(Constants.SETTINGS_PERSISTENCE_KEY, false);
+        if (intent.hasExtra(Constants.SETTINGS_KEY_PERSISTENCE)) {
+            sPersist = intent.getBooleanExtra(Constants.SETTINGS_KEY_PERSISTENCE, false);
             Timber.d("DEBUG: sPersist = " + sPersist);
 
             // If the user enables persistence while the torch is already lit, goForeground
@@ -102,7 +102,7 @@ public class TorchService extends Service {
         }
 
         // Check if this is really a call to start the torch or just the service starting up
-        if (intent.hasExtra("start_torch")) {
+        if (intent.hasExtra(Constants.EXTRA_START_TORCH)) {
             Timber.d("DEBUG: startTorch | mTorch.isOn() was " + mTorch.isOn()
                     + " when image was pressed");
 
@@ -112,7 +112,7 @@ public class TorchService extends Service {
 
             // Check for persistence user setting, enter foreground mode if present
             if (sPersist) goForeground();
-        } else if (intent.hasExtra("stop_torch")) {
+        } else if (intent.hasExtra(Constants.EXTRA_STOP_TORCH)) {
             Timber.d("DEBUG: stopTorch | mTorch.isOn() was " + mTorch.isOn()
                     + " when image was pressed");
 
@@ -182,8 +182,8 @@ public class TorchService extends Service {
         Timber.e(errMsg);
 
         // Send intent back to MainActivity to finish()
-        Intent deathThreat = new Intent(Constants.INTERNAL_INTENT);
-        deathThreat.putExtra(Constants.DEATH_THREAT, errMsg);
+        Intent deathThreat = new Intent(Constants.INTENT_INTERNAL);
+        deathThreat.putExtra(Constants.EXTRA_DEATH_THREAT, errMsg);
         LocalBroadcastManager.getInstance(this).sendBroadcast(deathThreat);
 
         // Stop the service
