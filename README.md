@@ -21,7 +21,7 @@ This project was created in [Android Studio](http://developer.android.com/sdk/in
         * Tools:
             * Android SDK Tools
             * Android SDK Platform-tools
-            * Android SDK Build-tools (22.0.1)
+            * Android SDK Build-tools
         * Android 5.1 (API 22):
             * SDK Platform
         * Extras:

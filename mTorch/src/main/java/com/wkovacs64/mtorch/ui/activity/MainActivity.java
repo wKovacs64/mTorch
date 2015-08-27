@@ -16,6 +16,7 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.wkovacs64.mtorch.Constants;
 import com.wkovacs64.mtorch.R;
 import com.wkovacs64.mtorch.service.TorchService;
 import com.wkovacs64.mtorch.ui.dialog.AboutDialog;
@@ -25,14 +26,8 @@ import java.util.Set;
 import butterknife.Bind;
 import timber.log.Timber;
 
-public class MainActivity extends BaseActivity implements View.OnClickListener,
-        SharedPreferences.OnSharedPreferenceChangeListener {
-
-    public static final String INTERNAL_INTENT = MainActivity.class.getPackage().getName() +
-            "INTERNAL_INTENT";
-    private static final String DEATH_THREAT = "die";
-    private static final String SETTINGS_AUTO_ON_KEY = "auto_on";
-    private static final String SETTINGS_PERSISTENCE_KEY = "persistence";
+public class MainActivity extends BaseActivity
+        implements View.OnClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private boolean mAutoOn;
     private boolean mPersist;
@@ -64,8 +59,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
 
         // Read preferences
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        mAutoOn = mPrefs.getBoolean(SETTINGS_AUTO_ON_KEY, false);
-        mPersist = mPrefs.getBoolean(SETTINGS_PERSISTENCE_KEY, false);
+        mAutoOn = mPrefs.getBoolean(Constants.SETTINGS_AUTO_ON_KEY, false);
+        mPersist = mPrefs.getBoolean(Constants.SETTINGS_PERSISTENCE_KEY, false);
 
         // Assume flash off on launch (certainly true the first time)
         mTorchEnabled = false;
@@ -90,13 +85,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
                 if (extras != null) {
                     Set<String> ks = extras.keySet();
 
-                    if (ks.contains(SETTINGS_AUTO_ON_KEY)) {
+                    if (ks.contains(Constants.SETTINGS_AUTO_ON_KEY)) {
                         Timber.d("DEBUG: intent included Auto On extra, toggling torch...");
                         toggleTorch();
-                    } else if (ks.contains(DEATH_THREAT)) {
+                    } else if (ks.contains(Constants.DEATH_THREAT)) {
                         Timber.d("DEBUG: received death threat from service... shutting down!");
-                        Toast.makeText(MainActivity.this, intent.getStringExtra(DEATH_THREAT),
-                                Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.this,
+                                intent.getStringExtra(Constants.DEATH_THREAT),
+                                Toast.LENGTH_LONG)
+                                .show();
                         finish();
                     }
                 }
@@ -110,7 +107,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         Timber.d("********** onStart **********");
 
         Intent startItUp = new Intent(this, TorchService.class);
-        IntentFilter toggleIntent = new IntentFilter(INTERNAL_INTENT);
+        IntentFilter toggleIntent = new IntentFilter(Constants.INTERNAL_INTENT);
 
         // Listen for intents from the service
         LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver, toggleIntent);
@@ -119,8 +116,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         mPrefs.registerOnSharedPreferenceChangeListener(this);
 
         // Pass the service our preferences as extras on the startup intent
-        startItUp.putExtra(SETTINGS_AUTO_ON_KEY, mAutoOn);
-        startItUp.putExtra(SETTINGS_PERSISTENCE_KEY, mPersist);
+        startItUp.putExtra(Constants.SETTINGS_AUTO_ON_KEY, mAutoOn);
+        startItUp.putExtra(Constants.SETTINGS_PERSISTENCE_KEY, mPersist);
 
         // Start the service that will handle the camera
         startService(startItUp);
@@ -188,8 +185,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     }
 
     private void toggleTorch() {
-        Timber.d("DEBUG: toggleTorch | mTorchEnabled was " + mTorchEnabled + " when image was "
-                + "pressed; changing to " + !mTorchEnabled);
+        Timber.d("DEBUG: toggleTorch | mTorchEnabled was " + mTorchEnabled
+                + " when image was pressed; changing to " + !mTorchEnabled);
 
         // Use the service to start/stop the torch (start = on, stop = off)
         Intent toggleIntent = new Intent(this, TorchService.class);
@@ -201,8 +198,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     }
 
     private void updateImageButton() {
-        Timber.d("DEBUG: updateImageButton | mTorchEnabled = " + mTorchEnabled + "; setting "
-                + "image accordingly");
+        Timber.d("DEBUG: updateImageButton | mTorchEnabled = " + mTorchEnabled
+                + "; setting image accordingly");
 
         mImageButton.setImageResource(mTorchEnabled ? R.drawable.torch_on : R.drawable.torch_off);
     }
@@ -214,10 +211,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         Intent settingsChangedIntent = new Intent(this, TorchService.class);
 
         // Settings have changed, observe the new value
-        if (key.equals(SETTINGS_AUTO_ON_KEY)) {
+        if (key.equals(Constants.SETTINGS_AUTO_ON_KEY)) {
             mAutoOn = prefs.getBoolean(key, false);
             settingsChangedIntent.putExtra(key, mAutoOn);
-        } else if (key.equals(SETTINGS_PERSISTENCE_KEY)) {
+        } else if (key.equals(Constants.SETTINGS_PERSISTENCE_KEY)) {
             mPersist = prefs.getBoolean(key, false);
             settingsChangedIntent.putExtra(key, mPersist);
         }
