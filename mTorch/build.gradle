@@ -8,10 +8,10 @@ android {
         release
     }
     defaultConfig {
-        minSdkVersion 8
+        minSdkVersion 11
         targetSdkVersion 22
-        versionCode 120
-        versionName '1.2.0-SNAPSHOT'
+        versionCode 200
+        versionName '2.0.0-SNAPSHOT'
     }
     buildTypes {
         release {
