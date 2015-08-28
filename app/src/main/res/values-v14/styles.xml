@@ -3,6 +3,8 @@
 <resources>
 
     <!-- Settings Dialog Theme -->
-    <style name="SettingsTheme" parent="android:Theme.DeviceDefault.Dialog" />
+    <style name="SettingsTheme" parent="android:Theme.DeviceDefault.Dialog">
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+    </style>
 
 </resources>

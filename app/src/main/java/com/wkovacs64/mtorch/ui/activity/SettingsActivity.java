@@ -1,20 +1,21 @@
 package com.wkovacs64.mtorch.ui.activity;
 
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
+import android.support.v4.app.FragmentActivity;
 
-import com.wkovacs64.mtorch.R;
+import com.wkovacs64.mtorch.ui.fragment.SettingsFragment;
 
 import timber.log.Timber;
 
-public final class SettingsActivity extends PreferenceActivity {
+public final class SettingsActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Timber.d("********** Settings **********");
-
-        //noinspection deprecation
-        addPreferencesFromResource(R.xml.settings);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(android.R.id.content, new SettingsFragment())
+                .commit();
     }
 }
