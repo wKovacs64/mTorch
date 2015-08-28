@@ -81,7 +81,12 @@ public final class TorchService extends Service {
                     + " when image was pressed");
 
             // Let's light this candle!
-            mTorch.toggle(true);
+            try {
+                mTorch.toggle(true);
+            } catch (IllegalStateException e) {
+                Timber.e("Failed to turn on the torch!", e);
+                die(getString(R.string.error_flash_unavailable));
+            }
 
             // Check for persistence user setting, enter foreground mode if present
             if (mPersist) goForeground();
@@ -90,7 +95,12 @@ public final class TorchService extends Service {
                     + " when image was pressed");
 
             // Snuff out the torch
-            mTorch.toggle(false);
+            try {
+                mTorch.toggle(false);
+            } catch (IllegalStateException e) {
+                Timber.e("Failed to turn off the torch!", e);
+                die(getString(R.string.error_flash_unavailable));
+            }
 
             // Check for persistence user setting, exit foreground mode if present
             if (mPersist) stopForeground(true);
@@ -117,7 +127,11 @@ public final class TorchService extends Service {
         // Shut the torch off if it was on when we got shut down
         if (mTorch != null && mTorch.isOn()) {
             Timber.w("WARN: torch still on, shutting it off...");
-            mTorch.toggle(false);
+            try {
+                mTorch.toggle(false);
+            } catch (IllegalStateException e) {
+                Timber.e("Failed to toggle torch off during service destruction!", e);
+            }
         }
 
         // Release the camera

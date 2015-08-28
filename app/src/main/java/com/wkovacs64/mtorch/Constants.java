@@ -28,4 +28,7 @@ public final class Constants {
     public static final String EXTRA_UPDATE_UI = "refresh_ui";
     public static final String EXTRA_START_TORCH = "start_torch";
     public static final String EXTRA_STOP_TORCH = "stop_torch";
+
+    // Request Results
+    public static final int RESULT_PERMISSION_CAMERA = 0;
 }

@@ -1,5 +1,6 @@
 package com.wkovacs64.mtorch.ui.activity;
 
+import android.Manifest;
 import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,12 +11,16 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Process;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.wkovacs64.mtorch.Constants;
@@ -29,8 +34,12 @@ import java.util.Set;
 import butterknife.Bind;
 import timber.log.Timber;
 
+import static com.wkovacs64.mtorch.util.PermissionUtils.hasCameraPermissions;
+import static com.wkovacs64.mtorch.util.PermissionUtils.requestCameraPermissions;
+
 public final class MainActivity extends BaseActivity
-        implements View.OnClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
+        implements View.OnClickListener, SharedPreferences.OnSharedPreferenceChangeListener,
+        ActivityCompat.OnRequestPermissionsResultCallback {
 
     private AboutDialog mAboutDialog;
     private BroadcastReceiver mBroadcastReceiver;
@@ -39,7 +48,17 @@ public final class MainActivity extends BaseActivity
     private boolean mAutoOn;
     private boolean mPersist;
     private boolean mTorchEnabled;
+    /**
+     * Indicates whether Camera permissions were actively denied by the user upon being prompted.
+     */
+    boolean mCameraPermissionDenied;
+    /**
+     * Indicates whether Camera permissions were actively granted by the user upon being prompted.
+     */
+    boolean mCameraPermissionGranted;
 
+    @Bind(R.id.container)
+    LinearLayout mRootView;
     @Bind(R.id.torch_image_button)
     ImageButton mImageButton;
 
@@ -118,6 +137,40 @@ public final class MainActivity extends BaseActivity
         startService(startItUp);
     }
 
+    /*
+     * This callback appears to occur prior to the UI being ready, so no UI code can exist here.
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        Timber.d("********** onRequestPermissionsResult **********");
+        switch (requestCode) {
+            case Constants.RESULT_PERMISSION_CAMERA:
+                if (grantResults.length == 1
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Timber.d("Permission granted: CAMERA");
+                    mCameraPermissionDenied = false;
+                    mCameraPermissionGranted = true;
+                } else {
+                    Timber.d("Permission denied: CAMERA");
+                    mCameraPermissionDenied = true;
+                    mCameraPermissionGranted = false;
+                }
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                break;
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Show the appropriate feedback based on permission results now that the UI is available
+        // (or do nothing if the user has not been prompted yet).
+        processPermissionResults();
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         // Close the About dialog if we're stopping anyway
@@ -194,6 +247,26 @@ public final class MainActivity extends BaseActivity
         }
     }
 
+    /**
+     * Shows the appropriate dialog based on results from {@link
+     * ActivityCompat.OnRequestPermissionsResultCallback#onRequestPermissionsResult}.
+     */
+    private void processPermissionResults() {
+        if (mCameraPermissionDenied
+                && !shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+            Timber.d("DEBUG: instructing user to grant permissions manually");
+            Snackbar.make(mRootView, R.string.content_camera_permission_denied,
+                    Snackbar.LENGTH_INDEFINITE)
+                    .show();
+        } else if (mCameraPermissionGranted) {
+            toggleTorch();
+        }
+
+        // Reset
+        mCameraPermissionDenied = false;
+        mCameraPermissionGranted = false;
+    }
+
     private void updateUi() {
         Timber.d("DEBUG: updating UI...");
 
@@ -210,14 +283,19 @@ public final class MainActivity extends BaseActivity
     }
 
     private void toggleTorch() {
-        Timber.d("DEBUG: toggleTorch | mTorchEnabled was " + mTorchEnabled
-                + " when image was pressed; changing to " + !mTorchEnabled);
+        // Check for the necessary permissions
+        if (hasCameraPermissions(this)) {
+            Timber.d("DEBUG: toggleTorch | mTorchEnabled was " + mTorchEnabled
+                    + " when image was pressed; changing to " + !mTorchEnabled);
 
-        // Use the service to start/stop the torch (start = on, stop = off)
-        Intent toggleIntent = new Intent(this, TorchService.class);
-        toggleIntent.putExtra(mTorchEnabled
-                ? Constants.EXTRA_STOP_TORCH : Constants.EXTRA_START_TORCH, true);
-        startService(toggleIntent);
+            // Use the service to start/stop the torch (start = on, stop = off)
+            Intent toggleIntent = new Intent(this, TorchService.class);
+            toggleIntent.putExtra(mTorchEnabled
+                    ? Constants.EXTRA_STOP_TORCH : Constants.EXTRA_START_TORCH, true);
+            startService(toggleIntent);
+        } else {
+            requestCameraPermissions(this, mRootView);
+        }
     }
 
     private void killService(String processName) {

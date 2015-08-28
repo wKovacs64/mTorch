@@ -20,6 +20,7 @@
     <!-- User-visible error messages -->
     <string name="error_camera_unavailable">ERROR: unable to acquire camera</string>
     <string name="error_no_flash">ERROR: no flash detected</string>
+    <string name="error_flash_unavailable">ERROR: unable to toggle the flash</string>
 
     <!-- Menu options -->
     <string name="menu_about">About</string>
@@ -29,6 +30,11 @@
     <string name="notification_text">Press to return to app</string>
     <string name="torch_toggle">Torch toggle</string>
     <string name="unknown">Unknown</string>
+    <string name="ok">OK</string>
+
+    <!-- Permissions -->
+    <string name="permission_rationale_camera">Camera access is required to activate the flash.</string>
+    <string name="content_camera_permission_denied">Grant this app Camera permissions in your system settings.</string>
 
     <!-- Settings | Auto On -->
     <string name="settings_auto_on_key" translatable="false">auto_on</string>

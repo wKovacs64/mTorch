@@ -47,10 +47,10 @@ public final class Camera2Torch extends CameraManager.TorchCallback implements T
         try {
             String[] cameraIds = mCameraManager.getCameraIdList();
             mCameraManager.setTorchMode(cameraIds[0], !mTorchEnabled);
+        } catch (ArrayIndexOutOfBoundsException | IllegalArgumentException e) {
+            throw new IllegalStateException("No camera with torch mode was available!", e);
         } catch (CameraAccessException e) {
             throw new IllegalStateException("Failed to access the camera device!", e);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalStateException("No camera with torch mode was available!", e);
         }
     }
 
