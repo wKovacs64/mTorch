@@ -41,8 +41,10 @@ public final class TorchService extends Service {
 
         // Choose the appropriate Torch implementation based on OS version
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            Timber.d("DEBUG: Pre-M Android OS, using deprecated CameraTorch");
             mTorch = new CameraTorch();
         } else {
+            Timber.d("DEBUG: Android M or later detected, using Camera2Torch");
             mTorch = new Camera2Torch(getApplicationContext());
         }
 
