@@ -1,13 +1,14 @@
 package com.wkovacs64.mtorch.ui.fragment;
 
 import android.os.Bundle;
-import android.support.v7.preference.PreferenceFragmentCompat;
+import android.preference.PreferenceFragment;
 
 import com.wkovacs64.mtorch.R;
 
-public final class SettingsFragment extends PreferenceFragmentCompat {
+public final class SettingsFragment extends PreferenceFragment {
     @Override
-    public void onCreatePreferences(Bundle bundle, String s) {
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings);
     }
 }

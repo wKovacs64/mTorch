@@ -40,8 +40,6 @@
     </style>
 
     <!-- Settings Dialog Theme -->
-    <style name="SettingsTheme" parent="android:Theme.Dialog">
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
-    </style>
+    <style name="SettingsTheme" parent="android:Theme.Dialog" />
 
 </resources>
