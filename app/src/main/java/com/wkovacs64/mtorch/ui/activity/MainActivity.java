@@ -14,6 +14,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -257,6 +258,13 @@ public final class MainActivity extends BaseActivity
             Timber.d("DEBUG: instructing user to grant permissions manually");
             Snackbar.make(mRootView, R.string.content_camera_permission_denied,
                     Snackbar.LENGTH_INDEFINITE)
+                    .setActionTextColor(ContextCompat.getColor(this, R.color.accent))
+                    .setAction(R.string.ok, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
+                        }
+                    })
                     .show();
         } else if (mCameraPermissionGranted) {
             toggleTorch();
