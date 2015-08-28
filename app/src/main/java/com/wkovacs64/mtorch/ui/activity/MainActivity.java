@@ -161,7 +161,7 @@ public final class MainActivity extends BaseActivity
         switch (item.getItemId()) {
             case R.id.menu_about:
                 // show About dialog
-                mAboutDialog.show(getSupportFragmentManager(), AboutDialog.TAG);
+                mAboutDialog.show(getFragmentManager(), AboutDialog.TAG);
                 return true;
             case R.id.menu_settings:
                 // show Settings

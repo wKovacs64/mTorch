@@ -1,11 +1,12 @@
 package com.wkovacs64.mtorch.ui.dialog;
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,10 +46,11 @@ public final class AboutDialog extends DialogFragment {
         dialog.setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.ic_launcher);
 
         // Find the version number
+        final Activity activity = getActivity();
         String versionName;
         try {
-            PackageInfo pkgInfo = getContext().getPackageManager()
-                    .getPackageInfo(getContext().getPackageName(), 0);
+            PackageInfo pkgInfo = activity.getPackageManager()
+                    .getPackageInfo(activity.getPackageName(), 0);
             versionName = pkgInfo.versionName;
         } catch (PackageManager.NameNotFoundException e) {
             versionName = getString(R.string.unknown);
