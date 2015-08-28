@@ -11,11 +11,12 @@ import java.util.List;
  * A {@link Torch} implementation built on the deprecated {@link Camera} API for use on Android
  * Honeycomb (API 11) through Android Lollipop (API 22).
  */
-public class CameraTorch implements Torch {
+public final class CameraTorch implements Torch {
 
     private final SurfaceTexture mDummySurface = new SurfaceTexture(0);
 
     private Camera mCamera;
+
     private boolean mTorchEnabled;
 
     @Override

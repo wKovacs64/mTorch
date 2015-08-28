@@ -12,10 +12,11 @@ import android.support.annotation.NonNull;
  * Android Marshmallow (API 23) and above.
  */
 @TargetApi(Build.VERSION_CODES.M)
-public class Camera2Torch extends CameraManager.TorchCallback implements Torch {
+public final class Camera2Torch extends CameraManager.TorchCallback implements Torch {
 
     private CameraManager mCameraManager;
     private Context mContext;
+
     private boolean mTorchEnabled;
 
     /**

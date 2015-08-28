@@ -17,13 +17,13 @@ import com.wkovacs64.mtorch.ui.activity.MainActivity;
 
 import timber.log.Timber;
 
-public class TorchService extends Service {
+public final class TorchService extends Service {
 
     private static final int ONGOING_NOTIFICATION_ID = 1;
 
-    private boolean mPersist;
-
     private Torch mTorch;
+
+    private boolean mPersist;
 
     public TorchService() {
     }

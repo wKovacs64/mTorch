@@ -29,16 +29,16 @@ import java.util.Set;
 import butterknife.Bind;
 import timber.log.Timber;
 
-public class MainActivity extends BaseActivity
+public final class MainActivity extends BaseActivity
         implements View.OnClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
-
-    private boolean mAutoOn;
-    private boolean mPersist;
-    private boolean mTorchEnabled;
 
     private AboutDialog mAboutDialog;
     private BroadcastReceiver mBroadcastReceiver;
     private SharedPreferences mPrefs;
+
+    private boolean mAutoOn;
+    private boolean mPersist;
+    private boolean mTorchEnabled;
 
     @Bind(R.id.torch_image_button)
     ImageButton mImageButton;

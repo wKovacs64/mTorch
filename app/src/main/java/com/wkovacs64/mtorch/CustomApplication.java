@@ -6,7 +6,7 @@ import android.os.StrictMode;
 
 import timber.log.Timber;
 
-public class CustomApplication extends Application {
+public final class CustomApplication extends Application {
 
     @Override
     public void onCreate() {

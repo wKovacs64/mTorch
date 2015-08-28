@@ -7,7 +7,7 @@ import com.wkovacs64.mtorch.R;
 
 import timber.log.Timber;
 
-public class SettingsActivity extends PreferenceActivity {
+public final class SettingsActivity extends PreferenceActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

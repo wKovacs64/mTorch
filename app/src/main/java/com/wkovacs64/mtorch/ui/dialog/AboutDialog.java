@@ -17,7 +17,7 @@ import com.wkovacs64.mtorch.R;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class AboutDialog extends DialogFragment {
+public final class AboutDialog extends DialogFragment {
 
     public static final String TAG = AboutDialog.class.getSimpleName();
 
