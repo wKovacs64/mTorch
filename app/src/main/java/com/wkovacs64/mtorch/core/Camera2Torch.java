@@ -3,6 +3,7 @@ package com.wkovacs64.mtorch.core;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -46,7 +47,15 @@ public final class Camera2Torch extends CameraManager.TorchCallback implements T
     public void toggle(boolean enabled) {
         try {
             String[] cameraIds = mCameraManager.getCameraIdList();
-            mCameraManager.setTorchMode(cameraIds[0], !mTorchEnabled);
+            for (String cameraId : cameraIds) {
+                CameraCharacteristics cc = mCameraManager.getCameraCharacteristics(cameraId);
+                Boolean flashAvailable = cc.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
+                Boolean lensFacingBack = cc.get(CameraCharacteristics.LENS_FACING) ==
+                        CameraCharacteristics.LENS_FACING_BACK;
+                if (flashAvailable && lensFacingBack) {
+                    mCameraManager.setTorchMode(cameraId, mTorchEnabled);
+                }
+            }
         } catch (ArrayIndexOutOfBoundsException | IllegalArgumentException e) {
             throw new IllegalStateException("No camera with torch mode was available!", e);
         } catch (CameraAccessException e) {
