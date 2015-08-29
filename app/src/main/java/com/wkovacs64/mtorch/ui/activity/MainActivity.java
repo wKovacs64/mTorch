@@ -1,21 +1,15 @@
 package com.wkovacs64.mtorch.ui.activity;
 
 import android.Manifest;
-import android.app.ActivityManager;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Process;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,13 +18,18 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.squareup.otto.Bus;
+import com.squareup.otto.Produce;
+import com.squareup.otto.Subscribe;
 import com.wkovacs64.mtorch.Constants;
 import com.wkovacs64.mtorch.R;
+import com.wkovacs64.mtorch.bus.BusProvider;
+import com.wkovacs64.mtorch.bus.PersistenceChangeEvent;
+import com.wkovacs64.mtorch.bus.ShutdownEvent;
+import com.wkovacs64.mtorch.bus.ToggleRequestEvent;
+import com.wkovacs64.mtorch.bus.ToggleResponseEvent;
 import com.wkovacs64.mtorch.service.TorchService;
 import com.wkovacs64.mtorch.ui.dialog.AboutDialog;
-
-import java.util.List;
-import java.util.Set;
 
 import butterknife.Bind;
 import timber.log.Timber;
@@ -42,8 +41,9 @@ public final class MainActivity extends BaseActivity
         implements View.OnClickListener, SharedPreferences.OnSharedPreferenceChangeListener,
         ActivityCompat.OnRequestPermissionsResultCallback {
 
+    private final Bus mBus = BusProvider.getBus();
+
     private AboutDialog mAboutDialog;
-    private BroadcastReceiver mBroadcastReceiver;
     private SharedPreferences mPrefs;
 
     private boolean mAutoOn;
@@ -75,7 +75,7 @@ public final class MainActivity extends BaseActivity
             finish();
             return;
         }
-        Timber.d("DEBUG: flash capability detected!");
+        Timber.d("Flash capability detected!");
 
         // Set the content
         setContentView(R.layout.activity_main);
@@ -85,33 +85,8 @@ public final class MainActivity extends BaseActivity
         mAutoOn = mPrefs.getBoolean(Constants.SETTINGS_KEY_AUTO_ON, false);
         mPersist = mPrefs.getBoolean(Constants.SETTINGS_KEY_PERSISTENCE, false);
 
-        // Set up the About dialog box
+        // Instantiate the About dialog box
         mAboutDialog = AboutDialog.newInstance();
-
-        // Register to receive broadcasts from the service
-        mBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Timber.d("DEBUG: broadcast received...");
-                Bundle extras = intent.getExtras();
-                if (extras != null) {
-                    Set<String> ks = extras.keySet();
-
-                    if (ks.contains(Constants.EXTRA_UPDATE_UI)) {
-                        // Update the UI according to the command from the service
-                        mTorchEnabled = extras.getBoolean(Constants.EXTRA_UPDATE_UI);
-                        updateUi();
-                    } else if (ks.contains(Constants.EXTRA_DEATH_THREAT)) {
-                        Timber.d("DEBUG: received death threat from service... shutting down!");
-                        Toast.makeText(MainActivity.this,
-                                intent.getStringExtra(Constants.EXTRA_DEATH_THREAT),
-                                Toast.LENGTH_LONG)
-                                .show();
-                        finish();
-                    }
-                }
-            }
-        };
     }
 
     @Override
@@ -119,23 +94,14 @@ public final class MainActivity extends BaseActivity
         super.onStart();
         Timber.d("********** onStart **********");
 
-        // Listen for command intents from the service
-        IntentFilter command = new IntentFilter(Constants.INTENT_COMMAND);
-        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver, command);
-
         // Listen for toggle image clicks
         mImageButton.setOnClickListener(this);
 
         // Listen for preference changes so we can react if necessary
         mPrefs.registerOnSharedPreferenceChangeListener(this);
 
-        // Pass the service our preferences as extras on the startup intent
-        Intent startItUp = new Intent(this, TorchService.class);
-        startItUp.putExtra(Constants.SETTINGS_KEY_PERSISTENCE, mPersist);
-
-        // Start the service that will control the torch
-        if (mAutoOn) startItUp.putExtra(Constants.EXTRA_START_TORCH, true);
-        startService(startItUp);
+        // Start the service
+        startService(new Intent(this, TorchService.class));
     }
 
     /*
@@ -157,6 +123,7 @@ public final class MainActivity extends BaseActivity
                     mCameraPermissionDenied = true;
                     mCameraPermissionGranted = false;
                 }
+                break;
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
                 break;
@@ -166,6 +133,11 @@ public final class MainActivity extends BaseActivity
     @Override
     protected void onResume() {
         super.onResume();
+        Timber.d("********** onResume **********");
+
+        // Register with the event bus
+        Timber.d("Registering with the event bus.");
+        mBus.register(this);
 
         // Show the appropriate feedback based on permission results now that the UI is available
         // (or do nothing if the user has not been prompted yet).
@@ -181,6 +153,16 @@ public final class MainActivity extends BaseActivity
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        Timber.d("********** onPause **********");
+
+        // Unregister from the event bus
+        Timber.d("Unregistering from the event bus.");
+        mBus.unregister(this);
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         Timber.d("********** onStop **********");
@@ -191,12 +173,9 @@ public final class MainActivity extends BaseActivity
         // Stop listening for preference changes
         mPrefs.unregisterOnSharedPreferenceChangeListener(this);
 
-        // Stop listening for broadcasts from the service
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver);
-
         // If no persistence or if the torch is off, stop the service
         if (!mPersist || !mTorchEnabled) {
-            killService(getPackageName() + getString(R.string.service_process));
+            stopService(new Intent(this, TorchService.class));
         }
     }
 
@@ -228,12 +207,19 @@ public final class MainActivity extends BaseActivity
     @Override
     public void onClick(View v) {
         Timber.d("********** onClick **********");
+
+        // Start the service (in case it was still on its way down when we fired up a new instance
+        // of MainActivity). In normal circumstances where the service is already running, this
+        // does nothing.
+        startService(new Intent(this, TorchService.class));
+
+        // Toggle the torch
         toggleTorch();
     }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-        Timber.d("DEBUG: SharedPreferences: " + key + " has changed");
+        Timber.d("SharedPreferences: " + key + " has changed");
 
         // Settings have changed, observe the new value
         if (key.equals(Constants.SETTINGS_KEY_AUTO_ON)) {
@@ -241,10 +227,9 @@ public final class MainActivity extends BaseActivity
         } else if (key.equals(Constants.SETTINGS_KEY_PERSISTENCE)) {
             mPersist = prefs.getBoolean(key, false);
 
-            // Create intent to notify the service of the changed setting
-            Intent settingsChangedIntent = new Intent(this, TorchService.class);
-            settingsChangedIntent.putExtra(Constants.SETTINGS_KEY_PERSISTENCE, mPersist);
-            startService(settingsChangedIntent);
+            // Notify the service of the setting change
+            Timber.d("Posting a new PersistenceChangeEvent to the bus: " + mPersist);
+            mBus.post(new PersistenceChangeEvent(mPersist));
         }
     }
 
@@ -255,7 +240,7 @@ public final class MainActivity extends BaseActivity
     private void processPermissionResults() {
         if (mCameraPermissionDenied
                 && !shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
-            Timber.d("DEBUG: instructing user to grant permissions manually");
+            Timber.d("Instructing user to grant permissions manually.");
             Snackbar.make(mRootView, R.string.content_camera_permission_denied,
                     Snackbar.LENGTH_INDEFINITE)
                     .setActionTextColor(ContextCompat.getColor(this, R.color.accent))
@@ -275,11 +260,15 @@ public final class MainActivity extends BaseActivity
         mCameraPermissionGranted = false;
     }
 
+    /**
+     * Updates the toggle image to match the on/off state of the torch. Also toggles {@link
+     * android.view.WindowManager.LayoutParams#FLAG_KEEP_SCREEN_ON} to keep the screen on while the
+     * torch is lit (but not otherwise).
+     */
     private void updateUi() {
-        Timber.d("DEBUG: updating UI...");
+        Timber.d("Updating UI, mTorchEnabled = " + mTorchEnabled);
 
         // Set the corresponding toggle image
-        Timber.d("DEBUG: mTorchEnabled = " + mTorchEnabled + "; setting image accordingly");
         mImageButton.setImageResource(mTorchEnabled ? R.drawable.torch_on : R.drawable.torch_off);
 
         // Keep the screen on while the app is open and the torch is on
@@ -290,32 +279,56 @@ public final class MainActivity extends BaseActivity
         }
     }
 
+    /**
+     * Toggles the on/off state of the torch. Checks for the necessary permissions prior to
+     * attempting the toggle, prompting for them if necessary.
+     */
     private void toggleTorch() {
-        // Check for the necessary permissions
+        // Check for the necessary permissions, request if missing
         if (hasCameraPermissions(this)) {
-            Timber.d("DEBUG: toggleTorch | mTorchEnabled was " + mTorchEnabled
-                    + " when image was pressed; changing to " + !mTorchEnabled);
-
             // Use the service to start/stop the torch (start = on, stop = off)
-            Intent toggleIntent = new Intent(this, TorchService.class);
-            toggleIntent.putExtra(mTorchEnabled
-                    ? Constants.EXTRA_STOP_TORCH : Constants.EXTRA_START_TORCH, true);
-            startService(toggleIntent);
+            mTorchEnabled = !mTorchEnabled;
+            Timber.d("Posting a new ToggleRequestEvent to the bus.");
+            mBus.post(new ToggleRequestEvent(mTorchEnabled, mPersist));
         } else {
             requestCameraPermissions(this, mRootView);
         }
     }
 
-    private void killService(String processName) {
-        ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-        List<ActivityManager.RunningAppProcessInfo> runningAppProcesses
-                = am.getRunningAppProcesses();
+    /**
+     * Subscribes to receive ToggleResponseEvent notifications from the bus.
+     *
+     * @param event the ToggleResponseEvent
+     */
+    @Subscribe
+    public void onToggleResponseEvent(ToggleResponseEvent event) {
+        Timber.d("ToggleResponseEvent detected on the bus.");
+        mTorchEnabled = event.getState();
+        updateUi();
+    }
 
-        for (ActivityManager.RunningAppProcessInfo next : runningAppProcesses) {
-            if (next.processName.equals(processName)) {
-                Process.killProcess(next.pid);
-                break;
-            }
-        }
+    /**
+     * Subscribes to receive ShutdownEvent notifications from the bus.
+     *
+     * @param event the ShutdownEvent
+     */
+    @Subscribe
+    public void onShutdownEvent(ShutdownEvent event) {
+        Timber.d("ShutdownEvent detected on the bus.");
+        Toast.makeText(MainActivity.this, event.getError(), Toast.LENGTH_LONG).show();
+        finish();
+    }
+
+    /**
+     * Posts a new ToggleRequestEvent to the bus when new subscribers are registered.
+     *
+     * @return a new ToggleRequestEvent constructed with the current values
+     */
+    @Produce
+    public ToggleRequestEvent produceToggleRequestEvent() {
+        Timber.d("Producing a new ToggleRequestEvent.");
+        ToggleRequestEvent producedEvent = new ToggleRequestEvent(mAutoOn, mPersist);
+        producedEvent.setProduced(true);
+        return producedEvent;
     }
 }

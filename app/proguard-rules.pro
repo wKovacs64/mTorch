@@ -15,3 +15,12 @@
 -keepclasseswithmembernames class * {
     @butterknife.* <methods>;
 }
+
+# Otto
+-keepclassmembers class ** {
+    @com.squareup.otto.Subscribe public *;
+    @com.squareup.otto.Produce public *;
+}
+
+# mTorch
+-keep class com.wkovacs64.mtorch.bus.** { *; }

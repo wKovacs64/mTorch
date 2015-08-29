@@ -42,19 +42,9 @@
             android:theme="@style/SettingsTheme">
         </activity>
 
-        <receiver
-            android:name=".receiver.CommandReceiver"
-            android:enabled="true"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.wkovacs64.mtorch.command" />
-            </intent-filter>
-        </receiver>
-
         <service
             android:name=".service.TorchService"
-            android:icon="@drawable/ic_launcher"
-            android:process="@string/service_process">
+            android:icon="@drawable/ic_launcher">
         </service>
 
     </application>
