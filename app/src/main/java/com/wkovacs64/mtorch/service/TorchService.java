@@ -74,8 +74,7 @@ public final class TorchService extends Service {
         mBus.register(this);
 
         // Notify subscribers of initial torch state
-        Timber.d("Notifying subscribers of initial torch state.");
-        mBus.post(new TorchStateEvent(mTorch.isOn()));
+        updateUi(mTorch.isOn());
     }
 
     @Override
@@ -87,9 +86,8 @@ public final class TorchService extends Service {
             mPersist = intent.getBooleanExtra(Constants.SETTINGS_KEY_PERSISTENCE, false);
             toggleTorch(true, mPersist);
 
-            // Post a TorchStateEvent to the bus to update the UI
-            Timber.d("Posting a new TorchStateEvent to the bus.");
-            mBus.post(new TorchStateEvent(mTorch.isOn()));
+            // Update the UI
+            updateUi(mTorch.isOn());
         }
 
         return Service.START_NOT_STICKY;
@@ -108,11 +106,11 @@ public final class TorchService extends Service {
         if (mTorch != null && mTorch.isOn()) {
             Timber.w("Torch is still on, shutting it off...");
             try {
+                // Turn off the torch
                 mTorch.toggle(false);
 
-                // Post a TorchStateEvent to the bus to update the UI
-                Timber.d("Posting a new TorchStateEvent to the bus.");
-                mBus.post(new TorchStateEvent(false));
+                // Update the UI
+                updateUi(false);
             } catch (IllegalStateException e) {
                 Timber.e("Failed to toggle torch off during service destruction!", e);
             }
@@ -208,6 +206,16 @@ public final class TorchService extends Service {
     }
 
     /**
+     * Posts a TorchStateEvent to the bus to update the UI.
+     *
+     * @param state the current state of the torch (true for on, false for off)
+     */
+    private void updateUi(boolean state) {
+        Timber.d("Posting a new TorchStateEvent to the bus.");
+        mBus.post(new TorchStateEvent(state));
+    }
+
+    /**
      * Stops the service and posts a new {@link ShutdownEvent} to the bus.
      *
      * @param error the error message to include in the shutdown event
@@ -240,9 +248,8 @@ public final class TorchService extends Service {
             toggleTorch(event.getRequestedState(), event.getPersistence());
         }
 
-        // Post a TorchStateEvent to the bus to update the UI
-        Timber.d("Posting a new TorchStateEvent to the bus.");
-        mBus.post(new TorchStateEvent(mTorch.isOn()));
+        // Update the UI
+        updateUi(mTorch.isOn());
     }
 
     /**
@@ -266,7 +273,6 @@ public final class TorchService extends Service {
     @Subscribe
     public void onStateRequestEvent(StateRequestEvent event) {
         Timber.d("StateRequestEvent detected on the bus.");
-        Timber.d("Notifying subscribers of current torch state.");
-        mBus.post(new TorchStateEvent(mTorch.isOn()));
+        updateUi(mTorch.isOn());
     }
 }
