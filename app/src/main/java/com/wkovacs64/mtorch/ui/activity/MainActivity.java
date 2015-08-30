@@ -27,9 +27,8 @@ import com.wkovacs64.mtorch.bus.BusProvider;
 import com.wkovacs64.mtorch.bus.PersistenceChangeEvent;
 import com.wkovacs64.mtorch.bus.ShutdownEvent;
 import com.wkovacs64.mtorch.bus.StateRequestEvent;
-import com.wkovacs64.mtorch.bus.StateResponseEvent;
 import com.wkovacs64.mtorch.bus.ToggleRequestEvent;
-import com.wkovacs64.mtorch.bus.ToggleResponseEvent;
+import com.wkovacs64.mtorch.bus.TorchStateEvent;
 import com.wkovacs64.mtorch.service.TorchService;
 import com.wkovacs64.mtorch.ui.dialog.AboutDialog;
 
@@ -40,7 +39,8 @@ import static com.wkovacs64.mtorch.util.PermissionUtils.hasCameraPermissions;
 import static com.wkovacs64.mtorch.util.PermissionUtils.requestCameraPermissions;
 
 public final class MainActivity extends BaseActivity
-        implements View.OnClickListener, SharedPreferences.OnSharedPreferenceChangeListener,
+        implements View.OnClickListener,
+        SharedPreferences.OnSharedPreferenceChangeListener,
         ActivityCompat.OnRequestPermissionsResultCallback {
 
     private final Bus mBus = BusProvider.getBus();
@@ -305,18 +305,6 @@ public final class MainActivity extends BaseActivity
     }
 
     /**
-     * Subscribes to receive ToggleResponseEvent notifications from the bus.
-     *
-     * @param event the ToggleResponseEvent
-     */
-    @Subscribe
-    public void onToggleResponseEvent(ToggleResponseEvent event) {
-        Timber.d("ToggleResponseEvent detected on the bus.");
-        mTorchEnabled = event.getState();
-        updateUi();
-    }
-
-    /**
      * Subscribes to receive ShutdownEvent notifications from the bus.
      *
      * @param event the ShutdownEvent
@@ -329,13 +317,13 @@ public final class MainActivity extends BaseActivity
     }
 
     /**
-     * Subscribes to receive StateResponseEvent notifications from the bus.
+     * Subscribes to receive TorchStateEvent notifications from the bus.
      *
-     * @param event the StateResponseEvent
+     * @param event the TorchStateEvent
      */
     @Subscribe
-    public void onStateResponseEvent(StateResponseEvent event) {
-        Timber.d("StateResponseEvent detected on the bus.");
+    public void onTorchStateEvent(TorchStateEvent event) {
+        Timber.d("TorchStateEvent detected on the bus.");
         mTorchEnabled = event.getState();
         updateUi();
     }
@@ -348,7 +336,7 @@ public final class MainActivity extends BaseActivity
     @Produce
     public ToggleRequestEvent produceToggleRequestEvent() {
         Timber.d("Producing a new ToggleRequestEvent.");
-        ToggleRequestEvent producedEvent =  new ToggleRequestEvent(mTorchEnabled, mPersist);
+        ToggleRequestEvent producedEvent = new ToggleRequestEvent(mTorchEnabled, mPersist);
         producedEvent.setProduced(true);
         return producedEvent;
     }

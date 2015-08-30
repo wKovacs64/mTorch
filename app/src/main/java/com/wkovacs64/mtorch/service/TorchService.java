@@ -17,9 +17,8 @@ import com.wkovacs64.mtorch.bus.BusProvider;
 import com.wkovacs64.mtorch.bus.PersistenceChangeEvent;
 import com.wkovacs64.mtorch.bus.ShutdownEvent;
 import com.wkovacs64.mtorch.bus.StateRequestEvent;
-import com.wkovacs64.mtorch.bus.StateResponseEvent;
 import com.wkovacs64.mtorch.bus.ToggleRequestEvent;
-import com.wkovacs64.mtorch.bus.ToggleResponseEvent;
+import com.wkovacs64.mtorch.bus.TorchStateEvent;
 import com.wkovacs64.mtorch.core.Camera2Torch;
 import com.wkovacs64.mtorch.core.CameraTorch;
 import com.wkovacs64.mtorch.core.Torch;
@@ -76,7 +75,7 @@ public final class TorchService extends Service {
 
         // Notify subscribers of initial torch state
         Timber.d("Notifying subscribers of initial torch state.");
-        mBus.post(new StateResponseEvent(mTorch.isOn()));
+        mBus.post(new TorchStateEvent(mTorch.isOn()));
     }
 
     @Override
@@ -88,9 +87,9 @@ public final class TorchService extends Service {
             mPersist = intent.getBooleanExtra(Constants.SETTINGS_KEY_PERSISTENCE, false);
             toggleTorch(true, mPersist);
 
-            // Post a ToggleResponseEvent to the bus to update the UI
-            Timber.d("Posting a new ToggleResponseEvent to the bus.");
-            mBus.post(new ToggleResponseEvent(mTorch.isOn()));
+            // Post a TorchStateEvent to the bus to update the UI
+            Timber.d("Posting a new TorchStateEvent to the bus.");
+            mBus.post(new TorchStateEvent(mTorch.isOn()));
         }
 
         return Service.START_NOT_STICKY;
@@ -111,9 +110,9 @@ public final class TorchService extends Service {
             try {
                 mTorch.toggle(false);
 
-                // Post a ToggleResponseEvent to the bus to update the UI
-                Timber.d("Posting a new ToggleResponseEvent to the bus.");
-                mBus.post(new ToggleResponseEvent(false));
+                // Post a TorchStateEvent to the bus to update the UI
+                Timber.d("Posting a new TorchStateEvent to the bus.");
+                mBus.post(new TorchStateEvent(false));
             } catch (IllegalStateException e) {
                 Timber.e("Failed to toggle torch off during service destruction!", e);
             }
@@ -241,9 +240,9 @@ public final class TorchService extends Service {
             toggleTorch(event.getRequestedState(), event.getPersistence());
         }
 
-        // Post a ToggleResponseEvent to the bus to update the UI
-        Timber.d("Posting a new ToggleResponseEvent to the bus.");
-        mBus.post(new ToggleResponseEvent(mTorch.isOn()));
+        // Post a TorchStateEvent to the bus to update the UI
+        Timber.d("Posting a new TorchStateEvent to the bus.");
+        mBus.post(new TorchStateEvent(mTorch.isOn()));
     }
 
     /**
@@ -268,6 +267,6 @@ public final class TorchService extends Service {
     public void onStateRequestEvent(StateRequestEvent event) {
         Timber.d("StateRequestEvent detected on the bus.");
         Timber.d("Notifying subscribers of current torch state.");
-        mBus.post(new StateResponseEvent(mTorch.isOn()));
+        mBus.post(new TorchStateEvent(mTorch.isOn()));
     }
 }
