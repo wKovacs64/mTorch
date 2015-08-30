@@ -26,6 +26,8 @@ import com.wkovacs64.mtorch.R;
 import com.wkovacs64.mtorch.bus.BusProvider;
 import com.wkovacs64.mtorch.bus.PersistenceChangeEvent;
 import com.wkovacs64.mtorch.bus.ShutdownEvent;
+import com.wkovacs64.mtorch.bus.StateRequestEvent;
+import com.wkovacs64.mtorch.bus.StateResponseEvent;
 import com.wkovacs64.mtorch.bus.ToggleRequestEvent;
 import com.wkovacs64.mtorch.bus.ToggleResponseEvent;
 import com.wkovacs64.mtorch.service.TorchService;
@@ -101,7 +103,10 @@ public final class MainActivity extends BaseActivity
         mPrefs.registerOnSharedPreferenceChangeListener(this);
 
         // Start the service
-        startService(new Intent(this, TorchService.class));
+        Intent torchService = new Intent(this, TorchService.class);
+        if (mAutoOn) torchService.putExtra(Constants.SETTINGS_KEY_AUTO_ON, true);
+        torchService.putExtra(Constants.SETTINGS_KEY_PERSISTENCE, mPersist);
+        startService(torchService);
     }
 
     /*
@@ -142,6 +147,10 @@ public final class MainActivity extends BaseActivity
         // Show the appropriate feedback based on permission results now that the UI is available
         // (or do nothing if the user has not been prompted yet).
         processPermissionResults();
+
+        // Request the current state of the torch, according to the service
+        Timber.d("Requesting torch state.");
+        mBus.post(new StateRequestEvent());
     }
 
     @Override
@@ -320,6 +329,18 @@ public final class MainActivity extends BaseActivity
     }
 
     /**
+     * Subscribes to receive StateResponseEvent notifications from the bus.
+     *
+     * @param event the StateResponseEvent
+     */
+    @Subscribe
+    public void onStateResponseEvent(StateResponseEvent event) {
+        Timber.d("StateResponseEvent detected on the bus.");
+        mTorchEnabled = event.getState();
+        updateUi();
+    }
+
+    /**
      * Posts a new ToggleRequestEvent to the bus when new subscribers are registered.
      *
      * @return a new ToggleRequestEvent constructed with the current values
@@ -327,7 +348,7 @@ public final class MainActivity extends BaseActivity
     @Produce
     public ToggleRequestEvent produceToggleRequestEvent() {
         Timber.d("Producing a new ToggleRequestEvent.");
-        ToggleRequestEvent producedEvent = new ToggleRequestEvent(mAutoOn, mPersist);
+        ToggleRequestEvent producedEvent =  new ToggleRequestEvent(mTorchEnabled, mPersist);
         producedEvent.setProduced(true);
         return producedEvent;
     }

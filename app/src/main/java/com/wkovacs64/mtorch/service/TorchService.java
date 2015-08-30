@@ -10,12 +10,14 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 
 import com.squareup.otto.Bus;
-import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
+import com.wkovacs64.mtorch.Constants;
 import com.wkovacs64.mtorch.R;
 import com.wkovacs64.mtorch.bus.BusProvider;
 import com.wkovacs64.mtorch.bus.PersistenceChangeEvent;
 import com.wkovacs64.mtorch.bus.ShutdownEvent;
+import com.wkovacs64.mtorch.bus.StateRequestEvent;
+import com.wkovacs64.mtorch.bus.StateResponseEvent;
 import com.wkovacs64.mtorch.bus.ToggleRequestEvent;
 import com.wkovacs64.mtorch.bus.ToggleResponseEvent;
 import com.wkovacs64.mtorch.core.Camera2Torch;
@@ -71,11 +73,22 @@ public final class TorchService extends Service {
         // Register with the event bus
         Timber.d("Registering with the event bus.");
         mBus.register(this);
+
+        // Notify subscribers of initial torch state
+        Timber.d("Notifying subscribers of initial torch state.");
+        mBus.post(new StateResponseEvent(mTorch.isOn()));
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Timber.d("########## onStartCommand ##########");
+
+        // Check for Auto On
+        if (intent.hasExtra(Constants.SETTINGS_KEY_AUTO_ON)) {
+            mPersist = intent.getBooleanExtra(Constants.SETTINGS_KEY_PERSISTENCE, false);
+            onToggleRequestEvent(new ToggleRequestEvent(true, mPersist));
+        }
+
         return Service.START_NOT_STICKY;
     }
 
@@ -231,13 +244,14 @@ public final class TorchService extends Service {
     }
 
     /**
-     * Posts a new ToggleResponseEvent to the bus when new subscribers are registered.
+     * Subscribes to receive StateRequestEvent notifications from the bus.
      *
-     * @return a new ToggleResponseEvent constructed with the current torch state
+     * @param event the StateRequestEvent
      */
-    @Produce
-    public ToggleResponseEvent produceToggleResponseEvent() {
-        Timber.d("Producing a new ToggleResponseEvent.");
-        return new ToggleResponseEvent(mTorch.isOn());
+    @Subscribe
+    public void onStateRequestEvent(StateRequestEvent event) {
+        Timber.d("StateRequestEvent detected on the bus.");
+        Timber.d("Notifying subscribers of current torch state.");
+        mBus.post(new StateResponseEvent(mTorch.isOn()));
     }
 }
