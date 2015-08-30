@@ -86,7 +86,11 @@ public final class TorchService extends Service {
         // Check for Auto On
         if (intent.hasExtra(Constants.SETTINGS_KEY_AUTO_ON)) {
             mPersist = intent.getBooleanExtra(Constants.SETTINGS_KEY_PERSISTENCE, false);
-            onToggleRequestEvent(new ToggleRequestEvent(true, mPersist));
+            toggleTorch(true, mPersist);
+
+            // Post a ToggleResponseEvent to the bus to update the UI
+            Timber.d("Posting a new ToggleResponseEvent to the bus.");
+            mBus.post(new ToggleResponseEvent(mTorch.isOn()));
         }
 
         return Service.START_NOT_STICKY;
@@ -179,6 +183,32 @@ public final class TorchService extends Service {
     }
 
     /**
+     * Toggles the torch state.
+     *
+     * @param requestedState the requested state of the torch (true for on, false for off)
+     * @param persistence    the current state of the persistence feature (true for on, false for
+     *                       off)
+     */
+    private void toggleTorch(boolean requestedState, boolean persistence) {
+        // Try to toggle the torch to the requested state
+        try {
+            mTorch.toggle(requestedState);
+        } catch (IllegalStateException e) {
+            Timber.e("Failed to turn on the torch!", e);
+            die(getString(R.string.error_flash_unavailable));
+        }
+
+        // If turning torch off while in foreground mode (persistence enabled), exit foreground
+        if (mForeground && !requestedState) {
+            Timber.d("Disabling torch while in foreground mode. Exiting foreground mode.");
+            exitForeground();
+        }
+
+        // Toggle persistence if applicable
+        togglePersistence(persistence);
+    }
+
+    /**
      * Stops the service and posts a new {@link ShutdownEvent} to the bus.
      *
      * @param error the error message to include in the shutdown event
@@ -207,22 +237,8 @@ public final class TorchService extends Service {
             // Disregard the initial launch toggle request if already in the foreground
             Timber.d("ToggleRequestEvent was produced while service in foreground. Disregarding.");
         } else {
-            // Try to toggle the torch to the requested state (and post the result to the bus)
-            try {
-                mTorch.toggle(event.getRequestedState());
-            } catch (IllegalStateException e) {
-                Timber.e("Failed to turn on the torch!", e);
-                die(getString(R.string.error_flash_unavailable));
-            }
-
-            // If turning torch off while in foreground mode (persistence enabled), exit foreground
-            if (mForeground && !event.getRequestedState()) {
-                Timber.d("Disabling torch while in foreground mode. Exiting foreground mode.");
-                exitForeground();
-            }
-
-            // Toggle persistence if applicable
-            togglePersistence(event.getPersistence());
+            // Toggle the torch
+            toggleTorch(event.getRequestedState(), event.getPersistence());
         }
 
         // Post a ToggleResponseEvent to the bus to update the UI
