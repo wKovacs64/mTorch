@@ -10,6 +10,7 @@ public interface Torch {
      * @throws IllegalStateException if the torch could not be initialized
      */
     void init() throws IllegalStateException;
+
     /**
      * Toggles the torch state.
      *
@@ -17,12 +18,14 @@ public interface Torch {
      * @throws IllegalStateException if the torch could not be toggled
      */
     void toggle(boolean enabled) throws IllegalStateException;
+
     /**
      * Reports the current illumination status of the torch.
      *
      * @return true if the torch is on, false if it's off
      */
     boolean isOn();
+
     /**
      * Releases or tears down any necessary torch components or dependencies.
      */
