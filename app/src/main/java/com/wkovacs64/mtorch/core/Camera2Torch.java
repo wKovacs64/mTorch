@@ -11,6 +11,9 @@ import android.support.annotation.NonNull;
 /**
  * A {@link Torch} implementation built on the {@link android.hardware.camera2} API for use on
  * Android Marshmallow (API 23) and above.
+ *
+ * Note: as it turns out, the Camera2 is very slow compared to the deprecated Camera API. It may not
+ * be suitable for a flashlight/torch that attempts to support rapid toggling.
  */
 @TargetApi(Build.VERSION_CODES.M)
 public final class Camera2Torch extends CameraManager.TorchCallback implements Torch {
