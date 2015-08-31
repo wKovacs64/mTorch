@@ -53,7 +53,8 @@ public final class Camera2Torch extends CameraManager.TorchCallback implements T
                 Boolean lensFacingBack = cc.get(CameraCharacteristics.LENS_FACING) ==
                         CameraCharacteristics.LENS_FACING_BACK;
                 if (flashAvailable && lensFacingBack) {
-                    mCameraManager.setTorchMode(cameraId, mTorchEnabled);
+                    mCameraManager.setTorchMode(cameraId, enabled);
+                    mTorchEnabled = enabled; // TODO: Stop cheating!
                 }
             }
         } catch (ArrayIndexOutOfBoundsException | IllegalArgumentException e) {
