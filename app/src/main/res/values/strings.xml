@@ -34,6 +34,7 @@
     <!-- Permissions -->
     <string name="permission_rationale_camera">Camera access is required to activate the flash.</string>
     <string name="content_camera_permission_denied">Grant this app Camera permissions in your system settings.</string>
+    <string name="action_settings">Settings</string>
 
     <!-- Settings | Auto On -->
     <string name="settings_auto_on_key" translatable="false">auto_on</string>

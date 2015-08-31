@@ -253,7 +253,7 @@ public final class MainActivity extends BaseActivity
             Snackbar.make(mRootView, R.string.content_camera_permission_denied,
                     Snackbar.LENGTH_INDEFINITE)
                     .setActionTextColor(ContextCompat.getColor(this, R.color.accent))
-                    .setAction(R.string.ok, new View.OnClickListener() {
+                    .setAction(R.string.action_settings, new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS));
