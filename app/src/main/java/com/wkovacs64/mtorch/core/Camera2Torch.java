@@ -32,7 +32,7 @@ public final class Camera2Torch extends CameraManager.TorchCallback implements T
     }
 
     @Override
-    public void init() throws IllegalStateException {
+    public void init() {
         try {
             mCameraManager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
             mCameraManager.registerTorchCallback(this, null);

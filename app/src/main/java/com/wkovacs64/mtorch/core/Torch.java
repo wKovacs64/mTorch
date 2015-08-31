@@ -9,7 +9,7 @@ public interface Torch {
      *
      * @throws IllegalStateException if the torch could not be initialized
      */
-    void init() throws IllegalStateException;
+    void init();
 
     /**
      * Toggles the torch state.
@@ -17,7 +17,7 @@ public interface Torch {
      * @param enabled true to turn the torch on, false to turn it off
      * @throws IllegalStateException if the torch could not be toggled
      */
-    void toggle(boolean enabled) throws IllegalStateException;
+    void toggle(boolean enabled);
 
     /**
      * Reports the current illumination status of the torch.
