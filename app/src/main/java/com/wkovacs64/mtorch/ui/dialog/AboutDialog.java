@@ -56,8 +56,11 @@ public final class AboutDialog extends DialogFragment {
             versionName = getString(R.string.unknown);
         }
 
+        // Compose the description
+        String desc = String.format("%s %s", getString(R.string.app_name), mAboutDesc.getText());
+
         // Populate data
-        mAboutDesc.setText(getString(R.string.app_name) + " " + mAboutDesc.getText());
+        mAboutDesc.setText(desc);
         mAboutVersion.setText(versionName);
 
         return view;
