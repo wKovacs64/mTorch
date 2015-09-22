@@ -248,7 +248,8 @@ public final class MainActivity extends BaseActivity
      */
     private void processPermissionResults() {
         if (mCameraPermissionDenied
-                && !shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+                && !ActivityCompat
+                .shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
             Timber.d("Instructing user to grant permissions manually.");
             Snackbar.make(mRootView, R.string.content_camera_permission_denied,
                     Snackbar.LENGTH_INDEFINITE)
