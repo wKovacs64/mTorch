@@ -1,9 +1,11 @@
 package com.wkovacs64.mtorch.util;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
@@ -15,6 +17,7 @@ import com.wkovacs64.mtorch.R;
 /**
  * Uninstantiable permission-related utility class.
  */
+@TargetApi(Build.VERSION_CODES.M)
 public final class PermissionUtils {
 
     // Pre-constructed String array for requestPermissions calls
