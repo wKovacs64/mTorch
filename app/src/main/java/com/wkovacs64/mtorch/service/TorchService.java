@@ -4,7 +4,6 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
-import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
@@ -19,7 +18,6 @@ import com.wkovacs64.mtorch.bus.ShutdownEvent;
 import com.wkovacs64.mtorch.bus.StateRequestEvent;
 import com.wkovacs64.mtorch.bus.ToggleRequestEvent;
 import com.wkovacs64.mtorch.bus.TorchStateEvent;
-import com.wkovacs64.mtorch.core.Camera2Torch;
 import com.wkovacs64.mtorch.core.CameraTorch;
 import com.wkovacs64.mtorch.core.Torch;
 import com.wkovacs64.mtorch.ui.activity.MainActivity;
@@ -51,6 +49,7 @@ public final class TorchService extends Service {
         Timber.d("########## onCreate ##########");
         super.onCreate();
 
+        /*
         // Choose the appropriate Torch implementation based on OS version
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             Timber.d("DEBUG: Pre-M Android OS detected, using deprecated CameraTorch");
@@ -59,6 +58,12 @@ public final class TorchService extends Service {
             Timber.d("DEBUG: Android M or later detected, using Camera2Torch");
             mTorch = new Camera2Torch(getApplicationContext());
         }
+        */
+
+        // TODO: replace with OS version-specific Torch implementation
+        // Use the default Torch implementation
+        Timber.d("DEBUG: Instantiating deprecated CameraTorch");
+        mTorch = new CameraTorch();
 
         // Initialize the torch
         try {
