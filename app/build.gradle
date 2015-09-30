@@ -1,0 +1,44 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion '23.0.1'
+
+    signingConfigs {
+        release
+    }
+    defaultConfig {
+        minSdkVersion 11
+        targetSdkVersion 23
+        versionCode 200
+        versionName '2.0.0-SNAPSHOT'
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
+                    'proguard-rules.pro'
+        }
+    }
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    compile 'com.android.support:design:23.0.1'
+    compile 'com.jakewharton.timber:timber:3.1.0'
+    compile 'com.jakewharton:butterknife:7.0.1'
+    compile 'com.squareup:otto:1.3.8'
+}
+
+// specify signing properties on the command line
+if (hasProperty('storeFile')) {
+    android.signingConfigs.release.storeFile = file(storeFile)
+    android.signingConfigs.release.storePassword = storePassword
+    android.signingConfigs.release.keyAlias = keyAlias
+    android.signingConfigs.release.keyPassword = keyPassword
+    android.buildTypes.release.signingConfig = android.signingConfigs.release
+} else {
+    android.buildTypes.release.signingConfig = null
+}

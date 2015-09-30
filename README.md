@@ -1,47 +1,38 @@
 # [mTorch](https://wkovacs64.github.io/mTorch/)
 
-mTorch is a minimalistic torch/flashlight app for Android. It is objectively and measurably superior to every other app ever created for any platform in the history of computing. Period. It is technologically impossible for a better app to exist, and that's a proven fact. It's science. The previous statements are entirely false, except for the first sentence.
+*A minimalistic torch/flashlight app for Android™.*
 
-I realize there are probably more torch apps on the Play Store than any other type of app, and most of them are probably much more polished and feature-rich than mine. Honestly, I just did it to have a little fun and learn some more Android. If anyone finds it useful and prefers the minimalistic approach I took with it, all the better.
+## Description and Requirements
 
-## Building
+mTorch was originally created as an exercise in Android development, but now it appears some people actually use it so I try to maintain it when I have time. The intended design was to be as minimalistic as possible while still providing a user-friendly experience. As such, the project has the following requirements:
 
-This project was created in [Android Studio](http://developer.android.com/sdk/installing/studio.html) and uses the [Gradle build system](http://www.gradleware.com/resources/tech/android). The first time you build something using the Gradle wrapper script, it will download the appropriate version of Gradle which can be relatively large (~150 MB). By default, it will save it in the `.gradle` subdirectory of your home directory. If you wish to override this location, set the environment variable GRADLE_USER_HOME to a more desirable path. If you already have Gradle installed on your system and would like to use that instead, make sure you set the GRADLE_HOME environment variable to the location where Gradle is installed and use the `gradle` command instead of the `gradlew` wrapper script to perform the build.
+##### Features
 
-#### System Requirements:
-* [Oracle Java JDK 7](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
-    * Set environment variable JAVA_HOME to JDK installation location
-    * You may want to set ANDROID_STUDIO_JDK to the same path, especially if JAVA_HOME already points elsewhere
-    * JDK 6 works as well, if you prefer
+* _Auto On_  
+If enabled, the torch should automatically illuminate upon entering the app. If disabled, the torch remains off upon entering the app and must be toggled by tapping the toggle image.
 
-* [Android SDK](https://developer.android.com/sdk)
-    * Latest version recommended
-    * Set environment variable ANDROID_HOME to SDK installation location
-    * Within Android SDK Manager, install the following options:
-        * Tools:
-            * Android SDK Tools
-            * Android SDK Platform-tools
-            * Android SDK Build-tools (22.0.1)
-        * Android 5.1 (API 22):
-            * SDK Platform
-        * Extras:
-            * Android Support Repository
-            * Android Support Library
+* _Persistence_  
+If enabled, the state of the torch persists after leaving the app. If the torch was illuminated upon leaving the app and persistence is enabled, the torch remains lit and a notification is displayed for quick return to the app. If the torch was off upon leaving the app and persistence is enabled, persistence does nothing and no notification is created.
 
-#### Build It:
-* After you have the system requirements installed and configured and you've cloned a copy of the git repository, simple leverage the Gradle wrapper to build: `gradlew build`
-* That's it! You should now have an installable APK in the `<project_root>/mTorch/build/outputs/apk` directory.
+##### Behavior
+
+* _Hardware Flash_  
+A hardware LED flash is required. Some flashlight apps will turn the display brightness up and just display a white screen in the absence of a hardware flash, but this app is not one of them.
+
+* _Quick Toggle_  
+One of the most annoying behavioral issues I found in almost every other flashlight/torch app on the market was a (relatively) long delay between tapping the toggle image and the light illuminating. While developing mTorch, I came to realize what caused this annoying delay. Toggling the hardware flash requires acquiring access to the camera device. Acquiring access to the camera produces the delay in question. Most (all?) of the apps with this delay are acquiring and releasing the camera device when the user toggles the torch state, causing the delay to be present on each tap. One of my primary goals with mTorch was to reduce/eliminate that delay, so I take a different approach and acquire the camera device upon entering the app and release it when leaving the app (assuming the torch was off or the Persistence feature was disabled). _(Note: this approach produces an obscure bug that drives me crazy, even though I doubt any real user would ever run into it. See issue #2.)_
 
 ## Contributing
-You can use the "Open an existing Android Studio project" option in Android Studio and point at the project root directory to start hacking on this app. Feel free to send me pull requests with fixes or improvements. I also welcome localization efforts if you would like to [translate](https://crowdin.com/project/mtorch) some strings.
+See the [CONTRIBUTING](../master/CONTRIBUTING.md) file if you'd like to contribute code. I also welcome localization efforts if you would like to [translate](https://crowdin.com/project/mtorch) some strings.
 
 [![Crowdin](https://d322cqt584bo4o.cloudfront.net/mtorch/localized.png)](https://crowdin.com/project/mtorch)
 
-## Developed By
-Designed and developed by Justin R. Hall. Special thanks to [Santoso Wijaya](https://github.com/santa4nt), see the [CONTRIBUTORS](../master/CONTRIBUTORS) file for further details.
+## Credits
+
+Thanks to [Speedy McVroom](http://viscious-speed.deviantart.com) for the public domain lamp graphic used in this app.
 
 ## License/Copying
-mTorch is distributed under the MIT License. See the [LICENSE](../master/LICENSE) file for further details.
+mTorch is distributed under the MIT License. See the [LICENSE](../master/LICENSE) file for details.
 
 ## Donating
 If you feel like donating for some unfathomable reason, I accept [Bitcoin](http://bit.co.in/mtorch).
