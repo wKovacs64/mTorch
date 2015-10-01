@@ -92,23 +92,6 @@
                 style="@style/AboutDialog.Description"
                 android:text="@string/about_author_name" />
 
-            <View
-                android:id="@+id/about_divider02"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/divider_height"
-                android:layout_below="@id/about_author_text"
-                android:layout_marginBottom="@dimen/divider_vertical_margin"
-                android:layout_marginTop="@dimen/divider_vertical_margin"
-                android:background="@drawable/white_transparent_gradient" />
-
-            <TextView
-                android:id="@+id/about_disclaimer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/about_divider02"
-                android:text="@string/about_disclaimer"
-                style="@style/AboutDialog.Disclaimer" />
-
         </RelativeLayout>
 
     </LinearLayout>

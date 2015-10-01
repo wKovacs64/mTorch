@@ -14,7 +14,6 @@
     <style name="AboutDialog.Description" parent="TextAppearance.AppCompat.Small">
         <item name="android:textColor">@color/text_secondary</item>
     </style>
-    <style name="AboutDialog.Disclaimer" parent="TextAppearance.AppCompat.Caption" />
 
     <!-- About Dialog: Link(s) -->
     <style name="AboutDialog.Link" parent="TextAppearance.AppCompat.Caption">

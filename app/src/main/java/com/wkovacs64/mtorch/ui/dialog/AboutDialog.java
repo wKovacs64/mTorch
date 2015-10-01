@@ -16,16 +16,20 @@ import android.widget.TextView;
 import com.wkovacs64.mtorch.R;
 
 import butterknife.Bind;
+import butterknife.BindString;
 import butterknife.ButterKnife;
 
 public final class AboutDialog extends DialogFragment {
 
     public static final String TAG = AboutDialog.class.getSimpleName();
 
-    @Bind(R.id.about_description)
-    TextView mAboutDesc;
     @Bind(R.id.about_version_number)
     TextView mAboutVersion;
+
+    @BindString(R.string.app_name)
+    String mAppName;
+    @BindString(R.string.unknown)
+    String mUnknown;
 
     public static AboutDialog newInstance() {
         return new AboutDialog();
@@ -42,7 +46,7 @@ public final class AboutDialog extends DialogFragment {
         Dialog dialog = getDialog();
         dialog.requestWindowFeature(Window.FEATURE_LEFT_ICON);
         dialog.setContentView(R.layout.dialog_about);
-        dialog.setTitle(getString(R.string.app_name));
+        dialog.setTitle(mAppName);
         dialog.setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.ic_launcher);
 
         // Find the version number
@@ -53,14 +57,10 @@ public final class AboutDialog extends DialogFragment {
                     .getPackageInfo(activity.getPackageName(), 0);
             versionName = pkgInfo.versionName;
         } catch (PackageManager.NameNotFoundException e) {
-            versionName = getString(R.string.unknown);
+            versionName = mUnknown;
         }
 
-        // Compose the description
-        String desc = String.format("%s %s", getString(R.string.app_name), mAboutDesc.getText());
-
         // Populate data
-        mAboutDesc.setText(desc);
         mAboutVersion.setText(versionName);
 
         return view;
