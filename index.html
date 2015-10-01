@@ -1,162 +1,85 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>mTorch</title>
-    <meta name="ROBOTS" content="NOARCHIVE" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="favicon.ico?v=1" />
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>mTorch by wKovacs64</title>
 
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,700">
-    <link rel="stylesheet" href="css/bootstrap.min.css?v=2">
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-dark.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>mTorch</h1>
+        <p> A minimalistic torch/flashlight app for Android™</p>
+        <p class="view"><a href="https://github.com/wKovacs64/mTorch">View the Project on GitHub <small>wKovacs64/mTorch</small></a></p>
+        <ul>
+          <li><a href="https://github.com/wKovacs64/mTorch/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/wKovacs64/mTorch/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/wKovacs64/mTorch">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h2>
+<a id="description-and-requirements" class="anchor" href="#description-and-requirements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Description and Requirements</h2>
 
-    <!-- Custom inline CSS -->
-    <style>
-        #main-container {
-          margin-top: 50px;
-        }
+<p>mTorch was originally created as an exercise in Android development, but now it appears some people actually use it so I try to maintain it when I have time. The intended design was to be as minimalistic as possible while still providing a user-friendly experience. As such, the project has the following requirements:</p>
 
-        #jumbo {
-          margin-top: 20px;
-        }
+<h5>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h5>
 
-        #download-button {
-          text-align: center;
-        }
+<ul>
+<li><p><em>Auto On</em><br>
+If enabled, the torch should automatically illuminate upon entering the app. If disabled, the torch remains off upon entering the app and must be toggled by tapping the toggle image.</p></li>
+<li><p><em>Persistence</em><br>
+If enabled, the state of the torch persists after leaving the app. If the torch was illuminated upon leaving the app and persistence is enabled, the torch remains lit and a notification is displayed for quick return to the app. If the torch was off upon leaving the app and persistence is enabled, persistence does nothing and no notification is created.</p></li>
+</ul>
 
-        footer {
-          border-top: 1px solid rgb(40, 40, 40);
-          padding-top: 5px;
-          margin-top: 70px;
-          margin-bottom: 70px;
-        }
-    </style>
-</head>
-<body>
-    <!-- Navigation Bar -->
-    <div class="navbar navbar-default navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="https://plus.google.com/u/0/115411089053611973023">
-                    +wKovacs64
-                </a>
-                <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-            </div>
-            <div id="navbar-main" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>
-                        <a href="http://www.android.com/">Android</a>
-                    </li>
-                    <li>
-                        <a href="https://developer.android.com">Development</a>
-                    </li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <a href="mailto:android@wkovacs64.com">Email</a>
-                    </li>
-                    <li>
-                        <a href="https://github.com/wKovacs64/mTorch">GitHub</a>
-                    </li>
-                    <li>
-                        <a href="http://bit.co.in/mtorch">Donations</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
+<h5>
+<a id="behavior" class="anchor" href="#behavior" aria-hidden="true"><span class="octicon octicon-link"></span></a>Behavior</h5>
+
+<ul>
+<li><p><em>Hardware Flash</em><br>
+A hardware LED flash is required. Some flashlight apps will turn the display brightness up and just display a white screen in the absence of a hardware flash, but this app is not one of them.</p></li>
+<li><p><em>Quick Toggle</em><br>
+One of the most annoying behavioral issues I found in almost every other flashlight/torch app on the market was a (relatively) long delay between tapping the toggle image and the light illuminating. While developing mTorch, I came to realize what caused this annoying delay. Toggling the hardware flash requires acquiring access to the camera device. Acquiring access to the camera produces the delay in question. Most (all?) of the apps with this delay are acquiring and releasing the camera device when the user toggles the torch state, causing the delay to be present on each tap. One of my primary goals with mTorch was to reduce/eliminate that delay, so I take a different approach and acquire the camera device upon entering the app and release it when leaving the app (assuming the torch was off or the Persistence feature was disabled). <em>(Note: this approach produces an obscure bug that drives me crazy, even though I doubt any real user would ever run into it. See issue #2.)</em></p></li>
+</ul>
+
+<h2>
+<a id="contributing" class="anchor" href="#contributing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contributing</h2>
+
+<p>See the <a href="../master/CONTRIBUTING.md">CONTRIBUTING</a> file if you'd like to contribute code. I also welcome localization efforts if you would like to <a href="https://crowdin.com/project/mtorch">translate</a> some strings.</p>
+
+<p><a href="https://crowdin.com/project/mtorch"><img src="https://d322cqt584bo4o.cloudfront.net/mtorch/localized.png" alt="Crowdin"></a></p>
+
+<h2>
+<a id="credits" class="anchor" href="#credits" aria-hidden="true"><span class="octicon octicon-link"></span></a>Credits</h2>
+
+<p>Thanks to <a href="http://viscious-speed.deviantart.com">Speedy McVroom</a> for the public domain lamp graphic used in this app.</p>
+
+<h2>
+<a id="licensecopying" class="anchor" href="#licensecopying" aria-hidden="true"><span class="octicon octicon-link"></span></a>License/Copying</h2>
+
+<p>mTorch is distributed under the MIT License. See the <a href="../master/LICENSE">LICENSE</a> file for details.</p>
+
+<h2>
+<a id="donating" class="anchor" href="#donating" aria-hidden="true"><span class="octicon octicon-link"></span></a>Donating</h2>
+
+<p>If you feel like donating for some unfathomable reason, I accept <a href="http://bit.co.in/mtorch">Bitcoin</a>.</p>
+      </section>
     </div>
-    <!-- Primary Content Container -->
-    <div id="main-container" class="container">
-        <!-- Jumbotron -->
-        <div id="jumbo" class="jumbotron">
-            <h1>mTorch</h1>
-            <p>mTorch is a minimalistic torch/flashlight app for Android. It is objectively and measurably superior to every other app ever created for any platform in the history of computing. Period. It is technologically impossible for a better app to exist, and that's a proven fact. It's science. The previous statements are entirely false, except for the first sentence.</p>
-            <br />
-            <p id="download-button">
-                <a class="btn btn-primary btn-lg" href="https://play.google.com/store/apps/details?id=com.wkovacs64.mtorch">
-                    Download Now
-                </a>
-            </p>
-        </div>
-        <!-- Marketing -->
-        <div class="row">
-            <div class="col-lg-4">
-                <h3 class="text-primary">THE Solution</h3>
-                <p>Bumping around in the dark is dangerous and I can never find a flashlight when I need one (partially because it's dark and hard to see), but I <em>always</em> have my mobile phone with me. Eureka! Wouldn't it be great if my phone could double as a flashlight?! Immediately, I went to the Play Store and searched for a flashlight/torch app. Nothing. Surely I must be searching incorrectly, there must be one out there somewhere. Nada. And thus, the idea for this app was born. Since nobody else had done it, I felt compelled to create such an app myself and provide a greatly needed service to those in desperate need of light.</p>
-            </div>
-            <div class="col-lg-4">
-                <h3 class="text-primary">Functional</h3>
-                <p>While other developers scurry to implement the latest and greatest fad in their apps, I focus on sound mechanics and doing what needs to be done. What can this app do that others can't, you might ask? Allow me to illuminate. This app doesn't only look great while taking up minimal system resources, but when you touch the lamp graphic - it actually turns the flashlight on your device ON. Impressive? Perhaps. But you deserve the very best, and that's why I dedicated my time and energy to making sure this was feature number one. It turns on, and it turns on well. Amazing, but not enough? No problem. In addition to turning the light on, touching the lamp graphic again will also toggle the light OFF. Yup, I went there. And the best part about these great features? 60% of the time, they work every time.</p>
-            </div>
-            <div class="col-lg-4">
-                <h3 class="text-primary">Lean</h3>
-                <p>This app was designed with the minimalist in mind. Other developers try to add "neat" features and "cool" tweaks to make their app stand out above the rest - but not me. It is my solemn promise to you as a developer to keep the features to a bare minimum. There will be no extraneous benefits in my app whatsoever. Strobe Mode? Squashed! Flashy colors on the screen? Eliminated! Widgets? Eradicated! I will strive to keep this app nearly feature-free and borderline useless for as long as I maintain it.</p>
-            </div>
-        </div>
-        <!-- Testimonials -->
-        <div class="row">
-            <div class="col-lg-12">
-                <h3 id="type-blockquotes">Testimonials</h3>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-6">
-                <blockquote>
-                    <p>Without a doubt, the best torch/flashlight app I've ever used.</p>
-                    <small><cite title="A different one. Totally not the author of this app.">Justin Hall</cite></small>
-                </blockquote>
-            </div>
-            <div class="col-lg-6">
-                <blockquote class="pull-right">
-                    <p>The tree of liberty must be refreshed from time to time with the blood of patriots and tyrants. Also, download this app.</p>
-                    <small><cite title="He said some of it.">Thomas Jefferson</cite></small>
-                </blockquote>
-            </div>
-        </div>
-        <!-- Privacy Policy -->
-        <div class="row" id="privacy">
-            <div class="col-lg-12">
-                <h3 class="text-primary">Privacy Policy</h3>
-                <p>I am a strong privacy supporter. I will not collect any user data whatsoever, aside from what Google tracks through the Play Store app publishing system (reported crashes, number of downloads, etc.). Your data and your identity are your own and I have no reason to observe or record either. This app is open source and <a href="https://github.com/wKovacs64/mTorch">available</a> for your review so that you don't have to take my word for it, but can see for yourself that no information is being collected. If you have any questions about this policy or your privacy when using this app, please contact me.</p>
-            </div>
-        </div>
-        <!-- Localization -->
-        <div class="row">
-            <div class="col-lg-12">
-                <h3 class="text-primary">Localization</h3>
-                <p>This app doesn't have a ton of strings, but I would be more than happy to accommodate other languages if anyone would like to submit translations. If you are familiar with the Android app structure and would like to simply email me an updated strings.xml and two-letter ISO language code, that's fine. Additionally, the project is available on <a href="https://crowdin.com/project/mtorch">Crowdin.com</a> for an easy web-based translation interface. Lastly, I also accept <a href="https://github.com/wKovacs64/mTorch/pulls">pull requests</a> on GitHub.</p>
-            </div>
-        </div>
-        <!-- Footer -->
-        <footer>
-            <div class="row">
-                <div class="col-lg-12">
-                    <ul class="list-unstyled">
-                        <li class="pull-left">
-                            Copyright (c) 2015 Justin R. Hall
-                        </li>
-                        <li class="pull-right">
-                            <a href="#top">Back to Top</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </footer>
-    </div>
-
-    <!-- End page content, begin scripts -->
-    <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
-    <script src="//netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-</body>
+    <footer>
+      <p>Project maintained by <a href="https://github.com/wKovacs64">wKovacs64</a></p>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
 </html>
