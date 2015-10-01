@@ -49,13 +49,13 @@ If enabled, the state of the torch persists after leaving the app. If the torch 
 <li><p><em>Hardware Flash</em><br>
 A hardware LED flash is required. Some flashlight apps will turn the display brightness up and just display a white screen in the absence of a hardware flash, but this app is not one of them.</p></li>
 <li><p><em>Quick Toggle</em><br>
-One of the most annoying behavioral issues I found in almost every other flashlight/torch app on the market was a (relatively) long delay between tapping the toggle image and the light illuminating. While developing mTorch, I came to realize what caused this annoying delay. Toggling the hardware flash requires acquiring access to the camera device. Acquiring access to the camera produces the delay in question. Most (all?) of the apps with this delay are acquiring and releasing the camera device when the user toggles the torch state, causing the delay to be present on each tap. One of my primary goals with mTorch was to reduce/eliminate that delay, so I take a different approach and acquire the camera device upon entering the app and release it when leaving the app (assuming the torch was off or the Persistence feature was disabled). <em>(Note: this approach produces an obscure bug that drives me crazy, even though I doubt any real user would ever run into it. See issue #2.)</em></p></li>
+One of the most annoying behavioral issues I found in almost every other flashlight/torch app on the market was a (relatively) long delay between tapping the toggle image and the light illuminating. While developing mTorch, I came to realize what caused this annoying delay. Toggling the hardware flash requires acquiring access to the camera device. Acquiring access to the camera produces the delay in question. Most (all?) of the apps with this delay are acquiring and releasing the camera device when the user toggles the torch state, causing the delay to be present on each tap. One of my primary goals with mTorch was to reduce/eliminate that delay, so I take a different approach and acquire the camera device upon entering the app and release it when leaving the app (assuming the torch was off or the Persistence feature was disabled). <em>(Note: this approach produces an obscure bug that drives me crazy, even though I doubt any real user would ever run into it. See issue #2 on GitHub.)</em></p></li>
 </ul>
 
 <h2>
 <a id="contributing" class="anchor" href="#contributing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contributing</h2>
 
-<p>See the <a href="../master/CONTRIBUTING.md">CONTRIBUTING</a> file if you'd like to contribute code. I also welcome localization efforts if you would like to <a href="https://crowdin.com/project/mtorch">translate</a> some strings.</p>
+<p>See the <a href="https://github.com/wKovacs64/mTorch/blob/master/CONTRIBUTING.md">CONTRIBUTING</a> file if you'd like to contribute code. I also welcome localization efforts if you would like to <a href="https://crowdin.com/project/mtorch">translate</a> some strings.</p>
 
 <p><a href="https://crowdin.com/project/mtorch"><img src="https://d322cqt584bo4o.cloudfront.net/mtorch/localized.png" alt="Crowdin"></a></p>
 
@@ -67,7 +67,7 @@ One of the most annoying behavioral issues I found in almost every other flashli
 <h2>
 <a id="licensecopying" class="anchor" href="#licensecopying" aria-hidden="true"><span class="octicon octicon-link"></span></a>License/Copying</h2>
 
-<p>mTorch is distributed under the MIT License. See the <a href="../master/LICENSE">LICENSE</a> file for details.</p>
+<p>mTorch is distributed under the MIT License. See the <a href="https://github.com/wKovacs64/mTorch/blob/develop/LICENSE">LICENSE</a> file for details.</p>
 
 <h2>
 <a id="donating" class="anchor" href="#donating" aria-hidden="true"><span class="octicon octicon-link"></span></a>Donating</h2>
