@@ -7,11 +7,16 @@
   <string name="about_version_text">Versión:</string>
   <string name="error_camera_unavailable">EL ERROR: no puede adquirir la cámara</string>
   <string name="error_no_flash">EL ERROR: sin flash detectado</string>
+  <string name="error_flash_unavailable">EL ERROR: incapaz de alternar el flash</string>
   <string name="menu_about">Sobre</string>
   <string name="menu_settings">Configuración</string>
   <string name="notification_text">Pulse para volver a la aplicación</string>
   <string name="torch_toggle">Alternar la antorcha</string>
   <string name="unknown">Desconocido</string>
+  <string name="ok">OK</string>
+  <string name="permission_rationale_camera">Se requiere acceso a la cámara para activar el flash.</string>
+  <string name="content_camera_permission_denied">Conceder permisos a esta aplicación en la configuración del sistema por la cámara.</string>
+  <string name="action_settings">Ajustes</string>
   <string name="settings_auto_on_title">Activar Automáticamente</string>
   <string name="settings_auto_on_summary_on">Iluminar la antorcha sobre lanzamiento</string>
   <string name="settings_auto_on_summary_off">Deja antorcha extinguida en lanzamiento</string>
