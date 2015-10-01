@@ -47,7 +47,7 @@ public final class AboutDialog extends DialogFragment {
         dialog.requestWindowFeature(Window.FEATURE_LEFT_ICON);
         dialog.setContentView(R.layout.dialog_about);
         dialog.setTitle(mAppName);
-        dialog.setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.ic_launcher);
+        dialog.setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.mipmap.ic_launcher);
 
         // Find the version number
         final Activity activity = getActivity();

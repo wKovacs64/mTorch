@@ -5,7 +5,8 @@
 * Android M support
 * Complete rewrite of torch implementation
 * Complete intra-app communication overhaul (increasing toggle speed)
-* Changed notification icons from greyscale to white per design guidelines
+* High quality image resources (dramatic increase for larger screens)
+* Changed notification icons to white per design guidelines
 * Dropped support for Android Froyo and Gingerbread (sorry)
 
 ## Version 1.1.1 *(2015-04-01)*
