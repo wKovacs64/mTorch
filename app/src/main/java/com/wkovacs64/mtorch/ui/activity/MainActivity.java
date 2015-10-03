@@ -10,6 +10,8 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,12 +35,13 @@ import com.wkovacs64.mtorch.service.TorchService;
 import com.wkovacs64.mtorch.ui.dialog.AboutDialog;
 
 import butterknife.Bind;
+import butterknife.ButterKnife;
 import timber.log.Timber;
 
 import static com.wkovacs64.mtorch.util.PermissionUtils.hasCameraPermissions;
 import static com.wkovacs64.mtorch.util.PermissionUtils.requestCameraPermissions;
 
-public final class MainActivity extends BaseActivity
+public final class MainActivity extends AppCompatActivity
         implements View.OnClickListener,
         SharedPreferences.OnSharedPreferenceChangeListener,
         ActivityCompat.OnRequestPermissionsResultCallback {
@@ -62,6 +65,8 @@ public final class MainActivity extends BaseActivity
 
     @Bind(R.id.container)
     LinearLayout mRootView;
+    @Bind(R.id.app_bar)
+    Toolbar mAppBar;
     @Bind(R.id.torch_image_button)
     ImageButton mImageButton;
 
@@ -81,6 +86,14 @@ public final class MainActivity extends BaseActivity
 
         // Set the content
         setContentView(R.layout.activity_main);
+
+        // Initialize Butter Knife bindings
+        ButterKnife.bind(this);
+
+        // Initialize the app bar
+        if (mAppBar != null) {
+            setSupportActionBar(mAppBar);
+        }
 
         // Read preferences
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
