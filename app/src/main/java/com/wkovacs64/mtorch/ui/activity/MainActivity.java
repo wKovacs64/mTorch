@@ -109,9 +109,6 @@ public final class MainActivity extends AppCompatActivity
         super.onStart();
         Timber.d("********** onStart **********");
 
-        // Listen for toggle image clicks
-        mImageButton.setOnClickListener(this);
-
         // Listen for preference changes so we can react if necessary
         mPrefs.registerOnSharedPreferenceChangeListener(this);
 
@@ -164,6 +161,9 @@ public final class MainActivity extends AppCompatActivity
         // Request the current state of the torch, according to the service
         Timber.d("Requesting torch state.");
         mBus.post(new StateRequestEvent());
+
+        // Listen for toggle image clicks
+        mImageButton.setOnClickListener(this);
     }
 
     @Override
@@ -179,6 +179,9 @@ public final class MainActivity extends AppCompatActivity
         super.onPause();
         Timber.d("********** onPause **********");
 
+        // Stop listening for toggle image clicks
+        mImageButton.setOnClickListener(null);
+
         // Unregister from the event bus
         Timber.d("Unregistering from the event bus.");
         mBus.unregister(this);
@@ -188,9 +191,6 @@ public final class MainActivity extends AppCompatActivity
     protected void onStop() {
         super.onStop();
         Timber.d("********** onStop **********");
-
-        // Stop listening for toggle image clicks
-        mImageButton.setOnClickListener(null);
 
         // Stop listening for preference changes
         mPrefs.unregisterOnSharedPreferenceChangeListener(this);
