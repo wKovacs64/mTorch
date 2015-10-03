@@ -74,16 +74,6 @@ public final class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Timber.d("********** onCreate **********");
-
-        // Check for flash capability
-        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
-            Timber.e(getString(R.string.error_no_flash));
-            Toast.makeText(this, R.string.error_no_flash, Toast.LENGTH_LONG).show();
-            finish();
-            return;
-        }
-        Timber.d("Flash capability detected!");
-
         // Set the content
         setContentView(R.layout.activity_main);
 
@@ -113,10 +103,12 @@ public final class MainActivity extends AppCompatActivity
         mPrefs.registerOnSharedPreferenceChangeListener(this);
 
         // Start the service
-        Intent torchService = new Intent(this, TorchService.class);
-        if (mAutoOn) torchService.putExtra(Constants.SETTINGS_KEY_AUTO_ON, true);
-        torchService.putExtra(Constants.SETTINGS_KEY_PERSISTENCE, mPersist);
-        startService(torchService);
+        if (hasCameraPermissions(this)) {
+            Intent torchService = new Intent(this, TorchService.class);
+            if (mAutoOn) torchService.putExtra(Constants.SETTINGS_KEY_AUTO_ON, true);
+            torchService.putExtra(Constants.SETTINGS_KEY_PERSISTENCE, mPersist);
+            startService(torchService);
+        }
     }
 
     /*
@@ -230,13 +222,12 @@ public final class MainActivity extends AppCompatActivity
     public void onClick(View v) {
         Timber.d("********** onClick **********");
 
-        // Start the service (in case it was still on its way down when we fired up a new instance
-        // of MainActivity). In normal circumstances where the service is already running, this
-        // does nothing.
-        startService(new Intent(this, TorchService.class));
-
-        // Toggle the torch
-        toggleTorch();
+        // Check for the necessary permissions prior to toggling, request if missing
+        if (hasCameraPermissions(this)) {
+            onToggleClicked();
+        } else {
+            requestCameraPermissions(this, mRootView);
+        }
     }
 
     @Override
@@ -275,12 +266,25 @@ public final class MainActivity extends AppCompatActivity
                     })
                     .show();
         } else if (mCameraPermissionGranted) {
-            toggleTorch();
+            onToggleClicked();
         }
 
         // Reset
         mCameraPermissionDenied = false;
         mCameraPermissionGranted = false;
+    }
+
+    /**
+     * Starts the service (in rare circumstances where it was killed) and toggles the torch.
+     */
+    private void onToggleClicked() {
+        // Start the service (in case it was still on its way down when we fired up a new
+        // instance of MainActivity). In normal circumstances where the service is already
+        // running, this does nothing.
+        startService(new Intent(this, TorchService.class));
+
+        // Toggle the torch
+        toggleTorch();
     }
 
     /**
@@ -307,15 +311,10 @@ public final class MainActivity extends AppCompatActivity
      * attempting the toggle, prompting for them if necessary.
      */
     private void toggleTorch() {
-        // Check for the necessary permissions, request if missing
-        if (hasCameraPermissions(this)) {
-            // Use the service to start/stop the torch (start = on, stop = off)
-            mTorchEnabled = !mTorchEnabled;
-            Timber.d("Posting a new ToggleRequestEvent to the bus.");
-            mBus.post(new ToggleRequestEvent(mTorchEnabled, mPersist));
-        } else {
-            requestCameraPermissions(this, mRootView);
-        }
+        // Use the service to start/stop the torch (start = on, stop = off)
+        mTorchEnabled = !mTorchEnabled;
+        Timber.d("Posting a new ToggleRequestEvent to the bus.");
+        mBus.post(new ToggleRequestEvent(mTorchEnabled, mPersist));
     }
 
     /**

@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.widget.Toast;
 
 import com.wkovacs64.mtorch.Constants;
 import com.wkovacs64.mtorch.R;
@@ -62,6 +63,20 @@ public final class PermissionUtils {
                                     Constants.RESULT_PERMISSION_CAMERA);
                         }
                     })
+                    .show();
+        } else {
+            activity.requestPermissions(PERMISSION_CAMERA, Constants.RESULT_PERMISSION_CAMERA);
+        }
+    }
+
+    /**
+     * Requests the Manifest.permission.CAMERA permission for activities without a content view.
+     *
+     * @param activity the calling Activity in which to prompt for permissions
+     */
+    public static void requestCameraPermissions(@NonNull final Activity activity) {
+        if (activity.shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+            Toast.makeText(activity, R.string.permission_rationale_camera, Toast.LENGTH_LONG)
                     .show();
         } else {
             activity.requestPermissions(PERMISSION_CAMERA, Constants.RESULT_PERMISSION_CAMERA);
