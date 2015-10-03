@@ -10,8 +10,6 @@ public final class CustomApplication extends Application {
 
     @Override
     public void onCreate() {
-        super.onCreate();
-
         if (BuildConfig.DEBUG) {
             // Initialize Timber logging library
             Timber.plant(new Timber.DebugTree());
@@ -19,6 +17,8 @@ public final class CustomApplication extends Application {
             // Enable StrictMode for debug builds
             enabledStrictMode();
         }
+
+        super.onCreate();
     }
 
     private void enabledStrictMode() {
@@ -27,6 +27,10 @@ public final class CustomApplication extends Application {
                     .detectAll()
                     .penaltyLog()
                     .penaltyDialog()
+                    .build());
+            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
                     .build());
         }
     }
