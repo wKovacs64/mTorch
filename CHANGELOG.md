@@ -1,6 +1,6 @@
 # Change Log
 
-## Version 2.0.0 *(in progress)*
+## Version 2.0.0 *(2015-10-05)*
 
 * Android M support
 * Complete rewrite of torch implementation
