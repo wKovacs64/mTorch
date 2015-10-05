@@ -1,4 +1,0 @@
-# Add project specific ProGuard rules here.
-
-# Timber (may only be needed for release builds logging to a third party like Crashlytics)
--keep public class timber.log.**

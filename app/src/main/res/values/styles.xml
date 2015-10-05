@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <!-- App Bar -->
+    <style name="AppBar">
+        <item name="android:background">@color/primary</item>
+    </style>
+
+    <!-- App Bar Text -->
+    <style name="AppBar.TitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title" />
+
+    <!-- About Dialog: TextView Widgets -->
+    <style name="AboutDialog.Description" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/text_secondary</item>
+    </style>
+
+    <!-- About Dialog: Link(s) -->
+    <style name="AboutDialog.Link" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:textColorLink">@color/accent</item>
+    </style>
+
+</resources>
