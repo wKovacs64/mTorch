@@ -72,9 +72,27 @@ public final class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         Timber.d("********** onCreate **********");
+
+        // Check for flash capability
+        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
+            Timber.e(getString(R.string.error_no_flash));
+            Toast.makeText(this, R.string.error_no_flash, Toast.LENGTH_LONG).show();
+            finish();
+        }
+        Timber.d("Flash capability detected!");
+
+        // Start the service if we have the appropriate permissions, otherwise it will be started
+        // after a manual toggle attempt (which prompts for permissions)
+        if (hasCameraPermissions(this)) {
+            // Start the service
+            Intent torchService = new Intent(this, TorchService.class);
+            startService(torchService);
+        }
+
         // Set the content
+        setTheme(R.style.AppTheme);
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         // Initialize Butter Knife bindings

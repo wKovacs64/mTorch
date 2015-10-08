@@ -2,11 +2,6 @@
 
 <resources>
 
-    <!-- LaunchActivity Theme -->
-    <style name="LaunchActivity" parent="Theme.AppCompat.NoActionBar">
-        <item name="android:windowBackground">@drawable/background_launch</item>
-    </style>
-
     <!-- Base Application Theme -->
     <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowBackground">@android:color/black</item>
@@ -23,6 +18,11 @@
         <!-- Text Colors -->
         <item name="android:textColorPrimary">@color/text_primary</item>
         <item name="android:textColorSecondary">@color/text_secondary</item>
+    </style>
+
+    <!-- Launch Theme -->
+    <style name="AppTheme.Launch">
+        <item name="android:windowBackground">@drawable/background_launch</item>
     </style>
 
     <!-- Dialog Theme -->
