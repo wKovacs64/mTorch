@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 2.0.1 *(in progress)*
+
+* Minor launch time performance increase
+
 ## Version 2.0.0 *(2015-10-05)*
 
 * Android M support
