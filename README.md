@@ -29,7 +29,8 @@ See the [CONTRIBUTING](../master/CONTRIBUTING.md) file if you'd like to contribu
 
 ## Credits
 
-Thanks to [Speedy McVroom](http://viscious-speed.deviantart.com) for the public domain lamp graphic used in this app.
+* [Speedy McVroom](http://viscious-speed.deviantart.com) - public domain lamp graphic
+* Aleksandr Loktionov - Russian translation
 
 ## License/Copying
 mTorch is distributed under the MIT License. See the [LICENSE](../master/LICENSE) file for details.

@@ -3,6 +3,7 @@
 ## Version 2.0.1 *(in progress)*
 
 * Minor launch time performance increase
+* Russian translation (thanks to Aleksandr Loktionov)
 
 ## Version 2.0.0 *(2015-10-05)*
 
