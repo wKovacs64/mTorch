@@ -34,7 +34,7 @@ import com.wkovacs64.mtorch.bus.TorchStateEvent;
 import com.wkovacs64.mtorch.service.TorchService;
 import com.wkovacs64.mtorch.ui.dialog.AboutDialog;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
@@ -63,11 +63,11 @@ public final class MainActivity extends AppCompatActivity
      */
     boolean mCameraPermissionGranted;
 
-    @Bind(R.id.container)
+    @BindView(R.id.container)
     LinearLayout mRootView;
-    @Bind(R.id.app_bar)
+    @BindView(R.id.app_bar)
     Toolbar mAppBar;
-    @Bind(R.id.torch_image_button)
+    @BindView(R.id.torch_image_button)
     ImageButton mImageButton;
 
     @Override

@@ -15,15 +15,18 @@ import android.widget.TextView;
 
 import com.wkovacs64.mtorch.R;
 
-import butterknife.Bind;
 import butterknife.BindString;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 public final class AboutDialog extends DialogFragment {
 
     public static final String TAG = AboutDialog.class.getSimpleName();
 
-    @Bind(R.id.about_version_number)
+    private Unbinder mUnbinder;
+
+    @BindView(R.id.about_version_number)
     TextView mAboutVersion;
 
     @BindString(R.string.app_name)
@@ -40,7 +43,7 @@ public final class AboutDialog extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.dialog_about, container, false);
-        ButterKnife.bind(this, view);
+        mUnbinder = ButterKnife.bind(this, view);
 
         // Configure the dialog
         Dialog dialog = getDialog();
@@ -69,6 +72,6 @@ public final class AboutDialog extends DialogFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
+        mUnbinder.unbind();
     }
 }
