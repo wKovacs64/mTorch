@@ -28,12 +28,10 @@ public final class TorchService extends Service {
 
     private static final int ONGOING_NOTIFICATION_ID = 1;
 
-    private final Bus mBus = BusProvider.getBus();
-
-    private Torch mTorch;
-
-    private boolean mPersist;
-    private boolean mForeground;
+    private final Bus bus = BusProvider.getBus();
+    private Torch torch;
+    private boolean persist;
+    private boolean foreground;
 
     public TorchService() {
     }
@@ -53,21 +51,21 @@ public final class TorchService extends Service {
         // Choose the appropriate Torch implementation based on OS version
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             Timber.d("DEBUG: Pre-M Android OS detected, using deprecated CameraTorch");
-            mTorch = new CameraTorch();
+            torch = new CameraTorch();
         } else {
             Timber.d("DEBUG: Android M or later detected, using Camera2Torch");
-            mTorch = new Camera2Torch(getApplicationContext());
+            torch = new Camera2Torch(getApplicationContext());
         }
         */
 
         // TODO: replace with OS version-specific Torch implementation
         // Use the default Torch implementation
         Timber.d("DEBUG: Instantiating deprecated CameraTorch");
-        mTorch = new CameraTorch();
+        torch = new CameraTorch();
 
         // Initialize the torch
         try {
-            mTorch.init();
+            torch.init();
         } catch (IllegalStateException e) {
             Timber.e("Unable to initialize torch.", e);
             // TODO: better error handling, possibly
@@ -76,10 +74,10 @@ public final class TorchService extends Service {
 
         // Register with the event bus
         Timber.d("Registering with the event bus.");
-        mBus.register(this);
+        bus.register(this);
 
         // Notify subscribers of initial torch state
-        updateUi(mTorch.isOn());
+        updateUi(torch.isOn());
     }
 
     @Override
@@ -88,11 +86,11 @@ public final class TorchService extends Service {
 
         // Check for Auto On
         if (intent.hasExtra(Constants.SETTINGS_KEY_AUTO_ON)) {
-            mPersist = intent.getBooleanExtra(Constants.SETTINGS_KEY_PERSISTENCE, false);
-            toggleTorch(true, mPersist);
+            persist = intent.getBooleanExtra(Constants.SETTINGS_KEY_PERSISTENCE, false);
+            toggleTorch(true, persist);
 
             // Update the UI
-            updateUi(mTorch.isOn());
+            updateUi(torch.isOn());
         }
 
         return Service.START_NOT_STICKY;
@@ -105,14 +103,14 @@ public final class TorchService extends Service {
 
         // If this service was told to stop for some reason and persistence was enabled,
         // stop running in foreground mode
-        if (mPersist) exitForeground();
+        if (persist) exitForeground();
 
         // Shut the torch off if it was on when we got shut down
-        if (mTorch != null && mTorch.isOn()) {
+        if (torch != null && torch.isOn()) {
             Timber.w("Torch is still on, shutting it off...");
             try {
                 // Turn off the torch
-                mTorch.toggle(false);
+                torch.toggle(false);
 
                 // Update the UI
                 updateUi(false);
@@ -122,14 +120,14 @@ public final class TorchService extends Service {
         }
 
         // Release the camera
-        if (mTorch != null) {
-            mTorch.tearDown();
-            mTorch = null;
+        if (torch != null) {
+            torch.tearDown();
+            torch = null;
         }
 
         // Unregister from the event bus
         Timber.d("Unregistering from the event bus.");
-        mBus.unregister(this);
+        bus.unregister(this);
     }
 
     /**
@@ -152,7 +150,7 @@ public final class TorchService extends Service {
                 .setSmallIcon(R.drawable.ic_stat_notify).build();
 
         // Enter foreground mode to keep the service running
-        mForeground = true;
+        foreground = true;
         startForeground(ONGOING_NOTIFICATION_ID, notification);
     }
 
@@ -160,7 +158,7 @@ public final class TorchService extends Service {
      * Leaves foreground mode via {@link Service#stopForeground}.
      */
     private void exitForeground() {
-        mForeground = false;
+        foreground = false;
         stopForeground(true);
     }
 
@@ -171,11 +169,11 @@ public final class TorchService extends Service {
      */
     private void togglePersistence(boolean persist) {
         // Track the current state of persistence
-        mPersist = persist;
+        this.persist = persist;
 
         // If the user enables persistence while the torch is already lit, goForeground
         // If the user disables persistence while the torch is already lit, stopForeground
-        if (mTorch.isOn()) {
+        if (torch.isOn()) {
             if (persist) {
                 goForeground();
             } else {
@@ -194,14 +192,14 @@ public final class TorchService extends Service {
     private void toggleTorch(boolean requestedState, boolean persistence) {
         // Try to toggle the torch to the requested state
         try {
-            mTorch.toggle(requestedState);
+            torch.toggle(requestedState);
         } catch (IllegalStateException e) {
             Timber.e("Failed to turn on the torch!", e);
             die(getString(R.string.error_flash_unavailable));
         }
 
         // If turning torch off while in foreground mode (persistence enabled), exit foreground
-        if (mForeground && !requestedState) {
+        if (foreground && !requestedState) {
             Timber.d("Disabling torch while in foreground mode. Exiting foreground mode.");
             exitForeground();
         }
@@ -217,7 +215,7 @@ public final class TorchService extends Service {
      */
     private void updateUi(boolean state) {
         Timber.d("Posting a new TorchStateEvent to the bus.");
-        mBus.post(new TorchStateEvent(state));
+        bus.post(new TorchStateEvent(state));
     }
 
     /**
@@ -230,7 +228,7 @@ public final class TorchService extends Service {
 
         // Post a new ShutdownEvent to the bus with the included error message
         Timber.d("Posting a new ShutdownEvent to the bus.");
-        mBus.post(new ShutdownEvent(error));
+        bus.post(new ShutdownEvent(error));
 
         // Stop the service
         stopSelf();
@@ -245,7 +243,7 @@ public final class TorchService extends Service {
     public void onToggleRequestEvent(ToggleRequestEvent event) {
         Timber.d("ToggleRequestEvent detected on the bus.");
 
-        if (mForeground && event.isProduced()) {
+        if (foreground && event.isProduced()) {
             // Disregard the initial launch toggle request if already in the foreground
             Timber.d("ToggleRequestEvent was produced while service in foreground. Disregarding.");
         } else {
@@ -254,7 +252,7 @@ public final class TorchService extends Service {
         }
 
         // Update the UI
-        updateUi(mTorch.isOn());
+        updateUi(torch.isOn());
     }
 
     /**
@@ -278,6 +276,6 @@ public final class TorchService extends Service {
     @Subscribe
     public void onStateRequestEvent(StateRequestEvent event) {
         Timber.d("StateRequestEvent detected on the bus.");
-        updateUi(mTorch.isOn());
+        updateUi(torch.isOn());
     }
 }

@@ -18,10 +18,9 @@ import android.support.annotation.NonNull;
 @TargetApi(Build.VERSION_CODES.M)
 public final class Camera2Torch extends CameraManager.TorchCallback implements Torch {
 
-    private CameraManager mCameraManager;
-    private Context mContext;
-
-    private boolean mTorchEnabled;
+    private CameraManager cameraManager;
+    private Context context;
+    private boolean torchEnabled;
 
     /**
      * Constructs a new Camera2Torch object using an instance of the {@link CameraManager} system
@@ -31,14 +30,14 @@ public final class Camera2Torch extends CameraManager.TorchCallback implements T
      *                Context and used to obtain an instance of the CameraManager system service)
      */
     public Camera2Torch(@NonNull Context context) {
-        mContext = context.getApplicationContext();
+        this.context = context.getApplicationContext();
     }
 
     @Override
     public void init() {
         try {
-            mCameraManager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
-            mCameraManager.registerTorchCallback(this, null);
+            cameraManager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
+            cameraManager.registerTorchCallback(this, null);
         } catch (IllegalArgumentException e) {
             throw new IllegalStateException("Failed to register with the Camera service!", e);
         } catch (NullPointerException e) {
@@ -49,15 +48,15 @@ public final class Camera2Torch extends CameraManager.TorchCallback implements T
     @Override
     public void toggle(boolean enabled) {
         try {
-            String[] cameraIds = mCameraManager.getCameraIdList();
+            String[] cameraIds = cameraManager.getCameraIdList();
             for (String cameraId : cameraIds) {
-                CameraCharacteristics cc = mCameraManager.getCameraCharacteristics(cameraId);
+                CameraCharacteristics cc = cameraManager.getCameraCharacteristics(cameraId);
                 Boolean flashAvailable = cc.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
                 Boolean lensFacingBack = cc.get(CameraCharacteristics.LENS_FACING) ==
                         CameraCharacteristics.LENS_FACING_BACK;
                 if (flashAvailable && lensFacingBack) {
-                    mCameraManager.setTorchMode(cameraId, enabled);
-                    mTorchEnabled = enabled; // TODO: Stop cheating!
+                    cameraManager.setTorchMode(cameraId, enabled);
+                    torchEnabled = enabled; // TODO: Stop cheating!
                 }
             }
         } catch (ArrayIndexOutOfBoundsException | IllegalArgumentException e) {
@@ -69,26 +68,26 @@ public final class Camera2Torch extends CameraManager.TorchCallback implements T
 
     @Override
     public boolean isOn() {
-        return mTorchEnabled;
+        return torchEnabled;
     }
 
     @Override
     public void tearDown() {
-        mCameraManager.unregisterTorchCallback(this);
-        mCameraManager = null;
-        mTorchEnabled = false;
-        mContext = null;
+        cameraManager.unregisterTorchCallback(this);
+        cameraManager = null;
+        torchEnabled = false;
+        context = null;
     }
 
     @Override
     public void onTorchModeUnavailable(@NonNull String cameraId) {
         super.onTorchModeUnavailable(cameraId);
-        mTorchEnabled = false;
+        torchEnabled = false;
     }
 
     @Override
     public void onTorchModeChanged(@NonNull String cameraId, boolean enabled) {
         super.onTorchModeChanged(cameraId, enabled);
-        mTorchEnabled = enabled;
+        torchEnabled = enabled;
     }
 }

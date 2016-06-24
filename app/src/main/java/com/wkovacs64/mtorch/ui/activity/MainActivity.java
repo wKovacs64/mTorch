@@ -46,29 +46,27 @@ public final class MainActivity extends AppCompatActivity
         SharedPreferences.OnSharedPreferenceChangeListener,
         ActivityCompat.OnRequestPermissionsResultCallback {
 
-    private final Bus mBus = BusProvider.getBus();
-
-    private AboutDialog mAboutDialog;
-    private SharedPreferences mPrefs;
-
-    private boolean mAutoOn;
-    private boolean mPersist;
-    private boolean mTorchEnabled;
+    private final Bus bus = BusProvider.getBus();
+    private AboutDialog aboutDialog;
+    private SharedPreferences prefs;
+    private boolean autoOn;
+    private boolean persist;
+    private boolean torchEnabled;
     /**
      * Indicates whether Camera permissions were actively denied by the user upon being prompted.
      */
-    boolean mCameraPermissionDenied;
+    private boolean cameraPermissionDenied;
     /**
      * Indicates whether Camera permissions were actively granted by the user upon being prompted.
      */
-    boolean mCameraPermissionGranted;
+    private boolean cameraPermissionGranted;
 
     @BindView(R.id.container)
-    LinearLayout mRootView;
+    LinearLayout rootView;
     @BindView(R.id.app_bar)
-    Toolbar mAppBar;
+    Toolbar appBar;
     @BindView(R.id.torch_image_button)
-    ImageButton mImageButton;
+    ImageButton imageButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,17 +97,17 @@ public final class MainActivity extends AppCompatActivity
         ButterKnife.bind(this);
 
         // Initialize the app bar
-        if (mAppBar != null) {
-            setSupportActionBar(mAppBar);
+        if (appBar != null) {
+            setSupportActionBar(appBar);
         }
 
         // Read preferences
-        mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        mAutoOn = mPrefs.getBoolean(Constants.SETTINGS_KEY_AUTO_ON, false);
-        mPersist = mPrefs.getBoolean(Constants.SETTINGS_KEY_PERSISTENCE, false);
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        autoOn = prefs.getBoolean(Constants.SETTINGS_KEY_AUTO_ON, false);
+        persist = prefs.getBoolean(Constants.SETTINGS_KEY_PERSISTENCE, false);
 
         // Instantiate the About dialog box
-        mAboutDialog = AboutDialog.newInstance();
+        aboutDialog = AboutDialog.newInstance();
     }
 
     @Override
@@ -118,13 +116,13 @@ public final class MainActivity extends AppCompatActivity
         Timber.d("********** onStart **********");
 
         // Listen for preference changes so we can react if necessary
-        mPrefs.registerOnSharedPreferenceChangeListener(this);
+        prefs.registerOnSharedPreferenceChangeListener(this);
 
         // Start the service
         if (hasCameraPermissions(this)) {
             Intent torchService = new Intent(this, TorchService.class);
-            if (mAutoOn) torchService.putExtra(Constants.SETTINGS_KEY_AUTO_ON, true);
-            torchService.putExtra(Constants.SETTINGS_KEY_PERSISTENCE, mPersist);
+            if (autoOn) torchService.putExtra(Constants.SETTINGS_KEY_AUTO_ON, true);
+            torchService.putExtra(Constants.SETTINGS_KEY_PERSISTENCE, persist);
             startService(torchService);
         }
     }
@@ -141,12 +139,12 @@ public final class MainActivity extends AppCompatActivity
                 if (grantResults.length == 1
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Timber.d("Permission granted: CAMERA");
-                    mCameraPermissionDenied = false;
-                    mCameraPermissionGranted = true;
+                    cameraPermissionDenied = false;
+                    cameraPermissionGranted = true;
                 } else {
                     Timber.d("Permission denied: CAMERA");
-                    mCameraPermissionDenied = true;
-                    mCameraPermissionGranted = false;
+                    cameraPermissionDenied = true;
+                    cameraPermissionGranted = false;
                 }
                 break;
             default:
@@ -162,7 +160,7 @@ public final class MainActivity extends AppCompatActivity
 
         // Register with the event bus
         Timber.d("Registering with the event bus.");
-        mBus.register(this);
+        bus.register(this);
 
         // Show the appropriate feedback based on permission results now that the UI is available
         // (or do nothing if the user has not been prompted yet).
@@ -170,16 +168,16 @@ public final class MainActivity extends AppCompatActivity
 
         // Request the current state of the torch, according to the service
         Timber.d("Requesting torch state.");
-        mBus.post(new StateRequestEvent());
+        bus.post(new StateRequestEvent());
 
         // Listen for toggle image clicks
-        mImageButton.setOnClickListener(this);
+        imageButton.setOnClickListener(this);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         // Close the About dialog if we're stopping anyway
-        if (mAboutDialog.isVisible()) mAboutDialog.dismiss();
+        if (aboutDialog.isVisible()) aboutDialog.dismiss();
 
         super.onSaveInstanceState(outState);
     }
@@ -190,11 +188,11 @@ public final class MainActivity extends AppCompatActivity
         Timber.d("********** onPause **********");
 
         // Stop listening for toggle image clicks
-        mImageButton.setOnClickListener(null);
+        imageButton.setOnClickListener(null);
 
         // Unregister from the event bus
         Timber.d("Unregistering from the event bus.");
-        mBus.unregister(this);
+        bus.unregister(this);
     }
 
     @Override
@@ -203,10 +201,10 @@ public final class MainActivity extends AppCompatActivity
         Timber.d("********** onStop **********");
 
         // Stop listening for preference changes
-        mPrefs.unregisterOnSharedPreferenceChangeListener(this);
+        prefs.unregisterOnSharedPreferenceChangeListener(this);
 
         // If no persistence or if the torch is off, stop the service
-        if (!mPersist || !mTorchEnabled) {
+        if (!persist || !torchEnabled) {
             stopService(new Intent(this, TorchService.class));
         }
     }
@@ -226,7 +224,7 @@ public final class MainActivity extends AppCompatActivity
         switch (item.getItemId()) {
             case R.id.menu_about:
                 // show About dialog
-                mAboutDialog.show(getFragmentManager(), AboutDialog.TAG);
+                aboutDialog.show(getFragmentManager(), AboutDialog.TAG);
                 return true;
             case R.id.menu_settings:
                 // show Settings
@@ -244,7 +242,7 @@ public final class MainActivity extends AppCompatActivity
         if (hasCameraPermissions(this)) {
             onToggleClicked();
         } else {
-            requestCameraPermissions(this, mRootView);
+            requestCameraPermissions(this, rootView);
         }
     }
 
@@ -254,13 +252,13 @@ public final class MainActivity extends AppCompatActivity
 
         // Settings have changed, observe the new value
         if (key.equals(Constants.SETTINGS_KEY_AUTO_ON)) {
-            mAutoOn = prefs.getBoolean(key, false);
+            autoOn = prefs.getBoolean(key, false);
         } else if (key.equals(Constants.SETTINGS_KEY_PERSISTENCE)) {
-            mPersist = prefs.getBoolean(key, false);
+            persist = prefs.getBoolean(key, false);
 
             // Notify the service of the setting change
-            Timber.d("Posting a new PersistenceChangeEvent to the bus: " + mPersist);
-            mBus.post(new PersistenceChangeEvent(mPersist));
+            Timber.d("Posting a new PersistenceChangeEvent to the bus: " + persist);
+            bus.post(new PersistenceChangeEvent(persist));
         }
     }
 
@@ -269,11 +267,11 @@ public final class MainActivity extends AppCompatActivity
      * ActivityCompat.OnRequestPermissionsResultCallback#onRequestPermissionsResult}.
      */
     private void processPermissionResults() {
-        if (mCameraPermissionDenied
+        if (cameraPermissionDenied
                 && !ActivityCompat
                 .shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
             Timber.d("Instructing user to grant permissions manually.");
-            Snackbar.make(mRootView, R.string.content_camera_permission_denied,
+            Snackbar.make(rootView, R.string.content_camera_permission_denied,
                     Snackbar.LENGTH_INDEFINITE)
                     .setActionTextColor(ContextCompat.getColor(this, R.color.accent))
                     .setAction(R.string.action_settings, new View.OnClickListener() {
@@ -283,13 +281,13 @@ public final class MainActivity extends AppCompatActivity
                         }
                     })
                     .show();
-        } else if (mCameraPermissionGranted) {
+        } else if (cameraPermissionGranted) {
             onToggleClicked();
         }
 
         // Reset
-        mCameraPermissionDenied = false;
-        mCameraPermissionGranted = false;
+        cameraPermissionDenied = false;
+        cameraPermissionGranted = false;
     }
 
     /**
@@ -311,13 +309,13 @@ public final class MainActivity extends AppCompatActivity
      * torch is lit (but not otherwise).
      */
     private void updateUi() {
-        Timber.d("Updating UI, mTorchEnabled = " + mTorchEnabled);
+        Timber.d("Updating UI, torchEnabled = " + torchEnabled);
 
         // Set the corresponding toggle image
-        mImageButton.setImageResource(mTorchEnabled ? R.drawable.torch_on : R.drawable.torch_off);
+        imageButton.setImageResource(torchEnabled ? R.drawable.torch_on : R.drawable.torch_off);
 
         // Keep the screen on while the app is open and the torch is on
-        if (mTorchEnabled) {
+        if (torchEnabled) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         } else {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -330,9 +328,9 @@ public final class MainActivity extends AppCompatActivity
      */
     private void toggleTorch() {
         // Use the service to start/stop the torch (start = on, stop = off)
-        mTorchEnabled = !mTorchEnabled;
+        torchEnabled = !torchEnabled;
         Timber.d("Posting a new ToggleRequestEvent to the bus.");
-        mBus.post(new ToggleRequestEvent(mTorchEnabled, mPersist));
+        bus.post(new ToggleRequestEvent(torchEnabled, persist));
     }
 
     /**
@@ -355,7 +353,7 @@ public final class MainActivity extends AppCompatActivity
     @Subscribe
     public void onTorchStateEvent(TorchStateEvent event) {
         Timber.d("TorchStateEvent detected on the bus.");
-        mTorchEnabled = event.getState();
+        torchEnabled = event.getState();
         updateUi();
     }
 
@@ -367,7 +365,7 @@ public final class MainActivity extends AppCompatActivity
     @Produce
     public ToggleRequestEvent produceToggleRequestEvent() {
         Timber.d("Producing a new ToggleRequestEvent.");
-        ToggleRequestEvent producedEvent = new ToggleRequestEvent(mTorchEnabled, mPersist);
+        ToggleRequestEvent producedEvent = new ToggleRequestEvent(torchEnabled, persist);
         producedEvent.setProduced(true);
         return producedEvent;
     }
