@@ -1,6 +1,6 @@
 # Change Log
 
-## Version 2.0.1 *(in progress)*
+## Version 2.1.0 *(in progress)*
 
 * Minor launch time performance increase
 * Russian translation (thanks to Aleksandr Loktionov)
