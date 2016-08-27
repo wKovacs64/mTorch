@@ -248,7 +248,7 @@ public final class MainActivity extends AppCompatActivity
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-        Timber.d("SharedPreferences: " + key + " has changed");
+        Timber.d("SharedPreferences: %s has changed", key);
 
         // Settings have changed, observe the new value
         if (key.equals(Constants.SETTINGS_KEY_AUTO_ON)) {
@@ -257,7 +257,7 @@ public final class MainActivity extends AppCompatActivity
             persist = prefs.getBoolean(key, false);
 
             // Notify the service of the setting change
-            Timber.d("Posting a new PersistenceChangeEvent to the bus: " + persist);
+            Timber.d("Posting a new PersistenceChangeEvent to the bus: %s", persist);
             bus.post(new PersistenceChangeEvent(persist));
         }
     }
@@ -309,7 +309,7 @@ public final class MainActivity extends AppCompatActivity
      * torch is lit (but not otherwise).
      */
     private void updateUi() {
-        Timber.d("Updating UI, torchEnabled = " + torchEnabled);
+        Timber.d("Updating UI, torchEnabled = %s", torchEnabled);
 
         // Set the corresponding toggle image
         imageButton.setImageResource(torchEnabled ? R.drawable.torch_on : R.drawable.torch_off);

@@ -67,7 +67,7 @@ public final class TorchService extends Service {
         try {
             torch.init();
         } catch (IllegalStateException e) {
-            Timber.e("Unable to initialize torch.", e);
+            Timber.e(e, "Unable to initialize torch.");
             // TODO: better error handling, possibly
             die(getString(R.string.error_camera_unavailable));
         }
@@ -115,7 +115,7 @@ public final class TorchService extends Service {
                 // Update the UI
                 updateUi(false);
             } catch (IllegalStateException e) {
-                Timber.e("Failed to toggle torch off during service destruction!", e);
+                Timber.e(e, "Failed to toggle torch off during service destruction!");
             }
         }
 
@@ -194,7 +194,7 @@ public final class TorchService extends Service {
         try {
             torch.toggle(requestedState);
         } catch (IllegalStateException e) {
-            Timber.e("Failed to turn on the torch!", e);
+            Timber.e(e, "Failed to turn on the torch!");
             die(getString(R.string.error_flash_unavailable));
         }
 
