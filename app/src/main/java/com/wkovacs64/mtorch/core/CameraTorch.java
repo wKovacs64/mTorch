@@ -13,30 +13,28 @@ import java.util.List;
  */
 public final class CameraTorch implements Torch {
 
-    private final SurfaceTexture mDummySurface = new SurfaceTexture(0);
-
-    private Camera mCamera;
-
-    private boolean mTorchEnabled;
+    private final SurfaceTexture dummySurface = new SurfaceTexture(0);
+    private Camera camera;
+    private boolean torchEnabled;
 
     @Override
     public void init() {
         try {
             // Acquire the Camera device
-            mCamera = Camera.open();
+            camera = Camera.open();
         } catch (RuntimeException e) {
             throw new IllegalStateException("Failed to acquire the camera device!", e);
         }
 
         // Test to make sure it supports torch mode
-        if (mCamera == null || !supportsTorchMode(mCamera)) {
+        if (camera == null || !supportsTorchMode(camera)) {
             throw new IllegalStateException("No back-facing camera that supports torch mode!");
         }
 
         // Start the preview required to enable the flash
-        mCamera.startPreview();
+        camera.startPreview();
         try {
-            mCamera.setPreviewTexture(mDummySurface);
+            camera.setPreviewTexture(dummySurface);
         } catch (IOException e) {
             throw new IllegalStateException("Failed to set preview texture!", e);
         }
@@ -45,26 +43,26 @@ public final class CameraTorch implements Torch {
     @Override
     public void toggle(boolean enabled) {
         // Toggle the torch
-        Camera.Parameters params = mCamera.getParameters();
+        Camera.Parameters params = camera.getParameters();
         params.setFlashMode(enabled
                 ? Camera.Parameters.FLASH_MODE_TORCH
                 : Camera.Parameters.FLASH_MODE_OFF);
-        mCamera.setParameters(params);
-        mTorchEnabled = enabled;
+        camera.setParameters(params);
+        torchEnabled = enabled;
     }
 
     @Override
     public boolean isOn() {
-        return mTorchEnabled;
+        return torchEnabled;
     }
 
     @Override
     public void tearDown() {
-        if (mCamera != null) {
-            mCamera.stopPreview();
-            mCamera.release();
-            mCamera = null;
-            mTorchEnabled = false;
+        if (camera != null) {
+            camera.stopPreview();
+            camera.release();
+            camera = null;
+            torchEnabled = false;
         }
     }
 

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:locale="en">
+
+    <!-- About dialog -->
+    <string name="about_author_text">Автор:</string>
+    <string name="about_description">Минималистичный фонарик для Android.</string>
+    <string name="about_homepage_text">В интернете:</string>
+    <string name="about_version_text">Версия:</string>
+
+    <!-- User-visible error messages -->
+    <string name="error_camera_unavailable">ОШИБКА: невозможно получить доступ к камере</string>
+    <string name="error_no_flash">ОШИБКА: вспышка не обнаружена</string>
+    <string name="error_flash_unavailable">ОШИБКА: не удалось включить вспышку</string>
+
+    <!-- Menu options -->
+    <string name="menu_about">О программе</string>
+    <string name="menu_settings">Настройки</string>
+
+    <!-- Miscellaneous -->
+    <string name="notification_text">Нажмите, чтобы вернуться обратно в приложение</string>
+    <string name="torch_toggle">Включить фонарик</string>
+    <string name="unknown">Неизвестно</string>
+    <string name="ok">OK</string>
+
+    <!-- Permissions -->
+    <string name="permission_rationale_camera">Необходим доступ к камере, чтобы активировать вспышку.</string>
+    <string name="content_camera_permission_denied">Разрешите этому приложению доступ к Камере в системных настройках устройства.</string>
+    <string name="action_settings">Настройки</string>
+
+    <!-- Settings | Auto On -->
+    <string name="settings_auto_on_title">Автоматическое включение</string>
+    <string name="settings_auto_on_summary_on">Включить фонарик при запуске приложения</string>
+    <string name="settings_auto_on_summary_off">Оставить фонарик выключенным при запуске</string>
+    <!-- Settings | Persistence -->
+    <string name="settings_persistence_title">Работа в фоновом режиме</string>
+    <string name="settings_persistence_summary_on">Оставить фонарик включенным при выходе из приложения</string>
+    <string name="settings_persistence_summary_off">Выключить фонарик при выходе из приложения</string>
+
+</resources>

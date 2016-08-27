@@ -1,5 +1,13 @@
 # Change Log
 
+## Version 2.1.0 *(2016-08-27)*
+
+* Android Nougat support
+* Multi-window support (Android 7.0 and above)
+* Minor launch time performance increase
+* Russian translation (thanks to Aleksandr Loktionov)
+* Japanese translation (thanks to naofum)
+
 ## Version 2.0.0 *(2015-10-05)*
 
 * Android M support

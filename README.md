@@ -25,11 +25,13 @@ One of the most annoying behavioral issues I found in almost every other flashli
 ## Contributing
 See the [CONTRIBUTING](../master/CONTRIBUTING.md) file if you'd like to contribute code. I also welcome localization efforts if you would like to [translate](https://crowdin.com/project/mtorch) some strings.
 
-[![Crowdin](https://d322cqt584bo4o.cloudfront.net/mtorch/localized.png)](https://crowdin.com/project/mtorch)
+[![Crowdin](https://d322cqt584bo4o.cloudfront.net/mtorch/localized.svg)](https://crowdin.com/project/mtorch)
 
 ## Credits
 
-Thanks to [Speedy McVroom](http://viscious-speed.deviantart.com) for the public domain lamp graphic used in this app.
+* [Speedy McVroom](http://viscious-speed.deviantart.com) - public domain lamp graphic
+* Aleksandr Loktionov - Russian translation
+* naofum - Japanese translation
 
 ## License/Copying
 mTorch is distributed under the MIT License. See the [LICENSE](../master/LICENSE) file for details.
