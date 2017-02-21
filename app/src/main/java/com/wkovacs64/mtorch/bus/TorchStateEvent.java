@@ -6,23 +6,23 @@ package com.wkovacs64.mtorch.bus;
  */
 public final class TorchStateEvent {
 
-  private final boolean state;
+    private final boolean state;
 
-  /**
-   * Constructs a new TorchStateEvent for the current state of the torch.
-   *
-   * @param state the current state of the torch (true for on, false for off)
-   */
-  public TorchStateEvent(boolean state) {
-    this.state = state;
-  }
+    /**
+     * Constructs a new TorchStateEvent for the current state of the torch.
+     *
+     * @param state the current state of the torch (true for on, false for off)
+     */
+    public TorchStateEvent(boolean state) {
+        this.state = state;
+    }
 
-  /**
-   * Retrieves the current state of the torch as reported in the TorchStateEvent.
-   *
-   * @return the current state of the torch (true for on, false for off)
-   */
-  public boolean getState() {
-    return state;
-  }
+    /**
+     * Retrieves the current state of the torch as reported in the TorchStateEvent.
+     *
+     * @return the current state of the torch (true for on, false for off)
+     */
+    public boolean getState() {
+        return state;
+    }
 }
