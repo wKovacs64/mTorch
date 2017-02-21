@@ -8,13 +8,13 @@ import com.wkovacs64.mtorch.ui.fragment.SettingsFragment;
 import timber.log.Timber;
 
 public final class SettingsActivity extends Activity {
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Timber.d("********** Settings **********");
-        getFragmentManager()
-                .beginTransaction()
-                .replace(android.R.id.content, new SettingsFragment())
-                .commit();
-    }
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    Timber.d("********** Settings **********");
+    getFragmentManager()
+        .beginTransaction()
+        .replace(android.R.id.content, new SettingsFragment())
+        .commit();
+  }
 }
