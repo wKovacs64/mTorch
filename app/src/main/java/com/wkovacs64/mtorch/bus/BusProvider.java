@@ -8,21 +8,21 @@ import com.squareup.otto.Bus;
  */
 public final class BusProvider {
 
-    private static final Bus BUS = new Bus();
+  private static final Bus BUS = new Bus();
 
-    /**
-     * Retrieves the event bus singleton instance.
-     *
-     * @return the event bus
-     */
-    public static Bus getBus() {
-        return BUS;
-    }
+  /**
+   * Retrieves the event bus singleton instance.
+   *
+   * @return the event bus
+   */
+  public static Bus getBus() {
+    return BUS;
+  }
 
-    /**
-     * Suppress default constructor to prevent instantiation.
-     */
-    private BusProvider() {
-        throw new AssertionError();
-    }
+  /**
+   * Suppress default constructor to prevent instantiation.
+   */
+  private BusProvider() {
+    throw new AssertionError();
+  }
 }
