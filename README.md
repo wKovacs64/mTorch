@@ -32,6 +32,7 @@ See the [CONTRIBUTING](../master/CONTRIBUTING.md) file if you'd like to contribu
 * [Speedy McVroom](http://viscious-speed.deviantart.com) - public domain lamp graphic
 * Aleksandr Loktionov - Russian translation
 * naofum - Japanese translation
+* YFdyh000 - Chinese Simplified translation
 
 ## License/Copying
 mTorch is distributed under the MIT License. See the [LICENSE](../master/LICENSE) file for details.
