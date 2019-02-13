@@ -1,3 +1,7 @@
+# [DEPRECATED]
+
+This project is no longer maintained.
+
 # [mTorch](https://wkovacs64.github.io/mTorch/)
 
 *A minimalistic torch/flashlight app for Android™.*
